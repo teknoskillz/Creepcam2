@@ -1,0 +1,205 @@
+============================================================================
+Creepcam [ Version 1.3 ] 
+Based on CreepCam [Version 1.15beta]
+Original Source: Courtesy of Jeff Preshing
+Porting for mods by: Cobalt & Slotzero
+Format for this file based on Frikbot/FBX install.txt
+============================================================================
+
+This program is in the Public Domain. The crack legal
+team would like to add:
+
+THIS SOFTWARE DESIGNATED: "AS IS"  .............
+ AND MAKES NO WARRANTY, EXPRESS OR IMPLIED, AS TO THE
+ACCURACY, CAPABILITY, EFFICIENCY, MERCHANTABILITY, OR
+FUNCTIONING OF THIS SOFTWARE AND/OR DOCUMENTATION.
+ IN NO EVENT WILL ANY PERSON BE LIABLE FOR ANY
+GENERAL, CONSEQUENTIAL, INDIRECT, INCIDENTAL,
+EXEMPLARY, OR SPECIAL DAMAGES, EVEN IF SUCH PERSONS
+HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH
+DAMAGES, IRRESPECTIVE OF THE CAUSE OF SUCH DAMAGES. 
+
+
+The export from the United States or the subsequent
+reexport of this software is subject to compliance
+with United States export control and munitions
+control restrictions. You agree that in the event you
+seek to export this software, you assume full
+responsibility for obtaining all necessary export
+licenses and approvals and for assuring compliance
+with applicable reexport restrictions. 
+
+Any reproduction of this software must contain
+this notice in its entirety. 
+
+============================================================================
+These installation instructions were designed using Darkplaces
+Quake as the main service engine. Build date of 2012 or later. 
+This port Does NOT include match mode system.
+============================================================================
+----------------------------------------------------------------------------
+To install to an existing mod:
+----------------------------------------------------------------------------
+
+* Add the following lines to progs.src right after the subs.qc or
+dpextensions.qc if you have it. *
+
+creepcam/creepmov.qc
+creepcam/creepswc.qc
+creepcam/creeputl.qc
+creepcam/creephks.qc
+
+----------------------------------------------------------------------------
+*world.qc BEGIN*
+----------------------------------------------------------------------------
+* Add this line to worldspawn ()  at the end of the routine*
+
+CC_WorldSpawn();
+
+----------------------------------------------------------------------------
+* Add the following to StartFrame () after teamplay*
+
+	c_max = floor(teamplay / MOVETYPE_BOUNCE);
+	teamplay = teamplay - c_max * MOVETYPE_BOUNCE;
+   if (c_max == 0)
+	{
+		c_max = FL_INWATER;
+	}
+	
+----------------------------------------------------------------------------
+*world.qc END*
+----------------------------------------------------------------------------	
+
+----------------------------------------------------------------------------
+*client.qc BEGIN*
+----------------------------------------------------------------------------
+* Add the following to respawn () at the beginning of the routine*
+
+void() respawn =
+{
+    CC_DeadGuyRespawning(self); //Added for CreepCam
+
+----------------------------------------------------------------------------
+* Add the following to ClientKill () at the end of the routine*
+
+CC_AntiSpamAction(self);
+
+*Note the above is not require but highly recommended to prevent 
+server performance loss from spam* 
+
+----------------------------------------------------------------------------
+* Add this line to the top of PutClientInServer ()
+
+void() PutClientInServer = 
+{
+	if (CC_PutClientInServer())  return; // Added for CreepCam
+	
+----------------------------------------------------------------------------
+
+* Add this line to the beginning of ClientConnect ()*
+
+void() ClientConnect = 
+{
+	if (CC_ClientConnect()) return; // Added for CreepCam
+	
+----------------------------------------------------------------------------
+* Add this line to the top of ClientDisconnect ()* 
+
+void() ClientDisconnect = 
+{
+	CC_ClientDisconnect(); // Added for CreepCam
+
+----------------------------------------------------------------------------
+* Add this line to PlayerPreThink below the intermission references*
+
+	if (intermission_running)
+	{
+		IntermissionThink();
+		return;
+	}
+	if (self.camtype >= 0) return;  // Added for Creepcam
+
+----------------------------------------------------------------------------
+* Add this line to PlayerPostThink  at the beginning of the routine*
+
+void() PlayerPostThink =
+{
+if (CC_PlayerPostThink()) return;
+
+----------------------------------------------------------------------------
+* Add these following lines to ClientObituary () at all the instances of death
+when the player is not himself*
+----------------------------------------------------------------------------
+if (targ.classname == "player")
+	{
+		if (attacker.classname == "teledeath")
+		{
+			bprint (targ.netname);
+			bprint (" was telefragged by ");
+			bprint (attacker.owner.netname);
+			bprint ("\n");
+
+			attacker.owner.frags = attacker.owner.frags + 1;
+			CC_PlayerKilledPlayer(attacker.owner, targ); // Added for CreepCam
+			return;
+----------------------------------------------------------------------------	
+		if (attacker.classname == "teledeath2")
+		{
+			bprint ("Satan's power deflects ");
+			bprint (targ.netname);
+			bprint ("'s telefrag\n");
+
+			targ.frags = targ.frags - 1;
+            CC_PlayerKilledPlayer(targ, attacker.owner); // Added for Creepcam
+			return;
+----------------------------------------------------------------------------			
+if (targ.weapon == 16)
+					bprint (" tries to put the pin back in\n");
+				else if (rnum)
+					bprint (" becomes bored with life\n");
+				else
+					bprint (" checks if his weapon is loaded\n");
+				return;
+			}
+			else if ( (teamplay == 2) && (targteam == attackerteam) &&
+				(attackerteam != 0) )	// gb
+			{
+				if (rnum < 0.25)
+					deathstring = " mows down a teammate\n";
+
+				else if (rnum < 0.50)
+					deathstring = " checks his glasses\n";
+
+				else if (rnum < 0.75)
+					deathstring = " gets a frag for the other team\n";
+
+				else
+					deathstring = " loses another friend\n";
+
+				bprint (attacker.netname);
+				bprint (deathstring);
+				attacker.frags = attacker.frags - 1;
+				CC_PlayerKilledPlayer(targ, attacker.owner); // Added for  Creepcam
+				return;
+			}
+	}
+
+			else
+			{
+				attacker.frags = attacker.frags + 1;
+				CC_PlayerKilledPlayer(targ, attacker.owner); // Added for Creepcam
+
+				rnum = attacker.weapon;
+
+----------------------------------------------------------------------------
+*client.qc END*
+----------------------------------------------------------------------------				
+----------------------------------------------------------------------------					
+*Note* Your code may be different. This code assumes Clean QC 1.01.  
+Check your code! 
+Source is included with this release.
+----------------------------------------------------------------------------	 				
+That should be all you need to get this working with almost any mod. Some 
+modification may be required depending on your mod needs.
+----------------------------------------------------------------------------
+

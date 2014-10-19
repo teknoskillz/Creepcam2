@@ -1,0 +1,41 @@
+progs.dat
+
+defs.qc
+extras/dpextensions.qc
+subs.qc
+creepcam/creepmov.qc
+creepcam/creepswc.qc
+creepcam/creeputl.qc
+creepcam/creephks.qc
+fight.qc
+ai.qc
+combat.qc
+helpers/netnames.qc	//gnounc
+items.qc
+weapons.qc
+world.qc
+client.qc
+player.qc
+monsters.qc
+doors.qc
+buttons.qc
+triggers.qc
+plats.qc
+misc.qc
+
+monsters/ogre.qc
+monsters/fiend.qc
+monsters/shambler.qc
+monsters/knight.qc
+monsters/grunt.qc
+monsters/scrag.qc
+monsters/rottweiler.qc
+monsters/zombie.qc
+monsters/cthon.qc
+
+monsters/spawn.qc			// registered
+monsters/hellknight.qc		// registered
+monsters/rotfish.qc			// registered
+monsters/vore.qc			// registered
+monsters/enforcer.qc		// registered
+monsters/shub.qc			// registered
