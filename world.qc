@@ -383,8 +383,9 @@ void() StartFrame =
    if (c_max == 0)
 	c_max = 16;
 	
+if (!framecount) registercvar ("respawntimer", "15");	
 	
-	
+	CC_RESPAWN = cvar ("respawntimer");
 	skill = cvar("skill");
 	framecount = framecount + 1;
 if (framecount > 100)

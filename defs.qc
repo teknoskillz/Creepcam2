@@ -757,13 +757,12 @@ float CF_KEEPBETWEENLEVELS    = 255;
 float CF_STAYASCAM    = 512.000;
 float SPAM_TIMEINTERVAL    = 3.000;
 float SPAM_ACTIONLIMIT    = 10.000;
-// CC_2
-var float autocvar_respawntimer = 15;
-var float autocvar_respawnactive = 1;
-.float watch;
-float WATCHING;
-float CC_RESPAWN = autocvar_respawntimer; // Set CC respawn timer val here
 
+// CC_2
+.float watch; // colormap of  CC target
+float WATCHING;  // propogate cam target to next level
+float CC_RESPAWN; // CC respawn timer val 
+// Alternate Setspawnparms to prevent parm9 interference
 .float spawnitems,spawnhealth,spawnarmorvalue,spawnammo_shells,spawnammo_nails,spawnammo_rockets,spawnammo_cells,spawnweapon;
 
 
