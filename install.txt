@@ -1,8 +1,11 @@
 ============================================================================
-Creepcam [ Version 1.3 ] 
+Creepcam [ Version 2.0 ]  ** For Darkplaces Quake Only ** 
 Based on CreepCam [Version 1.15beta]
 Original Source: Courtesy of Jeff Preshing
-Porting for mods by: Cobalt & Slotzero
+Porting for mods by: 
+Cobalt [ http://quakeone.com/members/cobalt ]
+Primalove [ http://quakeone.com/members/primallove/ ]
+
 Format for this file based on Frikbot/FBX install.txt
 ============================================================================
 
@@ -36,6 +39,14 @@ this notice in its entirety.
 These installation instructions were designed using Darkplaces
 Quake as the main service engine. Build date of 2012 or later. 
 This port Does NOT include match mode system.
+
+New features for V2 are commented with a "CC_2" prefix in the src.
+
+V 2.0 is based on coop and includes a respawn timer, by default set to 15 but 
+can be changed by autocvar
+
+Make sure cvar : coop is set to 1 when runing this code.
+
 ============================================================================
 ----------------------------------------------------------------------------
 To install to an existing mod:
@@ -140,7 +151,7 @@ if (targ.classname == "player")
 			bprint ("\n");
 
 			attacker.owner.frags = attacker.owner.frags + 1;
-			CC_PlayerKilledPlayer(attacker.owner, targ); // Added for CreepCam
+			CC_PlayerKilledPlayer(attacker.owner, targ); // Added for CreepCam - modify for bot case
 			return;
 ----------------------------------------------------------------------------	
 		if (attacker.classname == "teledeath2")
@@ -194,12 +205,25 @@ if (targ.weapon == 16)
 ----------------------------------------------------------------------------
 *client.qc END*
 ----------------------------------------------------------------------------				
+
 ----------------------------------------------------------------------------					
 *Note* Your code may be different. This code assumes Clean QC 1.01.  
+
+1) In the actual CC_Worldspawn code suppied , these lines may not be needed and can be commented out:
+   cvar_set("sv_aim","1");
+   cvar_set("sys_ticrate","0.025");
+ [ You may need to experiment with ticrates depending on the Quake engine being used and other settings. ]
+
+2) Creepcam used Parm9 by default to flag the player as being a camera. Some mods may have Parm9 used for something else.
+
+3) Creepcam uses Impulses 100 to activate.  120-122, 151 and 152 are also for CC.
+
+
 Check your code! 
 Source is included with this release.
 ----------------------------------------------------------------------------	 				
 That should be all you need to get this working with almost any mod. Some 
 modification may be required depending on your mod needs.
 ----------------------------------------------------------------------------
+
 
