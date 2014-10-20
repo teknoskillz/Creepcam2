@@ -118,9 +118,9 @@ void(entity c, entity targ) CC_ChangeToFollowCam =
 	CC_StopCamOrPlayer(c);
 	c.camtype = 1;
 	c.owner = targ;
-	c.watch = targ.colormap; // PRIME Addition for entity watch to be same as target colormap
+	c.watch = targ.colormap; // PRIME CC_2 Addition for entity watch to be same as target colormap
 	c.clink = world;
-	if (!(targ.clink))// PRIME waterlevel view fix
+	if (!(targ.clink))// PRIME CC_2 waterlevel view fix
 	{
 		CC_ShowRec(targ);
 		targ.clink = c;

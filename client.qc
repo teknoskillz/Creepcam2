@@ -1515,7 +1515,7 @@ void(entity targ, entity attacker) ClientObituary =
 			return;
 		}
 
-		if ((attacker.classname == "player") || (attacker.flags == FL_MONSTER))
+		if (attacker.classname == "player" || attacker.flags & FL_MONSTER) // Cobalt optimized removed brackets, fixed to & FL_MONSTER
 		{
 			if (targ == attacker)
 			{
@@ -1574,8 +1574,9 @@ void(entity targ, entity attacker) ClientObituary =
 				rnum = attacker.weapon;
 
 					//FIXME string_nul ??? maybe not necessary	//gnounc
-			if(attacker.killstring != "")
+			if(attacker.killstring) // Cobalt Optimized and fixed
 			{//gnounc
+			      bprint (targ.netname);
 				bprint (attacker.killstring);
 				return;
 			}

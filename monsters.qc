@@ -139,7 +139,9 @@ void() walkmonster_start_go =
 		self.th_walk ();
 	}
 
-	
+
+
+
 	// spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
 };
@@ -206,7 +208,9 @@ void() flymonster_start_go =
 		self.pausetime = 99999999;
 		self.th_walk ();
 	}
-};
+	
+	
+	};
 
 void() flymonster_start =
 {

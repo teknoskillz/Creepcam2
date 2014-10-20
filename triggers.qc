@@ -398,13 +398,7 @@ void() teleport_touch =
 	local entity	t;
 	local vector	org;
 
-	if (self.targetname != string_null)
-	{
-		if (self.nextthink < time)
-		{
-			return;		// not fired yet
-		}
-	}
+	if (self.targetname != string_null && self.nextthink < time) return; // not fired yet / Cobalt optimized removed brackets etc
 
 	if (self.spawnflags & PLAYER_ONLY)
 	{
@@ -426,6 +420,13 @@ void() teleport_touch =
 	if (!t)
 		objerror ("couldn't find target");
 
+	if (other.flags & FL_MONSTER) // Cobalt / PRIME - stop moving monsters from telefrag, delay teleporting
+	{
+	if (t.teleport_time < time)
+	t.teleport_time = time + 0.88;
+	else return;
+	}
+		
 	// spawn a tfog flash in front of the destination
 	makevectors (t.mangle);
 	org = t.origin + 32 * v_forward;
@@ -440,6 +441,7 @@ void() teleport_touch =
 		other.velocity = (v_forward * other.velocity_x) + (v_forward * other.velocity_y);
 		return;
 	}
+
 
 	setorigin (other, t.origin);
 	other.angles = t.mangle;

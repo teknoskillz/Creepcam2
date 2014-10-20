@@ -228,11 +228,8 @@ void() boss_death8 = [$death8, boss_death9] {};
 void() boss_death9 = [$death9, boss_death10]
 {
 	sound (self, CHAN_BODY, "boss1/out1.wav", 1, ATTN_NORM);
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_LAVASPLASH);
-	WriteCoord (MSG_BROADCAST, self.origin_x);
-	WriteCoord (MSG_BROADCAST, self.origin_y);
-	WriteCoord (MSG_BROADCAST, self.origin_z);
+       te_lavasplash (self.origin); // Cobalt DP optimisation
+	
 };
 
 void() boss_death10 = [$death9, boss_death10]
@@ -263,10 +260,9 @@ void(vector p) boss_missile =
 		d = self.enemy.origin + t * vec;		
 	}
 
-	else
-	{
-		d = self.enemy.origin;
-	}
+	else // Cobalt remove brackets, optimize
+	d = self.enemy.origin;
+	
 	
 	vec = normalize (d - org);
 
@@ -279,6 +275,12 @@ void(vector p) boss_missile =
 	newmis.touch = T_MissileTouch; // rocket explosion
 	sound (self, CHAN_WEAPON, "boss1/throw.wav", 1, ATTN_NORM);
 
+	if (random () < 0.5) // Cobalt put cython killstrings here for randomization each attack
+	self.killstring = " was assaulted by Cythons fury";
+       else
+	self.killstring = " got fireballed by Lord Cython";
+	
+	
 	// check for dead enemy
 	if (self.enemy.health <= 0)
 		boss_idle1 ();
@@ -295,8 +297,8 @@ void() boss_awake =
 
 	//gnounc
 	self.netname = "Cthon";
-	self.killstring = "Has Cthon ever really killed someone? -GNOUNC";
 
+	
 	setsize (self, '-128 -128 -24', '128 128 256');
 	
 	if (skill == 0)
@@ -305,12 +307,7 @@ void() boss_awake =
 		self.health = 3;
 
 	self.enemy = activator;
-
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_LAVASPLASH);
-	WriteCoord (MSG_BROADCAST, self.origin_x);
-	WriteCoord (MSG_BROADCAST, self.origin_y);
-	WriteCoord (MSG_BROADCAST, self.origin_z);
+       te_lavasplash (self.origin); // Cobalt DP optimisation
 
 	self.yaw_speed = 20;
 	boss_rise1 ();

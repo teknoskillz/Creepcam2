@@ -181,11 +181,17 @@ ZombieFireGrenade
 */
 void(vector st) ZombieFireGrenade =
 {
-	local	entity missile;
-	local	vector	org;
-
+	local entity missile;
+	local vector org,move,spot; // CC_2 added Zombie Zaxis and Leading Shot
+	local float dist,fly,airtime;                                                
+        
 	sound (self, CHAN_WEAPON, "zombie/z_shot1.wav", 1, ATTN_NORM);
 
+		if (random () < 0.5) // Cobalt moved killstring here better 
+	self.killstring = " joins the Walking dead...\n";
+	else
+	self.killstring = " joins the Zombies\n";
+	
 	missile = spawn ();
 	missile.classname = "zombie_grenade";	//gnounc
 	missile.owner = self;
@@ -198,10 +204,30 @@ void(vector st) ZombieFireGrenade =
 	// set missile speed	
 
 	makevectors2 (self.angles);
+       dist = vlen(self.enemy.origin - org);
+	
+	airtime = dist / 600;
+        move = self.enemy.velocity;
+        move_z = 0;
+        spot = self.enemy.origin + airtime * move;
+	 
+	 if (vlen(spot - org) < dist)
+                spot = self.enemy.origin + airtime * move * 0.7;
+        else if (vlen(spot - org) > dist)
+                spot = self.enemy.origin + airtime * move * 1.2;
+	
+	 if (skill > 1)
+        missile.velocity = normalize (spot - org);
+        else
+        missile.velocity = normalize (self.enemy.origin - org);
+        missile.velocity = missile.velocity * 600;
+	
+	  dist = vlen(spot - org);
+        fly = High_GrenadeFly(dist);
+ 
+       missile.velocity_z = (missile.velocity_z + fly);
 
-	missile.velocity = normalize(self.enemy.origin - org);
-	missile.velocity = missile.velocity * 600;
-	missile.velocity_z = 200;
+
 
 	missile.avelocity = '3000 1000 2000';
 
@@ -212,7 +238,12 @@ void(vector st) ZombieFireGrenade =
 	missile.think = SUB_Remove;
 
 	setmodel (missile, "progs/zom_gib.mdl");
-	setsize (missile, '0 0 0', '0 0 0');		
+	setsize (missile, '0 0 0', '0 0 0');
+       if (skill > 2) // Cobalt CC_2 little larger size for harder skill...?
+	{
+	missile.movetype = MOVETYPE_FLY;
+	setsize (missile, '-1 -1 -1', '1 1 1');
+	}
 	setorigin (missile, org);
 };
 
@@ -527,7 +558,7 @@ void() monster_zombie =
 	//gnounc
 	self.noise = "zombie/z_idle.wav";	//gnounc
 	self.netname = "zombie";
-	self.killstring = " joins the Zombies\n";
+
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 60;

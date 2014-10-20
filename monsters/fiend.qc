@@ -224,7 +224,7 @@ void() monster_demon1 =
 	//gnounc
 	setmodel (self, "progs/demon.mdl");
 	self.noise = "demon/sight2.wav";
-	self.killstring = " was eviscerated by a Fiend\n";
+	
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 300;
@@ -337,6 +337,11 @@ void(float side)	Demon_Melee =
 	if (!CanDamage (self.enemy, self))
 		return;
 		
+		if (random () < 0.5)
+		self.killstring = " was eviscerated by a Fiend\n";
+		else
+		self.killstring = " was shredded by a Fiend\n";
+		
     sound (self, CHAN_WEAPON, "demon/dhit2.wav", 1, ATTN_NORM);
 	ldmg = 10 + 5*random();
 	T_Damage (self.enemy, self, self, ldmg);	
@@ -357,6 +362,10 @@ void()	Demon_JumpTouch =
 	{
 		if ( vlen(self.velocity) > 400 )
 		{
+		if (random () < 0.5)
+		self.killstring = " was crushed by a Fiend\n";
+		else
+		self.killstring = " got stepped on by a Fiend\n";
 			ldmg = 40 + 10*random();
 			T_Damage (other, self, self, ldmg);	
 		}

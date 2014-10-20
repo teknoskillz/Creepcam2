@@ -210,6 +210,11 @@ void() army_fire =
 	
 	ai_face();
 	
+		if (random () < 0.5)
+	self.killstring = " was shot by a Grunt\n";
+        else
+	 self.killstring = " was put down by a Grunt\n";
+	
 	sound (self, CHAN_WEAPON, "soldier/sattck1.wav", 1, ATTN_NORM);	
 
 	// fire somewhat behind the player, so a dodging player is harder to hit
@@ -316,7 +321,6 @@ void() monster_army =
 	//gnounc
 	self.noise = "soldier/sight1.wav";	//gnounc
 	self.netname = "Grunt";
-	self.killstring = " was shot by a Grunt\n";
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 30;

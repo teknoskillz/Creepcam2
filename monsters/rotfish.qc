@@ -105,6 +105,11 @@ void() fish_melee =
 	if (vlen(delta) > 60)
 		return;
 		
+		if (random () < 0.5)
+		self.killstring = " was fed to the Rotfish.\n";
+		else
+		self.killstring = " got bit by a Rotfish\n";
+		
 	sound (self, CHAN_VOICE, "fish/bite.wav", 1, ATTN_NORM);
 	ldmg = (random() + random()) * 3;
 	T_Damage (self.enemy, self, self, ldmg);
@@ -196,7 +201,7 @@ void() monster_fish =
 	//gnounc
 	self.netname = "Rotfish";
 	self.noise = "fish/idle.wav"; //gnounc 	(for completeness..just in case)
-	self.killstring = " was fed to the Rotfish\n";
+	
 
 	setsize (self, '-16 -16 -24', '16 16 24');
 	self.health = 25;

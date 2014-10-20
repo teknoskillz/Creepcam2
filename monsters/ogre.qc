@@ -112,10 +112,16 @@ void() OgreFireGrenade =
 {
 	local	entity missile;
 	
+	local vector org,move,spot; // CC_2 zaxis code and leading shot for ogre
+	local float dist,fly,airtime;             
+	
 	self.effects = self.effects | EF_MUZZLEFLASH;
 
 	sound (self, CHAN_WEAPON, "weapons/grenade.wav", 1, ATTN_NORM);
-
+      if (random () < 0.5)
+	self.killstring = " got blown away by an Ogre.\n";
+	else
+	self.killstring = " was destroyed by an Ogre.\n";
 	missile = spawn ();
 	missile.classname = "ogre_grenade";	//gnounc
 	missile.owner = self;
@@ -125,10 +131,34 @@ void() OgreFireGrenade =
 // set missile speed	
 
 	makevectors2 (self.angles);
+    
+       org = self.origin + v_forward * 32 + v_right * -6 + '0 0 16';
+	
+	 dist = vlen(self.enemy.origin - org);
+ 
+        airtime = dist / 600;
+        move = self.enemy.velocity;
+        move_z = 0;
+        spot = self.enemy.origin + airtime * move;
 
+                if (vlen(spot - org) < dist)
+                spot = self.enemy.origin + airtime * move * 0.7;
+                else if (vlen(spot - org) > dist)
+                spot = self.enemy.origin + airtime * move * 1.2;
+ 
+        if (skill > 1)
+        missile.velocity = normalize (spot - org);
+        else
+        missile.velocity = normalize (self.enemy.origin - org);	 
+
+	
 	missile.velocity = normalize(self.enemy.origin - self.origin);
 	missile.velocity = missile.velocity * 600;
-	missile.velocity_z = 200;
+	
+	dist = vlen(spot - org);
+        fly = High_GrenadeFly(dist);
+	 
+	missile.velocity_z = (missile.velocity_z + fly);
 
 	missile.avelocity = '300 300 300';
 
@@ -152,6 +182,11 @@ void() OgreFireGrenade2 =
    self.effects = self.effects | EF_MUZZLEFLASH;
 
    sound (self, CHAN_WEAPON, "weapons/grenade.wav", 1, ATTN_NORM);
+   
+      if (random () < 0.5)
+	self.killstring = " didnt know Ogre's were that smart....\n";
+	else
+	self.killstring = " thought he saw an Ogre's grenade.\n";
 
    missile = spawn ();
    missile.owner = self;
@@ -206,7 +241,14 @@ local float 	ldmg;
 
 	if (vlen(delta) > 100)
 		return;
-		
+	
+       if (random () < 0.5)
+	self.killstring = " was chainsaw massacred by an Ogre\n";
+	else
+	self.killstring = " was sliced and diced by an Ogre\n";
+	
+	CAN_GibZombie ();
+	
 	ldmg = (random() + random() + random()) * 4;
 	T_Damage (self.enemy, self, self, ldmg);
 	
@@ -581,7 +623,7 @@ void() monster_ogre =
 	//gnounc
 	self.noise = "ogre/ogwake.wav";	//gnounc
 	self.netname = "Ogre";
-	self.killstring = " was destroyed by an Ogre\n";
+	
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 200;

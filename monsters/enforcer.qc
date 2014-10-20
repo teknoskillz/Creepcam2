@@ -122,6 +122,11 @@ void() enforcer_fire =
 {
 	local vector org;
 
+		if (random () < 0.5) // Cobalt alternate killstring
+       self.killstring = " was neutralized by an Enforcer.\n";
+	else
+	self.killstring = " was blasted by an Enforcer.\n";
+	
 	self.effects = self.effects | EF_MUZZLEFLASH;
 	makevectors2 (self.angles);
 	
@@ -372,7 +377,7 @@ void() monster_enforcer =
 
 	//gnounc
 	self.netname = "enforcer";
-	self.killstring = " was blasted by an Enforcer\n";
+
 	self.noise = "enforcer/sight1.wav";	//gnounc
 	self.noise1 = "enforcer/sight2.wav";	//gnounc
 	self.noise2 = "enforcer/sight3.wav";	//gnounc

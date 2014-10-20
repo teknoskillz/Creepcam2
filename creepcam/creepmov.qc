@@ -292,23 +292,28 @@ void (entity cam) CC_UpdateViewOffset =
 
 	if ((cam.view_pitch > 0))
 	{
+	    if (cam.netname == "cthon")
+		trace_dest = realorigin(cam);
+		else
 		trace_dest = cam.owner.origin;
 		trace_dest_z = (trace_dest_z + (4 * CAMERA_OFFSET));
 		traceline (cam.owner.origin, trace_dest, 1, cam.owner);
-		if ((trace_fraction < 1))
-		{
-			cam.view_offset = (CAMERA_OFFSET - (((1 - trace_fraction) * 4) * CAMERA_OFFSET));
-		}
+		if (trace_fraction < 1) // Cobalt removed brackets, optimize
+		cam.view_offset = (CAMERA_OFFSET - (((1 - trace_fraction) * 4) * CAMERA_OFFSET));
 		else
-		{
-			cam.view_offset = CAMERA_OFFSET;
-		}
+		cam.view_offset = CAMERA_OFFSET;
+		
 	}
 	else
-	{
+	{ // CC_2 PRIME/ Cobalt - Experiment to make cython camera better
+	    if (cam.netname == "cthon")
+		cam.view_offset = 120;
+		else
 		cam.view_offset = CAMERA_OFFSET;
 	}
 };
+
+
 
 void(entity cam) CC_MoveSingleCamera = 
 {
@@ -630,13 +635,10 @@ void(entity cam) CC_DoCamAlgorithm =
 	CC_CheckForBetterTarget(cam);
 	CC_UpdateViewingPitch (cam);  // PRIME New addition
 	CC_UpdateViewOffset (cam);    // New Addition
-	if (cam.state == 0)
-	{
-		CC_MoveSingleCamera(cam);
-	}
+	if (cam.state == 0) // Cobalt removed brackets, cleanup ....
+       CC_MoveSingleCamera(cam);
 	else
-	{
-		CC_MoveDualCamera(cam);
-	}
+	CC_MoveDualCamera(cam);
+	
 };
 

@@ -89,6 +89,10 @@ void(float offset) hknight_shot =
 	// set missile speed
 	vec = normalize (v_forward);
 	vec_z = 0 - vec_z + (random() - 0.5)*0.1;
+	if (random () < 0.5)
+	self.killstring = " falls in pain from the Hell Knight's magic.\n";
+	else
+	self.killstring = " feels the spell of a Hell Knight.\n";
 	
 	launch_spike (org, vec);
 	newmis.classname = "knight_spike";		//changed it to be consistant --gnounc
@@ -412,6 +416,11 @@ void() hknight_melee =
 	hknight_type = hknight_type + 1;
 
 	sound (self, CHAN_WEAPON, "hknight/slash1.wav", 1, ATTN_NORM);
+	if (random () < 0.5)
+	self.killstring = " was slain by a Hell Knight.\n";
+	else
+	self.killstring = " was fatally wounded by a Hell Knight.\n";
+	
 	if (hknight_type == 1)
 		hknight_slice1 ();
 
@@ -459,7 +468,7 @@ void() monster_hell_knight =
 	//gnounc
 	self.noise = "hknight/sight1.wav";	//gnounc
 	self.netname = "Hell Knight";
-	self.killstring = " was slain by a Hell Knight\n";
+	
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 250;

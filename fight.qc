@@ -426,3 +426,32 @@ float() OgreCheckAttack =
 	return TRUE;
 };
 
+float(float dist) High_GrenadeFly =
+{
+        local   float   g;      
+        local   float   base;   
+		
+        g = (cvar("sv_gravity")) * 0.00125;   // Find gravity in terms of g.
+
+        if (dist > 900)       base = 200+((dist - (200 - (dist * 0.2)))*0.5);
+        else if (dist > 700)  base = 200+((dist - (200 - (dist * 0.15)))*0.5);
+        else if (dist > 500)  base = 200+((dist - (200 - (dist * 0.1)))*0.5);
+        else if (dist > 300)  base = 200+((dist - 200)*0.5);
+        else if (dist > 200)  base = 200;
+        else if (dist > 100)  base = dist;
+        else                  base = 100;
+
+        return (base * g);
+};
+void(float chance) CAN_GibZombie =
+{
+        local   vector  delta;
+
+        if (self.enemy.classname != "monster_zombie")  return;
+
+        chance = chance * 0.01;
+        delta = self.enemy.origin - self.origin;
+        if (vlen(delta) <= 60)
+            if (random() < chance)
+                T_Damage (self.enemy, self, self, self.enemy.health);
+};

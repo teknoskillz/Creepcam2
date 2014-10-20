@@ -382,12 +382,15 @@ void() StartFrame =
 	teamplay = teamplay - c_max * MOVETYPE_BOUNCE;
    if (c_max == 0)
 	c_max = 16;
-	
+
+// CC_2	
 if (!framecount) registercvar ("respawntimer", "15");	
 	
 	CC_RESPAWN = cvar ("respawntimer");
 	skill = cvar("skill");
 	framecount = framecount + 1;
+	
+// Cobalt CC_2 lock camera angles when in worldcam
 if (framecount > 100)
 {	
 local entity slot;

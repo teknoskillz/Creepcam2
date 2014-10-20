@@ -341,7 +341,7 @@ void (void() thinkst) SUB_CheckRefire =
 	self.cnt = 1;
 	self.think = thinkst;
 };
-
+// Cobalt CC_2 - Mini Setchangeparms 
 void () CC_Spawnparms =
 {
 	self.items = self.spawnitems;
@@ -356,3 +356,10 @@ void () CC_Spawnparms =
 
 
 };
+// Cobalt, borrowed from Frikbot
+vector(entity ent) realorigin =
+{
+// even more simplified...
+	return (ent.absmin + ent.absmax) * 0.5;
+};
+

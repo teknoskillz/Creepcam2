@@ -1471,7 +1471,7 @@ void() DropBackpack =
 	setmodel (item, "progs/backpack.mdl");
 	setsize (item, '-16 -16 0', '16 16 56');
 	item.touch = BackpackTouch;
-	
+	item.colormap = self.colormap; // Cobalt, DP optimization, eye candy, neato.
 	item.nextthink = time + 120;    // remove after 2 minutes
 	item.think = SUB_Remove;
 };

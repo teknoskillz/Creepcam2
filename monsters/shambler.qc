@@ -162,6 +162,11 @@ void(float side) ShamClaw =
 	if (vlen(delta) > 100)
 		return;
 		
+			if (random () < 0.5)
+	self.killstring = " was pounded by a Shambler\n";
+	else
+	self.killstring = " was crushed by a Shambler\n";
+		
 	ldmg = (random() + random() + random()) * 20;
 	T_Damage (self.enemy, self, self, ldmg);
 	sound (self, CHAN_VOICE, "shambler/smack.wav", 1, ATTN_NORM);
@@ -175,6 +180,12 @@ void(float side) ShamClaw =
 
 void() sham_swingl1	=[      $swingl1,      sham_swingl2   ] 
 {
+
+	if (random () < 0.5)
+	self.killstring = " was clawed by a Shambler\n";
+	else
+	self.killstring = " was ripped to pieces by a Shambler\n";
+
 	sound(self, CHAN_VOICE, "shambler/melee2.wav", 1, ATTN_NORM);
 	ai_charge(5);
 };
@@ -195,6 +206,11 @@ void() sham_swingl9 =[      $swingl9,      sham_run1  ]
 
 void() sham_swingr1	=[      $swingr1,      sham_swingr2   ] 
 {
+	if (random () < 0.5)
+	self.killstring = " was smashed by a Shambler\n";
+	else
+	self.killstring = " was torn to pieces by a Shambler\n";
+
 	sound (self, CHAN_VOICE, "shambler/melee1.wav", 1, ATTN_NORM);
 	ai_charge(1);
 };
@@ -218,6 +234,8 @@ void() sham_melee =
 {
 	local float chance;
 	chance = random();
+	
+
 
 	if (chance > 0.6 || self.health == 600)
 		sham_smash1 ();
@@ -244,7 +262,11 @@ void() CastLightning =
 
 	dir = self.enemy.origin + '0 0 16' - org;
 	dir = normalize (dir);
-
+       if (random () < 0.5)
+	self.killstring = " was shocked by a Shambler.\n";
+	else
+	self.killstring = " inhales a Shambler's lighting bolt.\n";
+	
 	traceline (org, self.origin + dir*600, TRUE, self);
 
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
@@ -408,7 +430,7 @@ void() monster_shambler =
 	//gnounc
 	self.noise = "shambler/ssight.wav";	//gnounc
 	self.netname = "Shambler";
-	self.killstring = " was smashed by a Shambler\n";
+	
 
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);

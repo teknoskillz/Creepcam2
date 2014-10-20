@@ -89,7 +89,7 @@ void() plat_go_up =
 	self.state = STATE_UP;
 	SUB_CalcMove (self.pos1, self.speed, plat_hit_top);
 };
-
+.float plat_time;
 void() plat_center_touch =
 {
 	if (other.classname != "player")
@@ -98,6 +98,14 @@ void() plat_center_touch =
 	if (other.health <= 0)
 		return;
 
+		  if (coop) // PRIME
+	{
+	if (self.plat_time < time)
+	self.plat_time = time + 0.9;
+	else return;
+	}	
+		
+		
 	self = self.enemy;
 
 	if (self.state == STATE_BOTTOM)
