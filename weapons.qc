@@ -48,37 +48,86 @@ float() crandom =
 
 /*
 ================
-W_FireAxe
+W_FireAxe 
 ================
 */
 void() W_FireAxe =
 {
-	local	vector	source;
-	local	vector	org;
-
+	local vector source, org, def;
+       local float dam;
+	 local string mes;
 	makevectors (self.v_angle);
 	source = self.origin + '0 0 16';
 	traceline (source, source + v_forward*64, FALSE, self);
-	if (trace_fraction == 1.0)
-		return;
+	if (trace_fraction == 1.0) return;
 	
 	org = trace_endpos - v_forward*4;
 
 	if (trace_ent.takedamage)
 	{
+	     
+	      dam = random (4) + 10 + self.health / 20;
+	     
 		trace_ent.axhitme = 1;
+		// Cobalt ignore buttons etc
+		if (trace_ent.solid != SOLID_BSP)
+		{
+		
 		SpawnBlood (org, '0 0 0', 20);
-		T_Damage (trace_ent, self, self, 20);
-	}
+		trace_ent.axhitme = 1;
 
+                if (trace_ent.flags & FL_MONSTER) // PRIME , Cobalt detection for behind an enemy
+                makevectors(trace_ent.angles);
+                else
+		makevectors(trace_ent.v_angle);
+		
+             	def = v_right;
+		makevectors(self.v_angle);
+		
+		// Cobalt - extra damage for overhanded axe blow
+		     if ((self.frame == 133 || self.frame == 134) && self.waterlevel < 3)
+		     
+		     {
+		     soundpitch (self, CHAN_WEAPON, "player/gasp1.wav", 0.5, ATTN_STATIC, 110);
+		     mes = " Overhanded blow...";
+	            dam = dam + random (5) + random (10);
+		     self.attack_finished = self.attack_finished + 0.25; // add a delay to recover from more effort
+		      }
+		if (crossproduct(def,v_forward) > 0.35)
+	       {
+		 mes = strcat (mes," hit from behind...");
+		 dam =  dam * 2.5;
+	      if (trace_ent.velocity == self.velocity == '0 0 0')
+	           dam = dam *  3;
+	           else
+	           dam = (dam + ((vlen(self.velocity)) / 75)) * 2.5;
+		    
+		   
+		    }
+		    if (self.movement_x && !EntitiesTouching(1,self,trace_ent))
+		    {
+		     mes = strcat (mes," slicing wound..");
+		     soundpitch (trace_ent, CHAN_AUTO, "blob/hit1.wav", 1, ATTN_IDLE, 77);
+		    
+		    dam = dam + 15;
+		    }
+		    dam = floor (dam);
+		   
+		    mes = strcat (mes," You did >> ^5");
+		    mes = strcat (mes, (ftos(dam)));
+		    mes = strcat (mes, " ^7pts of damage.\n");
+	          sprint (self,mes);	    
+               }
+		 else
+		 dam = trace_ent.health / 2;
+		 
+		T_Damage (trace_ent, self, self, dam);
+		
+	}
 	else
-	{	// hit wall
-		sound (self, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
-		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_GUNSHOT);
-		WriteCoord (MSG_BROADCAST, org_x);
-		WriteCoord (MSG_BROADCAST, org_y);
-		WriteCoord (MSG_BROADCAST, org_z);
+	{
+	te_gunshot (org); // Cobalt DP optimization  [hit wall]
+	sound (self, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
 	}
 };
 
@@ -233,15 +282,9 @@ void(float damage, vector dir) TraceAttack =
 		SpawnBlood (org, vel*0.2, damage);
 		AddMultiDamage (trace_ent, damage);
 	}
-
 	else
-	{
-		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_GUNSHOT);
-		WriteCoord (MSG_BROADCAST, org_x);
-		WriteCoord (MSG_BROADCAST, org_y);
-		WriteCoord (MSG_BROADCAST, org_z);
-	}
+	te_gunshot (org); // Cobalt DP optimization
+
 };
 
 /*
@@ -1308,6 +1351,13 @@ void() ImpulseCommands =
 	if (self.impulse == 11)
 		ServerflagsCommand ();
 	if (self.impulse == 12)
+	if (self.impulse == 123)
+	{
+		if (self.chatvisible) 
+               self.chatvisible = 0;
+		else
+		self.chatvisible = 1;
+		}
 		CycleWeaponReverseCommand();
 	if (self.impulse == 255)
 		QuadCheat ();

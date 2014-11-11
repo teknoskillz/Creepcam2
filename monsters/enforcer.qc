@@ -78,13 +78,8 @@ void() Laser_Touch =
 		T_Damage (other, self, self.owner, 15);
 	}
 	else
-	{
-		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_GUNSHOT);
-		WriteCoord (MSG_BROADCAST, org_x);
-		WriteCoord (MSG_BROADCAST, org_y);
-		WriteCoord (MSG_BROADCAST, org_z);
-	}
+	te_gunshot (org); // Cobalt DP optimization
+	
 	
 	remove(self);	
 };

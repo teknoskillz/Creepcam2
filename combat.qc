@@ -202,7 +202,8 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 
 	// do the damage
 	targ.health = targ.health - take;
-			
+	if (targ.flags & FL_CLIENT || targ.flags & FL_MONSTER) // CC_2 Cobalt tag monsters or clients that just took dmg so they are a priority for a cam
+       targ.took_damage = time + 3;			
 	if (targ.health <= 0)
 	{
 		Killed (targ, attacker);

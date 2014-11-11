@@ -54,7 +54,10 @@ void(entity e) CC_SendAliases =
 	stuffcmd(e, "alias showcam \"impulse 121\"\n");
 	stuffcmd(e, "alias autoswitch \"impulse 122\"\n");
 	stuffcmd(e, "alias playerlist \"impulse 152\"\n");
-	stuffcmd(e, "alias respawntimer \"impulse 153\"\n");
+	// Cobalt removed respawntimer reference
+	
+	
+
 
 	   stuffcmd(e, "cl_movement 0");
            stuffcmd (e, "cl_nolerp 0");
@@ -189,7 +192,7 @@ void(string s) CC_StuffToAllCams =
 	stuffcmd(c, s);
 	
 };
-
+entity fighter;
 void() CC_BlinkThink = 
 {
 	local entity l;
@@ -197,15 +200,19 @@ void() CC_BlinkThink =
 	while (l != world)
 	{
 		if (l.clink != world)
+		CC_ShowRec(l);
+		
+	     if (l.attack_finished > time && l.took_damage > time)
 		{
-			CC_ShowRec(l);
+
+		fighter = l;
+
 		}
 		l = l.tless;
 	}
 	if (blinkstate)
-	{
-		CC_ClearCamNamesForAll();
-	}
+	CC_ClearCamNamesForAll();
+	
 	blinkstate = 1 - blinkstate;
 	self.nextthink = time + 1;
 	if (time > scoreshowtime)

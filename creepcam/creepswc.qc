@@ -120,7 +120,7 @@ void(entity c, entity targ) CC_ChangeToFollowCam =
 	c.owner = targ;
 	c.watch = targ.colormap; // PRIME CC_2 Addition for entity watch to be same as target colormap
 	c.clink = world;
-	if (!(targ.clink))// PRIME CC_2 waterlevel view fix
+	if (!(targ.clink))
 	{
 		CC_ShowRec(targ);
 		targ.clink = c;
@@ -129,7 +129,7 @@ void(entity c, entity targ) CC_ChangeToFollowCam =
 		c.state = 0;
 		c.style = 0;
 		
-		if (c.owner.waterlevel == 2)
+		if (c.owner.waterlevel == 2) // PRIME CC_2 waterlevel view fix
               c.view_pitch = -1;
               else
               c.view_pitch = 1;
@@ -333,7 +333,7 @@ void() CC_ConfigureCamera =
 	self.takedamage = DAMAGE_NO;
 	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_NONE;
-	self.attack_finished = 0;
+	self.attack_finished = self.effects = 0;  // Cobalt turn off any previous effects
 	self.autoswitch = world;
 	self.velocity = VEC_ORIGIN;
 	self.flags = FL_NOTARGET | FL_CLIENT;

@@ -443,6 +443,8 @@ void() InitBodyQueue =
 // respawned elsewhere
 void(entity ent) CopyToBodyQueue =
 {
+
+	
 	bodyqueue_head.angles = ent.angles;
 	bodyqueue_head.model = ent.model;
 	bodyqueue_head.modelindex = ent.modelindex;
@@ -451,9 +453,22 @@ void(entity ent) CopyToBodyQueue =
 	bodyqueue_head.movetype = ent.movetype;
 	bodyqueue_head.velocity = ent.velocity;
 	bodyqueue_head.flags = 0;
-	setorigin (bodyqueue_head, ent.origin);
 	setsize (bodyqueue_head, ent.mins, ent.maxs);
+	setorigin (bodyqueue_head, ent.origin);
 	bodyqueue_head = bodyqueue_head.owner;
+	
+	// Cobalt , experiment with Sevens code to match angles of corpse to floor, cases like slopes - to be improved at later date
+
+       
+
+       //traceline (ent.origin - '0 0 22', ent.origin - '0 33', TRUE, ent);
+	//ocal vector tempi;
+       //tempi = trace_plane_normal;
+	
+       bodyqueue_head.angles_x = ent.mangle_x - 90; 
+	//bodyqueue_head.angles_z = tempi_x - 90;
+	
+	
 };
 
 

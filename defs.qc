@@ -235,7 +235,7 @@ void		end_sys_fields;			// flag for structure dumping
 ==============================================================================
 */
 
-
+.entity view_pos;
 //
 // constants
 //
@@ -764,7 +764,7 @@ float WATCHING;  // propogate cam target to next level
 float CC_RESPAWN; // CC respawn timer val 
 // Alternate Setspawnparms to prevent parm9 interference
 .float spawnitems,spawnhealth,spawnarmorvalue,spawnammo_shells,spawnammo_nails,spawnammo_rockets,spawnammo_cells,spawnweapon;
-
+.float took_damage;
 
 float c_max /* = 0.000 */;
 float c_count /* = 0.000 */;
@@ -802,8 +802,10 @@ float (float v) anglemod;
 .float respawncam; 
 .float respawn_time; 
 .float watermove_time;
-
-
+.entity       chatbubble;
+.float chatvisible;
+void updateclientchat(entity bclient, float bvisible);
 .float grenade_time;
 .vector last_enemy_origin, grenade_velocity;
 .float	dmgtime;
+float (float mode, entity e1, entity e2) EntitiesTouching;

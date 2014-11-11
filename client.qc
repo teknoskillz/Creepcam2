@@ -27,6 +27,56 @@ void (vector org, entity death_owner) spawn_tdeath;
 
 float	modelindex_eyes, modelindex_player;
 
+
+// This float will be used to remove the indicator if the client disconnects from the server - used in client.qc
+float removebubble(entity bowner, .entity bubbles)
+{ 
+	if(bowner.bubbles)
+	{
+	  remove(bowner.bubbles);
+	   bowner.bubbles = world;
+	   return TRUE;
+	}
+	else
+	  return FALSE;
+}		
+
+// This routine will update the status of the chat indicator depending on if it should be displayed or not.
+void updateclientchat(entity bclient, float bvisible)
+{
+	if(!bvisible)
+	{
+		if(bclient.chatbubble == world)
+		{
+		bprint ("Spawning bubble\n");
+	            //This is the information  we need to spawn the bubble and make it visible to all other clients 
+                    local entity bubble;
+		    bubble = spawn(); //It's there! :)
+		    setmodel(bubble, "progs/s_bubble.spr");
+		    bubble.effects = EF_FULLBRIGHT;   //Here you could use EF_DIMLIGHT instead for non DP/FTE engines. 
+		    bubble.scale = 1.2; //Size of the sprite
+		    bubble.alpha = 0.6; // How see through the sprite will be
+		    bubble.colormod = '1 0 0'; //This is whatever color you want to highlight the sprite in. (RGB) from left to right. 
+		    setorigin(bubble, bubble.origin + '0 0 0.5' + bclient.maxs_z * '0 0 1'); //Instructions on where to place the indicator over the head of the player using xyz coords and a limit on the max height possible to adjust for changes while player moves up or down. 
+	            bclient.chatbubble = bubble;
+	            setattachment(bubble, bclient, ""); //This allows other clients to see the entity. In order to accomplish this without using this dp extension you can assign this entity MOVETYPE_FOLLOW. But when possible, setattachment syncs much better :)
+		}
+		
+	}
+	else
+	{
+		if(bclient.chatbubble != world)
+		{
+		bprint ("Chat off\n");
+		remove (bclient.chatbubble);}
+	}
+}
+
+
+
+
+
+
 /*=============================================================================
 
 				LEVEL CHANGING / INTERMISSION
@@ -320,7 +370,7 @@ void() execute_changelevel =
 		other.view_ofs = '0 0 0';
 		other.angles = other.v_angle = pos.mangle;
 		other.fixangle = TRUE;		// turn this way immediately
-		other.nextthink = time + 0.5;
+		other.nextthink = time + frametime + frametime * random (10); // Cobalt try to fix intermisison bug?
 		other.takedamage = DAMAGE_NO;
 		other.solid = SOLID_NOT;
 		other.movetype = MOVETYPE_NONE;
@@ -488,6 +538,9 @@ Player entered the suicide command
 */
 void() ClientKill =
 {
+       // Cobalt - Fix from QW no suicide during Intermission, also add case for creepcam
+	if (intermission_running || self.classname == "camera") return;
+	
 	bprint (self.netname);
 	bprint (" suicides\n");
 	set_suicide_frame ();
@@ -1098,8 +1151,15 @@ if (self.view_ofs == '0 0 0')
 	
 	if (self.camtype >= 0) return;  // Added for Kratos Cam
 
-
-		
+	/*
+	if (self.classname != "camera")
+	{
+		if(!self.chatvisible)
+		updateclientchat(self, 0);
+	else
+		updateclientchat(self, 1);
+	}
+	*/	
 	makevectors (self.v_angle);		// is this still used
 
 	if (deathmatch || coop)	// gb, this is a waste in SP
@@ -1418,7 +1478,7 @@ void() PlayerPostThink =
 
 	CheckPowerups ();
 	
-	
+
 };
 
 
@@ -1450,6 +1510,7 @@ called when a player disconnects from a server
 void() ClientDisconnect =
 {
     CC_ClientDisconnect(); // PRIME CreepCam
+    removebubble (self, chatbubble);
 	if (gameover)
 		return;
 
@@ -1515,8 +1576,9 @@ void(entity targ, entity attacker) ClientObituary =
 			return;
 		}
 
-		if (attacker.classname == "player" || attacker.flags & FL_MONSTER) // Cobalt optimized removed brackets, fixed to & FL_MONSTER
+		if (attacker.classname == "player" || attacker.killstring) // Cobalt optimized removed FL_MONSTER
 		{
+		
 			if (targ == attacker)
 			{
 				// killed self
@@ -1568,7 +1630,7 @@ void(entity targ, entity attacker) ClientObituary =
 
 			else
 			{
-				attacker.frags = attacker.frags + 1;
+				
 				CC_PlayerKilledPlayer(targ, attacker.owner); // PRIME Creepcam
 
 				rnum = attacker.weapon;
@@ -1580,6 +1642,11 @@ void(entity targ, entity attacker) ClientObituary =
 				bprint (attacker.killstring);
 				return;
 			}
+				// Cobalt penalty for killing player in coop
+				if (coop && ((clienttype(attacker)) == (clienttype(targ))))
+				attacker.frags = attacker.frags - 1;
+				else
+				attacker.frags = attacker.frags + 1;
 				
 				if (rnum == IT_AXE)
 				{

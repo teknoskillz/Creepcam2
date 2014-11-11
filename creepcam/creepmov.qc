@@ -52,6 +52,7 @@ void(entity cam) CC_StartCamTransition =
 
 void(entity cam, float goal) CC_ControlCamFocalLength = 
 {
+ 
 	local float frac;
 	if (goal > TRACE_MINIMUM)
 	{
@@ -115,28 +116,30 @@ void(entity cam, float goal) CC_ControlCamFocalLength =
 	}
 };
 
-float(entity guy, entity rel) CC_InterestLevel = 
+float (entity guy, entity rel, entity prevguy) CC_InterestLevel =
 {
 	local float lev;
 	local float dist1;
 	local float dist2;
-	local entity prevguy;
-	
+
 	lev = 0;
 	if (guy.classname == "player")
 	{
-		lev = lev + FL_NOTARGET;
-	}
-	if (guy.team != rel.team)
-	{
-		if (teamplay != 0)
+		if (!guy.deadflag)
 		{
-			lev = lev + FL_GODMODE;
+			lev = 256;
+		}
+	}
+	if (teamplay)
+	{
+		if ((guy.team != rel.team))
+		{
+			lev = (lev + 128);
 		}
 	}
 	if ((((guy.items & IT_ROCKET_LAUNCHER) && (guy.ammo_rockets >= 1)) || ((guy.items & IT_LIGHTNING) && (guy.ammo_cells >= 5))))
 	{
-		lev = lev + FL_MONSTER;
+		lev = (lev + 64);
 	}
 	if ((guy.items & IT_QUAD))
 	{
@@ -160,10 +163,10 @@ float(entity guy, entity rel) CC_InterestLevel =
 	{
 		lev = (lev + 2);
 	}
-	return lev;
+	return (lev);
 };
 
-void(entity cam) CC_CheckForBetterTarget = 
+void (entity cam) CC_CheckForBetterTarget =
 {
 	local entity targ1;
 	local entity targ2;
@@ -171,7 +174,8 @@ void(entity cam) CC_CheckForBetterTarget =
 	local entity prevguy;
 	local float lev1;
 	local float lev2;
-	if (cam.style & EITHER_GUY_KILLED)
+
+	if ((cam.style & EITHER_GUY_KILLED))
 	{
 		return;
 	}
@@ -208,59 +212,57 @@ void(entity cam) CC_CheckForBetterTarget =
 				}
 			}
 		}
-		worthit = targ2 != targ1 && targ2.deadflag == DEAD_NO;
-		if (worthit)
+		if (!targ2.deadflag)
 		{
-			worthit = !(cam.state == FL_SWIM && cam.movetarget == targ2);
-			if (worthit)
+			if ((targ2 != targ1))
 			{
-				if (cam.style & FIND_DIFFERENT_GUY && cam.autoswitch == targ2)
+				cam.oldenemy = targ2;
+				if ((cam.state == 0))
 				{
-					worthit = 0;
-					cam.style = cam.style - FIND_DIFFERENT_GUY;
-					cam.autoswitch = world;
-				}
-			}
-		}
-		if (worthit)
-		{
-			cam.oldenemy = targ2;
-			if (cam.state == 0)
-			{
-				traceline(targ1.predpos, targ2.predpos, 1, targ1);
-				if (!trace_startsolid && trace_endpos == targ2.predpos)
-				{
-					cam.movetarget = targ2;
-					cam.state = 1;
-					cam.slack1 = targ1.predpos;
-					cam.slack2 = targ2.predpos;
-					CC_StartCamTransition(cam);
-				}
-			}
-			else
-			{
-				traceline(targ1.filmpos, targ2.filmpos, 1, targ1);
-				if (!trace_startsolid && trace_endpos == targ2.filmpos)
-				{
-					prevguy = cam.movetarget;
-					if (prevguy == targ2)
+					traceline (targ1.predpos, targ2.predpos, 1, targ1);
+					if (!trace_startsolid)
 					{
-						cam.state = FL_SWIM;
-					}
-					else
-					{
-						lev1 = CC_InterestLevel(targ2, targ1);
-						lev2 = CC_InterestLevel(prevguy, targ1);
-						if (lev1 > lev2)
+						if ((trace_endpos == targ2.predpos))
 						{
-							cam.state = FL_SWIM;
-							cam.movetarget = targ2;
-							CC_StartCamTransition(cam);
+							if ((targ2.deadflag == DEAD_NO))
+							{
+								cam.movetarget = targ2;
+								cam.state = 1;
+								cam.slack1 = targ1.predpos;
+								cam.slack2 = targ2.predpos;
+								CC_StartCamTransition (cam);
+							}
 						}
 					}
 				}
+				else
+				{
+					traceline (targ1.filmpos, targ2.filmpos, 1, targ1);
+					if (!trace_startsolid)
+					{
+						if ((trace_endpos == targ2.filmpos))
+						{
+							prevguy = cam.movetarget;
+							if ((prevguy == targ2))
+							{
+								cam.state = 2;
+							}
+							else
+							{
+								lev1 = CC_InterestLevel (targ2, targ1, prevguy);
+								lev2 = CC_InterestLevel (prevguy, targ1, prevguy);
+								if ((lev1 > lev2))
+								{
+									cam.state = 2;
+									cam.movetarget = targ2;
+									CC_StartCamTransition (cam);
+								}
+							}
+						}
+					}
+				}
+				return;
 			}
-			return;
 		}
 	}
 };
@@ -268,6 +270,7 @@ void(entity cam) CC_CheckForBetterTarget =
 
 void (entity cam) CC_UpdateViewingPitch =
 {
+
 	if ((cam.owner.waterlevel >= 3))
 	{
 		cam.view_pitch = (cam.view_pitch - (frametime * WATER_TILT));
@@ -289,26 +292,42 @@ void (entity cam) CC_UpdateViewingPitch =
 void (entity cam) CC_UpdateViewOffset =
 {
 	local vector trace_dest;
+	
 
-	if ((cam.view_pitch > 0))
+
+	if (cam.view_pitch > 0)
 	{
-	    if (cam.netname == "cthon")
-		trace_dest = realorigin(cam);
-		else
+
+		
+			if (cam.owner.netname == "Cthon")
+	{
+	bprint ("Viewing Cthon\n");
+	cam.owner.clink = cam.owner.view_pos;
+	//trace_dest = cam.owner.view_pos.origin;
+	     // msg_entity = cam;
+      // WriteByte (MSG_ONE, 5);
+      // WriteEntity(MSG_ONE, cam.owner.view_pos);
+	}
+         	
 		trace_dest = cam.owner.origin;
+	
 		trace_dest_z = (trace_dest_z + (4 * CAMERA_OFFSET));
 		traceline (cam.owner.origin, trace_dest, 1, cam.owner);
 		if (trace_fraction < 1) // Cobalt removed brackets, optimize
 		cam.view_offset = (CAMERA_OFFSET - (((1 - trace_fraction) * 4) * CAMERA_OFFSET));
-		else
+		
 		cam.view_offset = CAMERA_OFFSET;
+
+
+
 		
 	}
 	else
 	{ // CC_2 PRIME/ Cobalt - Experiment to make cython camera better
-	    if (cam.netname == "cthon")
-		cam.view_offset = 120;
-		else
+	
+	
+	
+	       bprint ("View pitch norm\n");	
 		cam.view_offset = CAMERA_OFFSET;
 	}
 };
@@ -317,6 +336,7 @@ void (entity cam) CC_UpdateViewOffset =
 
 void(entity cam) CC_MoveSingleCamera = 
 {
+
 	local vector newvec;
 	local float tangle;
 	local float dangle;
@@ -439,6 +459,7 @@ void(entity cam) CC_MoveSingleCamera =
 
 void(entity cam) CC_UpdateDualCamState = 
 {
+
 	local entity targ1;
 	local entity targ2;
 	if (cam.state == FL_SWIM)
@@ -477,6 +498,7 @@ void(entity cam) CC_UpdateDualCamState =
 
 void(entity cam) CC_MoveDualCamera = 
 {
+
 	local vector newvec;
 	local vector dualangles;
 	local float tangle;

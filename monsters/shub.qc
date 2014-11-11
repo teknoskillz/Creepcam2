@@ -311,3 +311,6 @@ void() monster_oldone =
 	CC_AddtoList (self);
 };
 
+
+
+

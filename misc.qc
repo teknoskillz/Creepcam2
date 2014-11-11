@@ -244,11 +244,18 @@ void() barrel_explode =
 	self.takedamage = DAMAGE_NO;
 	self.classname = "explo_box";
 	// did say self.owner..i believe it meant to say enemy. now properly tracks who shot the barrel	--gnounc
-	T_RadiusDamage (self, self.enemy, 160, world);
+	// Cobalt - modified less dmg for smaller box, change self.enemy to self so obit works 
+	if (self.health == 20)
+	T_RadiusDamage (self, self, 120, world);
+	else
+	T_RadiusDamage (self, self, 160, world);
 	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	particle (self.origin, '0 0 0', 75, 255);
-
-	self.origin_z = self.origin_z + 32;
+       if (random () < 0.5)
+	setorigin (self, self.absmax); // Cobalt - experiment....
+	else if (random () < 0.5)
+	setorigin (self, self.absmin); // Cobalt - experiment....
+	
 	BecomeExplosion ();
 };
 
@@ -261,7 +268,7 @@ void() misc_explobox =
 {
 	local float	oldz;
 	
-	self.solid = SOLID_BBOX;
+	self.solid = SOLID_BSP; // Cobalt, was BBOX for some reason?
 	self.movetype = MOVETYPE_NONE;
 	precache_model ("maps/b_explob.bsp");
 	setmodel (self, "maps/b_explob.bsp");
@@ -272,7 +279,7 @@ void() misc_explobox =
 
 	//gnounc
 	self.netname = "exploding barrel";
-	self.killstring = " blew up\n";
+	self.killstring = " blew up.\n";
 
 	self.origin_z = self.origin_z + 2;
 	oldz = self.origin_z;
@@ -297,18 +304,18 @@ void() misc_explobox2 =
 {
 	local float	oldz;
 	
-	self.solid = SOLID_BBOX;
+	self.solid = SOLID_BSP; // Cobalt, was BBOX for some reason?
 	self.movetype = MOVETYPE_NONE;
 	precache_model2 ("maps/b_exbox2.bsp");
 	setmodel (self, "maps/b_exbox2.bsp");
 	precache_sound ("weapons/r_exp3.wav");
-	self.health = 20;
+	self.health = 15; // Cobalt smaller box, less health
 	self.th_die = barrel_explode;
 	self.takedamage = DAMAGE_AIM;
 
 	//gnounc
 	self.netname = "exploding barrel";
-	self.killstring = " blew up\n";
+	self.killstring = " exploded.\n";
 
 	self.origin_z = self.origin_z + 2;
 	oldz = self.origin_z;
@@ -334,6 +341,7 @@ void() spikeshooter_use =
 {
 	if (self.spawnflags & SPAWNFLAG_LASER)
 	{
+	       self.killstring =" got zapped.\n"; // Cobalt for laser traps
 		sound (self, CHAN_VOICE, "enforcer/enfire.wav", 1, ATTN_NORM);
 		LaunchLaser (self.origin, self.movedir);
 	}
@@ -343,10 +351,19 @@ void() spikeshooter_use =
 		sound (self, CHAN_VOICE, "weapons/spike2.wav", 1, ATTN_NORM);
 		launch_spike (self.origin, self.movedir);
 		newmis.velocity = self.movedir * 500;
+		self.killstring =" was spiked.\n"; // Cobalt, moved here
 
 		if (self.spawnflags & SPAWNFLAG_SUPERSPIKE)
-			newmis.touch = superspike_touch;
+		{
+		newmis.touch = superspike_touch;
+		self.killstring =" was crucified.\n"; // Cobalt for lsuperspike death
+               }		
+	
+		 
 	}
+	
+	
+	
 };
 
 void() shooter_think =
@@ -368,7 +385,7 @@ void() trap_spikeshooter =
 	
 	//gnounc
 	self.netname = "spike trap";
-	self.killstring =" was spiked\n";
+	
 
 	if (self.spawnflags & SPAWNFLAG_LASER)
 	{
@@ -376,6 +393,7 @@ void() trap_spikeshooter =
 		
 		precache_sound2 ("enforcer/enfire.wav");
 		precache_sound2 ("enforcer/enfstop.wav");
+		
 	}
 
 	else

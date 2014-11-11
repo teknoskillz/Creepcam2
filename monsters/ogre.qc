@@ -103,6 +103,7 @@ void() OgreGrenadeTouch =
 		self.avelocity = '0 0 0';
 };
 
+void() ogre_run1;
 /*
 ================
 OgreFireGrenade
@@ -114,6 +115,15 @@ void() OgreFireGrenade =
 	
 	local vector org,move,spot; // CC_2 zaxis code and leading shot for ogre
 	local float dist,fly,airtime;             
+	
+	if (!self.ammo_rockets) // PRIME Just in case
+	{
+	ogre_run1 ();
+	return;
+	}
+	
+	self.ammo_rockets = self.ammo_rockets - 1; // PRIME  Loses ammo
+	
 	
 	self.effects = self.effects | EF_MUZZLEFLASH;
 
@@ -178,6 +188,15 @@ void() OgreFireGrenade =
 void() OgreFireGrenade2 =
 {
    local   entity missile;
+   
+   	if (!self.ammo_rockets) // PRIME Just in case
+	{
+	ogre_run1 ();
+	return;
+	}
+	
+	self.ammo_rockets = self.ammo_rockets - 1; // PRIME  Loses ammo
+   
    
    self.effects = self.effects | EF_MUZZLEFLASH;
 
@@ -247,7 +266,7 @@ local float 	ldmg;
 	else
 	self.killstring = " was sliced and diced by an Ogre\n";
 	
-	CAN_GibZombie ();
+	CAN_GibZombie (skill); // CC_2 Prime - gib zombies w chansaw chance
 	
 	ldmg = (random() + random() + random()) * 4;
 	T_Damage (self.enemy, self, self, ldmg);
@@ -263,7 +282,19 @@ local float 	ldmg;
 };
 
 
-void() ogre_stand1	=[	$stand1,	ogre_stand2	] {ai_stand();};
+void() ogre_stand1	=[$stand1,ogre_stand2] 
+{
+       if (self.ammo_rockets < 10)
+	{
+	if (random() > 0.50)
+	self.ammo_rockets = self.ammo_rockets + 1; // PRIME Even when he is standing...
+	}
+	if (self.ammo_rockets >= 10)
+	self.ammo_rockets = 10;
+
+ai_stand();
+
+};
 void() ogre_stand2	=[	$stand2,	ogre_stand3	] {ai_stand();};
 void() ogre_stand3	=[	$stand3,	ogre_stand4	] {ai_stand();};
 void() ogre_stand4	=[	$stand4,	ogre_stand5	] {ai_stand();};
@@ -280,7 +311,19 @@ void() ogre_stand7	=[	$stand7,	ogre_stand8	] {ai_stand();};
 void() ogre_stand8	=[	$stand8,	ogre_stand9	] {ai_stand();};
 void() ogre_stand9	=[	$stand9,	ogre_stand1	] {ai_stand();};
 
-void() ogre_walk1	=[	$walk1,		ogre_walk2	] {ai_walk(3);};
+void() ogre_walk1	=[$walk1,ogre_walk2] 
+{
+if (self.ammo_rockets < 10) //PRIME Added this for random chances to get ammo back while walking
+	{
+	if (random() > 0.5)
+	self.ammo_rockets = self.ammo_rockets + 1;
+	}
+	if (self.ammo_rockets >= 10)
+	self.ammo_rockets = 10;
+
+ai_walk(3);
+
+};
 void() ogre_walk2	=[	$walk2,		ogre_walk3	] {ai_walk(2);};
 void() ogre_walk3	=[	$walk3,		ogre_walk4	]
  {
@@ -311,8 +354,17 @@ void() ogre_walk14	=[	$walk14,	ogre_walk15	] {ai_walk(3);};
 void() ogre_walk15	=[	$walk15,	ogre_walk16	] {ai_walk(3);};
 void() ogre_walk16	=[	$walk16,	ogre_walk1	] {ai_walk(4);};
 
-void() ogre_run1	=[	$run1,		ogre_run2	] 
+void() ogre_run1	=[$run1,ogre_run2] 
 {
+
+if (self.ammo_rockets < 10)
+	{
+	if (random() > 0.75)
+	self.ammo_rockets = self.ammo_rockets + 1; //PRIME Added this for random chances to get ammo back while walking
+	}
+	if (self.ammo_rockets >= 10)
+	self.ammo_rockets = 10;
+
 	ai_run(9);
 
 	if (random() < 0.2)
@@ -649,3 +701,4 @@ void() monster_ogre_marksman =
 };
 
 
+ 

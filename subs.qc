@@ -362,4 +362,36 @@ vector(entity ent) realorigin =
 // even more simplified...
 	return (ent.absmin + ent.absmax) * 0.5;
 };
+// PRIME
+float(vector veca, vector vecb) crossproduct =
+{
+	local float result;
+
+	result = (veca_x * vecb_y) - (vecb_x * veca_y);
+	return result;
+};
+
+
+
+// For player model only for now
+void (entity this) MatchSurfaceAngles =
+{
+local vector c1,c2,c3, ofs;
+ofs = '0 0 10';
+c1 = this.absmax;
+c1_z = this.absmin_z; // opposite corner (hypotenuse line)
+
+c2 = c1 - '0 32 0'; // forward corner from absmin
+c3 = c1 - '32 0 0'; // left corner from absmin
+
+traceline (c1, c1 - ofs, TRUE, this);
+
+
+traceline (c2 , c2 - ofs, TRUE, this);
+
+traceline (c3, c3 - ofs, TRUE, this);
+
+traceline (this.absmin, this.absmin - ofs, TRUE, this);
+
+};
 

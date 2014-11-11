@@ -63,9 +63,22 @@ void() boss_face =
 		if (!self.enemy)
 			self.enemy = find(self.enemy, classname, "player");
 	}
-
+local vector old;
+old = self.angles;	
+   
 	ai_face();
-};
+	 makevectors (self.angles);
+	 
+   self.view_pos.movetype = MOVETYPE_FOLLOW;
+   self.view_pos.aiment = self;
+    self.view_pos.view_ofs = (v_forward * -250) + '0 0 350';
+    self.view_pos.v_angle = self.view_pos.angles - self.angles;
+	//self.view_pos.punchangle = vectoangles (normalize(v_forward)); //vectoangles (self.view_pos.velocity * -1) + (v_forward* 100);
+  
+       
+
+	
+	};
 
 void() boss_rise1	=[	$rise1, boss_rise2 ] 
 {
@@ -259,7 +272,6 @@ void(vector p) boss_missile =
 		vec_z = 0;
 		d = self.enemy.origin + t * vec;		
 	}
-
 	else // Cobalt remove brackets, optimize
 	d = self.enemy.origin;
 	
@@ -276,10 +288,9 @@ void(vector p) boss_missile =
 	sound (self, CHAN_WEAPON, "boss1/throw.wav", 1, ATTN_NORM);
 
 	if (random () < 0.5) // Cobalt put cython killstrings here for randomization each attack
-	self.killstring = " was assaulted by Cythons fury";
+	self.killstring = " was assaulted by Cythons fury.\n";
        else
-	self.killstring = " got fireballed by Lord Cython";
-	
+	self.killstring = " got fireballed by Lord Cython.\n";
 	
 	// check for dead enemy
 	if (self.enemy.health <= 0)
@@ -311,6 +322,12 @@ void() boss_awake =
 
 	self.yaw_speed = 20;
 	boss_rise1 ();
+
+	self.view_pos = spawn ();
+	  self.view_pos.aiment = self;
+	  self.view_pos.movetype = MOVETYPE_FOLLOW;
+	self.view_pos.effects = EF_BRIGHTFIELD;
+	
 };
 
 

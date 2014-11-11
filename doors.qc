@@ -315,25 +315,43 @@ entity(vector fmins, vector fmaxs) spawn_field =
 	return (trigger);
 };
 
-
-float (entity e1, entity e2) EntitiesTouching =
+float (float mode, entity e1, entity e2) EntitiesTouching =
 {
-	if (e1.mins_x > e2.maxs_x)
+// Cobalt mode float - modifies to cover absmin/absmax, else do normal mins/maxs
+
+local vector low1, high1, low2, high2;
+
+ low1 = e1.mins;
+ high1 = e1.maxs;
+  low2 = e2.mins;
+ high2 = e2.maxs;
+
+ if (mode)
+{
+ low1 = e1.absmin;
+ high1 = e1.absmax;
+  low2 = e2.absmin;
+ high2 = e2.absmax;
+ 
+ }
+ 
+ 
+	if (low1_x > high2_x)
 		return FALSE;
 
-	if (e1.mins_y > e2.maxs_y)
+	if (low1_y > high2_y)
 		return FALSE;
 
-	if (e1.mins_z > e2.maxs_z)
+	if (low1_z > high2_z)
 		return FALSE;
 
-	if (e1.maxs_x < e2.mins_x)
+	if (high1_x < e2.mins_x)
 		return FALSE;
 
-	if (e1.maxs_y < e2.mins_y)
+	if (high1_y < e2.mins_y)
 		return FALSE;
 
-	if (e1.maxs_z < e2.mins_z)
+	if (high1_z < e2.mins_z)
 		return FALSE;
 
 	return TRUE;
@@ -399,7 +417,7 @@ void() LinkDoors =
 			return;
 		}
 
-		if (EntitiesTouching(self,t))
+		if (EntitiesTouching(0,self,t))
 		{
 			if (t.enemy)
 				objerror ("cross connected doors");

@@ -396,20 +396,19 @@ float() OgreCheckAttack =
 
 	traceline (spot1, spot2, FALSE, self);
 
-	if (trace_inopen && trace_inwater)
-		return FALSE;			// sight line crossed contents
+	if (trace_inopen && trace_inwater) return FALSE; // sight line crossed contents
 
-	if (trace_ent != targ)
-	{
-		return FALSE;	// don't have a clear shot
-	}
+	if (trace_ent != targ) return FALSE; // don't have a clear shot
+	
 
 	// missile attack
-	if (time < self.attack_finished)
-		return FALSE;
+	
+	if (!self.ammo_rockets)  //PRIME Added a check here for not having ammo so he runs for you.
+	   return FALSE;
+	
+	if (time < self.attack_finished) return FALSE;
 		
-	if (enemy_range == RANGE_FAR)
-		return FALSE;
+	if (enemy_range == RANGE_FAR) return FALSE;
 		
 	else if (enemy_range == RANGE_NEAR)
 		chance = 0.10;
@@ -449,9 +448,9 @@ void(float chance) CAN_GibZombie =
 
         if (self.enemy.classname != "monster_zombie")  return;
 
-        chance = chance * 0.01;
+        chance = random (3);
         delta = self.enemy.origin - self.origin;
         if (vlen(delta) <= 60)
-            if (random() < chance)
+            if (skill >= chance) // Cobalt edit to meet skill
                 T_Damage (self.enemy, self, self, self.enemy.health);
 };
