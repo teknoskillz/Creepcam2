@@ -333,6 +333,8 @@ void() CC_ConfigureCamera =
 	self.takedamage = DAMAGE_NO;
 	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_NONE;
+	// Cobalt - Optional, gives better viewpos, stays in world origin a bit better, but will give an unstick entity message in console if unstickentities is set
+	//self.movetype = MOVETYPE_BOUNCEMISSILE
 	self.attack_finished = self.effects = 0;  // Cobalt turn off any previous effects
 	self.autoswitch = world;
 	self.velocity = VEC_ORIGIN;
