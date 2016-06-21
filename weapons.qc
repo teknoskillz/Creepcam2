@@ -54,8 +54,8 @@ W_FireAxe
 void() W_FireAxe =
 {
 	local vector source, org, def;
-       local float dam;
-	 local string mes;
+          local float dam;
+	local string mes;
 	makevectors (self.v_angle);
 	source = self.origin + '0 0 16';
 	traceline (source, source + v_forward*64, FALSE, self);
