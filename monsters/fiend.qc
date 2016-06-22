@@ -398,6 +398,7 @@ void() undead_demon_run3 =[	$run3,	undead_demon_run4 ]    {ai_face();movetogoal 
 void() undead_demon_run4 =[	$run4,	undead_demon_run5 ]    {ai_face();movetogoal (10);};
 void() undead_demon_run5 =[	$run5,	undead_demon_jump1 ]    {ai_face();movetogoal (10);};
 
+/*
 //This sets up animations for a jump attack! And at the end calls to remove the entity										
 void() undead_demon_jump1 =[	$leap1,	undead_demon_jump2 ]    {ai_face();};
 void() undead_demon_jump2 =[	$leap2,	undead_demon_jump3 ]    {sound (self, CHAN_VOICE, "demon/djump.wav", 1, ATTN_NORM);	ai_face();};
@@ -409,7 +410,7 @@ void() undead_demon_jump5 =[	$leap5,	undead_demon_end1 ]    {ai_face();movetogoa
 self.origin_z = self.origin_z + 1;
 self.velocity = v_forward * 280 + '0 0 250';
 };
-
+*/
 // This little beauty runs the death sequence in reverse :) So it looks like he rises from the grave. 
 void() undead_demon1 =[	$death8,	undead_demon2 	]  {};
 void() undead_demon2 =[	$death7,	undead_demon3 	]  {};
