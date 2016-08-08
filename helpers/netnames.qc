@@ -254,3 +254,18 @@ string getModelByNum(float it_num)
 			return string_null;
 	}
 };
+
+
+void () TraceID =
+{
+	
+	makevectors (self.v_angle);
+	local vector bing;          
+	bing = self.origin + self.view_ofs + v_forward * 18;
+	traceline (bing, (bing + (v_forward * 1000)), FALSE, self);
+          
+	if ((trace_ent.flags & FL_CLIENT) && trace_ent != self)
+          if (trace_ent.pain_finished < time)
+	centerprint (self, trace_ent.netname);
+  	
+};

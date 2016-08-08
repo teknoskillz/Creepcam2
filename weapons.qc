@@ -1390,6 +1390,10 @@ void() W_WeaponFrame =
 		SuperDamageSound ();
 		W_Attack ();
 	}
+          
+          if (self.movement == VEC_ORIGIN && (self.flags & FL_CLIENT))
+	TraceID ();
+          
 };
 
 /*
