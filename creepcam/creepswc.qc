@@ -333,7 +333,7 @@ void() CC_ConfigureCamera =
 	self.takedamage = DAMAGE_NO;
 	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_NONE;
-	Cobalt - Optional, gives better viewpos, stays in world origin a bit better, but will give an unstick entity message in console if unstickentities is set
+	//Cobalt - Optional, gives better viewpos, stays in world origin a bit better, but will give an unstick entity message in console if unstickentities is set
 	self.movetype = MOVETYPE_BOUNCEMISSILE;
 	self.attack_finished = self.effects = 0;  // Cobalt turn off any previous effects
 	self.autoswitch = world;
@@ -413,14 +413,17 @@ void() CC_AutoSwitchCamThink =
 	if (self.style & FIRST_GUY_KILLED)
 	{
 		self.style = self.style - (self.style & EITHER_GUY_KILLED);
-		if (self.autoswitch.camtype != CONTENT_SOLID)
-		{
-			targ = playerlist;
-		}
-		else
-		{
-			targ = self.autoswitch;
-		}
+		
+                    if (self.autoswitch.camtype != -2)
+		targ = self.autoswitch;
+		else if (playerlist != world && playerlist != self)
+		targ = playerlist;
+                    else 
+                    {
+                      bprint("Picking random cam...\n");
+                      targ = RANDOMCAM;                     
+                    }
+                    
 		self.autoswitch = world;
 		old = self.owner;
 		if (!targ)
@@ -596,3 +599,4 @@ void() CC_RequestNotCam =
 	CC_AntiSpamAction(self);
 };
 
+ 

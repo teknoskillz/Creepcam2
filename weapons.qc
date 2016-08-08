@@ -1231,6 +1231,7 @@ Go to the prev weapon with ammo
 */
 void() CycleWeaponReverseCommand =
 {
+          if (self.classname != "player") return;
 	local float it, am;
 
 	it = self.items;

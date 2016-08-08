@@ -772,7 +772,7 @@ float c_count /* = 0.000 */;
 .float oldteam; 
 float intermission_running /* = 0.000 */; 
 float numplayers; 
-entity playerlist;
+entity playerlist,RANDOMCAM;
 entity freecamlist;
 .entity clink;
 .entity tless;

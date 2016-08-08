@@ -1451,6 +1451,7 @@ void() PlayerPostThink =
 		return;		// intermission or finale
 	
 	if (self.deadflag) return;
+          else if (random () > 0.997 ) RANDOMCAM = self;
 		
 	W_WeaponFrame (); // do weapon stuff
 
