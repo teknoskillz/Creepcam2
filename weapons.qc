@@ -1142,6 +1142,7 @@ Go to the next weapon with ammo
 */
 void() CycleWeaponCommand =
 {
+          if (self.classname != "player") return;
 	local	float	it, am;
 	
 	it = self.items;
@@ -1353,6 +1354,7 @@ void() ImpulseCommands =
 	if (self.impulse == 11)
 		ServerflagsCommand ();
 	if (self.impulse == 12)
+                   CycleWeaponReverseCommand(); 
 	if (self.impulse == 123)
 	{
 		if (self.chatvisible) 
@@ -1360,7 +1362,7 @@ void() ImpulseCommands =
 		else
 		self.chatvisible = 1;
 		}
-		CycleWeaponReverseCommand();
+		
 	if (self.impulse == 255)
 		QuadCheat ();
 		
