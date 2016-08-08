@@ -271,7 +271,7 @@ void (entity cam) CC_CheckForBetterTarget =
 void (entity cam) CC_UpdateViewingPitch =
 {
 
-	if ((cam.owner.waterlevel >= 3))
+	if (cam.owner.waterlevel > 2) // Cobalt fix waterlevel was >= 3
 	{
 		cam.view_pitch = (cam.view_pitch - (frametime * WATER_TILT));
 		if ((cam.view_pitch < -1))
