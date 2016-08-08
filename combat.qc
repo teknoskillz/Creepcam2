@@ -152,6 +152,10 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 
 	// save damage based on the target's armor level
 	save = ceil(targ.armortype*damage);
+          
+            if (attacker == world && targ.waterlevel > 2 && targ.air_finished < time) // Simplified QIP Armor drown fix
+	     save = 0;
+          
 
 	if (save >= targ.armorvalue)
 	{
