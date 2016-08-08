@@ -1110,11 +1110,11 @@ void() WaterMove =
                     ar = self.radsuit_finished;
            if ((ar - 1) > time)
           {
-          local float i;
+          local float i,ii,ch;
       
           msg_entity = self;
 
-          WriteByte_apply (MSG_ONE, 26); // Cobalt, modify so that camera will also show the meter
+          WriteByte_apply (MSG_ONE, 26); // Cobalt, use writebyte_apply so that camera will also show the meter
          if (!(self.items & IT_SUIT))
          {
           
@@ -1137,10 +1137,16 @@ void() WaterMove =
           WriteByte_apply (MSG_ONE, 212);
          }
          WriteByte_apply (MSG_ONE, 10);
+         
+         ii = ar - time; // Cobalt use red character when low on o2
+          if (ii > 4)
+          ch = 11;
+          else
+          ch = 139;
           
-          for(i = 0; i < ((ar - time) - 1); i = i + 1)
+           for(i = 0; i < ((ii) - 1); i = i + 1)
           {
-           WriteByte_apply (MSG_ONE, 139);
+           WriteByte (MSG_ONE, ch);
           }
          
           WriteByte_apply (MSG_ONE, 0);
