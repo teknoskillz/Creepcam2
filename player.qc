@@ -669,8 +669,8 @@ void() set_suicide_frame =
 
 	traceline (self.origin - '0 0 22', self.origin - '0 33', TRUE, self);
 	self.mangle = trace_plane_normal;	
-	bprint (vtos(self.mangle));
-	bprint ("\n");
+	//bprint (vtos(self.mangle));
+	//bprint ("\n");
 	self.frame = $deatha11;
 	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_TOSS;

@@ -327,7 +327,7 @@ void (entity cam) CC_UpdateViewOffset =
 	
 	
 	
-	       bprint ("View pitch norm\n");	
+	      // bprint ("View pitch norm\n");	
 		cam.view_offset = CAMERA_OFFSET;
 	}
 };
