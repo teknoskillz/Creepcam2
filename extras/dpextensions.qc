@@ -1380,7 +1380,7 @@ float CLIENTTYPE_BOT = 2;
 float CLIENTTYPE_NOTACLIENT = 3;
 //builtin definitions:
 entity() spawnclient = #454; // like spawn but for client slots (also calls relevant connect/spawn functions), returns world if no clients available
-float(entity clent) clienttype = #455; // returns one of the CLIENTTYPE_* constants
+
 //description:
 //spawns a client with no network connection, to allow bots to use client slots with no hacks.
 //How to use:

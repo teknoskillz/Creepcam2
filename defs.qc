@@ -652,7 +652,8 @@ void(float to, float f) WriteCoord		= #56;
 void(float to, float f) WriteAngle		= #57;
 void(float to, string s) WriteString	= #58;
 void(float to, entity s) WriteEntity	= #59;
-
+float(entity clent) clienttype = #455; // returns one of the CLIENTTYPE_* constants
+.entity clink; // For creepcam, means entity is being chasecammed by the clink
 //
 // broadcast client message generation
 //
@@ -665,7 +666,18 @@ void(float to, entity s) WriteEntity	= #59;
 // void(float f) bWriteAngle		= #64;
 // void(string s) bWriteString	= #65;
 // void(entity e) bWriteEntity = #66;
-
+void (float to, float f) WriteByte_apply =
+{
+          if (clienttype(msg_entity) != 1) return;
+          
+        WriteByte (to, f);
+	if (clienttype(msg_entity.clink) == 1)
+        {
+	msg_entity = msg_entity.clink;
+	WriteByte (to, f);
+        }
+	
+};
 void(float step) movetogoal				= #67;
 
 string(string s) precache_file		= #68;	// no effect except for -copy
@@ -774,7 +786,7 @@ float intermission_running /* = 0.000 */;
 float numplayers; 
 entity playerlist,RANDOMCAM;
 entity freecamlist;
-.entity clink;
+
 .entity tless;
 .float camtype;
 .vector filmpos;
@@ -808,4 +820,4 @@ void updateclientchat(entity bclient, float bvisible);
 .float grenade_time;
 .vector last_enemy_origin, grenade_velocity;
 .float	dmgtime;
-float (float mode, entity e1, entity e2) EntitiesTouching;
+float (float mode, entity e1, entity e2) EntitiesTouching; 

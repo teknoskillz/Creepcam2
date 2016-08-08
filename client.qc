@@ -1097,6 +1097,57 @@ void() WaterMove =
 	
 	if (! (self.flags & FL_WATERJUMP) )
 		self.velocity = self.velocity - 0.8*self.waterlevel*frametime*self.velocity;
+          
+          
+           // Cobalt O2 meter
+          if (clienttype(self) == CLIENTTYPE_REAL && self.watertype != -5)
+          if (((self.waterlevel > 2) && (self.health > 0) && (!(self.items & IT_INVULNERABILITY))))
+	{
+                    local float ar;
+                     if (!(self.items & IT_SUIT))
+                     ar = self.air_finished;
+                    else
+                    ar = self.radsuit_finished;
+           if ((ar - 1) > time)
+          {
+          local float i;
+      
+          msg_entity = self;
+
+          WriteByte_apply (MSG_ONE, 26); // Cobalt, modify so that camera will also show the meter
+         if (!(self.items & IT_SUIT))
+         {
+          
+          WriteByte_apply (MSG_ONE, 79);
+          WriteByte_apply (MSG_ONE, 88);
+          WriteByte_apply (MSG_ONE, 89);
+          WriteByte_apply (MSG_ONE, 71);
+          WriteByte_apply (MSG_ONE, 69);
+          WriteByte_apply (MSG_ONE, 78);
+          
+         }
+         else
+         {
+          WriteByte_apply (MSG_ONE, 194);
+          WriteByte_apply (MSG_ONE, 201);
+          WriteByte_apply (MSG_ONE, 207);
+          WriteByte_apply (MSG_ONE, 211);
+          WriteByte_apply (MSG_ONE, 213);
+          WriteByte_apply (MSG_ONE, 201);
+          WriteByte_apply (MSG_ONE, 212);
+         }
+         WriteByte_apply (MSG_ONE, 10);
+          
+          for(i = 0; i < ((ar - time) - 1); i = i + 1)
+          {
+           WriteByte_apply (MSG_ONE, 139);
+          }
+         
+          WriteByte_apply (MSG_ONE, 0);
+          }
+          }
+          
+          
 };
 
 void() CheckWaterJump =
