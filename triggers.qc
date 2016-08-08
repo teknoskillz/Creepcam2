@@ -381,6 +381,7 @@ void(vector org, entity death_owner) spawn_tdeath =
 	death = spawn();
 	death.classname = "teledeath";
 	death.movetype = MOVETYPE_NONE;
+          death.effects = EF_BRIGHTFIELD; // Cobalt, brief effect to mark the kill field
 	death.solid = SOLID_TRIGGER;
 	death.angles = '0 0 0';
 	setsize (death, death_owner.mins - '1 1 1', death_owner.maxs + '1 1 1');
