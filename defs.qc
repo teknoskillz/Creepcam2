@@ -673,8 +673,11 @@ void (float to, float f) WriteByte_apply =
         WriteByte (to, f);
 	if (clienttype(msg_entity.clink) == 1)
         {
+          local entity ment;
+          ment = msg_entity;
 	msg_entity = msg_entity.clink;
 	WriteByte (to, f);
+          msg_entity = ment;
         }
 	
 };
