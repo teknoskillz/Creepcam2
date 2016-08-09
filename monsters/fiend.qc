@@ -118,7 +118,7 @@ void()	demon1_jump4	=[	$leap4,		demon1_jump5	]
 	makevectors2 (self.angles);
 	self.origin_z = self.origin_z + 1;
         
-        if (skill <= 1)
+        if (cvar("skill") <= 1) 
         self.velocity = v_forward * 600 + '0 0 250';  
            // Cobalt Better Demon skill as per ftp://ftp.fu-berlin.de/pc/games/idgames2/quakec/code_examples/jump_ai.txt
            else 
@@ -294,10 +294,7 @@ void() monster_demon1 =
 	
           // Cobalt Better Demon skill as per ftp://ftp.fu-berlin.de/pc/games/idgames2/quakec/code_examples/jump_ai.txt
            if (cvar("skill") > 1) 
-           {
-                     self.effects = EF_BRIGHTFIELD;
-                setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
-           }
+           setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
           else       
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 300;
