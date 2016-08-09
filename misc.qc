@@ -293,7 +293,7 @@ void() barrel_damage =
 	setorigin (self, self.absmax); // Cobalt - experiment....
 	else if (random () < 0.5)
 	setorigin (self, self.absmin); // Cobalt - experiment....
-        self.effects = self.effects EF_BRIGHTFIELD;
+        self.effects = self.effects | EF_BRIGHTFIELD;
 	BecomeExplosion ();
 };
 
@@ -304,7 +304,7 @@ void() barrel_explode =
         sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
         particle (self.origin + '0 0 32', '0 0 0', 75, 255);
         self.nextthink = time + 0.1;
-        self.effects = EF_DIMLIGHT;
+        self.effects = EF_BRIGHTLIGHT;
         self.think = barrel_damage;
 };
 //---------------------------------------------------------------- END -----
