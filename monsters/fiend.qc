@@ -45,6 +45,7 @@ $frame death1 death2 death3 death4 death5 death6 death7 death8 death9
 $frame attacka1 attacka2 attacka3 attacka4 attacka5 attacka6 attacka7 attacka8
 $frame attacka9 attacka10 attacka11 attacka12 attacka13 attacka14 attacka15
 
+void()	demon1_jump1;
 //============================================================================
 
 void()	Demon_JumpTouch;
@@ -89,22 +90,88 @@ void()	demon1_run2	=[	$run2,		demon1_run3	] {ai_run(15);};
 void()	demon1_run3	=[	$run3,		demon1_run4	] {ai_run(36);};
 void()	demon1_run4	=[	$run4,		demon1_run5	] {ai_run(20);};
 void()	demon1_run5	=[	$run5,		demon1_run6	] {ai_run(15);};
-void()	demon1_run6	=[	$run6,		demon1_run1	] {ai_run(36);};
+void()	demon1_run6	=[	$run6,		demon1_run1	] 
+{
+          ai_run(36);
+          // Cobalt Better Demon skill as per ftp://ftp.fu-berlin.de/pc/games/idgames2/quakec/code_examples/jump_ai.txt
+           if (skill > 1) {
+   // if underwater, give a chance to switch to jump AI anyway
+   if (self.waterlevel == 1)
+   {
+      if ( random() > 0.8 )
+         self.think = demon1_jump1;
+   }          
+           }
+          };
 
 void()	demon1_jump1	=[	$leap1,		demon1_jump2	] {ai_face();};
 void()	demon1_jump2	=[	$leap2,		demon1_jump3	] {ai_face();};
 void()	demon1_jump3	=[	$leap3,		demon1_jump4	] {ai_face();};
+
 void()	demon1_jump4	=[	$leap4,		demon1_jump5	]
 {
-	ai_face();
-	
-	self.touch = Demon_JumpTouch;
+        local vector dir;
+        local float dist;   
+ 
+          ai_face();
+          self.touch = Demon_JumpTouch;
 	makevectors2 (self.angles);
 	self.origin_z = self.origin_z + 1;
-	self.velocity = v_forward * 600 + '0 0 250';
+        
+        if (skill <= 1)
+        self.velocity = v_forward * 600 + '0 0 250';  
+           // Cobalt Better Demon skill as per ftp://ftp.fu-berlin.de/pc/games/idgames2/quakec/code_examples/jump_ai.txt
+           else 
+           {
 
-	if (self.flags & FL_ONGROUND)
+   if (self.enemy.origin_z > self.origin_z + 40)
+   {
+
+      if ( infront(self.enemy) || self.waterlevel == 1 )
+      {
+         dir = normalize(self.enemy.origin - self.origin);
+         dist = vlen(self.enemy.origin - self.origin);
+         self.velocity = dir * dist;
+      }
+      else
+         self.velocity = v_forward * 150;
+
+      dist = self.enemy.origin_z - self.origin_z;
+
+      // a vertical velocity to jump just above player's head
+      // for any given distance between z origins.
+      // (hack numbers that work for Quake)
+      dist = dist - 237;
+      self.velocity_z = 714 + dist;
+
+   }
+   else
+   {
+      // slow forward to fall off ledge if player down
+      // else normal horizontal velocity
+      if (self.enemy.origin_z < self.origin_z - 40)
+         self.velocity = v_forward * 150;
+      else
+         self.velocity = v_forward * 600;
+
+      // check for wall in front
+      traceline( self.origin - '0 0 16',
+                 (self.origin - '0 0 16') + v_forward*150, TRUE, self);
+
+      // attempt to jump wall or normal vel.
+      if (trace_fraction < 1)
+      {
+         self.velocity = v_forward * 110;
+         self.velocity_z = 250 * (random() + 1);
+      }
+      else
+         self.velocity_z = 250;
+   }
+           }
+
+   if (self.flags & FL_ONGROUND)
 		self.flags = self.flags - FL_ONGROUND;
+
 };
 
 void()	demon1_jump5	=[	$leap5,		demon1_jump6	] {};
@@ -225,7 +292,13 @@ void() monster_demon1 =
 	setmodel (self, "progs/demon.mdl");
 	self.noise = "demon/sight2.wav";
 	
-
+          // Cobalt Better Demon skill as per ftp://ftp.fu-berlin.de/pc/games/idgames2/quakec/code_examples/jump_ai.txt
+           if (cvar("skill") > 1) 
+           {
+                     self.effects = EF_BRIGHTFIELD;
+                setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+           }
+          else       
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 300;
 	self.max_health = 300;

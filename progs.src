@@ -1,5 +1,4 @@
-progs.dat
-
+../progs.dat
 defs.qc
 extras/dpextensions.qc
 subs.qc
