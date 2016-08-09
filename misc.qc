@@ -235,30 +235,79 @@ void() fire_touch =
 	T_Damage (other, self, self, 20);
 	remove(self);
 };
+/*
+=======================================================================
+Title                   : BoxFix
+Date Finished           :  9 - 14 - 1997
+Author                  : Patrick Martin
+Email Address           : cmarti39@icon.net
+Misc. Author Info       : I like Doom][ and QUAKE.
+Description:
+     Ever since I have played around with my Buster patch,
+I noticed a bug with the barrels in Quake:  Whenever a
+radius attack destroys a barrel, that radius attack is
+negated and the explosion of the barrel's takes its place.
 
-//============================================================================
+     Since nothing in normal Quake (other than lightning
+discharge underwater) had the explosive power of an exploding
+barrel, this bug had very little if any effect in regular
+Quake.  However, custom weapons which produce large, damaging
+explosions, such as those that recreate the effects of a nuke,
+could have their damaging effects spoiled if a barrel is
+destroyed by the explosion.
 
+     Below is some code that will fix this bug.  What it
+does is delay the barrel explosion for a frame (0.1 sec.),
+which will let *your* weapon do the damage first without
+interference; then the barrel explodes immediately afterward.
+
+     Feel free to cut-and-paste this code into your projects.
+
+
+MISC.QC
+(Go down to
+
+	void() barrel_explode =
+
+ and erase the *entire* function.
+
+ Then insert the following two functions where
+ the original void() barrel_explode used to be...)
+
+
+//-------------------------------------------------------- Code Change -----
+//  This fixes a bug in which barrel explosions cancel other explosions.
+//  Here, the barrel explosion is delayed for one frame so that other
+//  explosions can occur without interference from the barrel.
+//--------------------------------------------------------------------------
+*/
+void() barrel_damage =
+{
+
+          // Cobalt - modified less dmg for smaller box, change self.enemy to self so obit works 
+	if (self.health == 20)
+	T_RadiusDamage (self, self, 120, world);
+	else
+	T_RadiusDamage (self, self, 160, world);
+           if (random () < 0.5)
+	setorigin (self, self.absmax); // Cobalt - experiment....
+	else if (random () < 0.5)
+	setorigin (self, self.absmin); // Cobalt - experiment....
+        self.effects = self.effects EF_BRIGHTFIELD;
+	BecomeExplosion ();
+};
 
 void() barrel_explode =
 {
 	self.takedamage = DAMAGE_NO;
 	self.classname = "explo_box";
-	// did say self.owner..i believe it meant to say enemy. now properly tracks who shot the barrel	--gnounc
-	// Cobalt - modified less dmg for smaller box, change self.enemy to self so obit works 
-	if (self.health == 20)
-	T_RadiusDamage (self, self, 120, world);
-	else
-	T_RadiusDamage (self, self, 160, world);
-	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
-	particle (self.origin, '0 0 0', 75, 255);
-       if (random () < 0.5)
-	setorigin (self, self.absmax); // Cobalt - experiment....
-	else if (random () < 0.5)
-	setorigin (self, self.absmin); // Cobalt - experiment....
-	
-	BecomeExplosion ();
+        sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
+        particle (self.origin + '0 0 32', '0 0 0', 75, 255);
+        self.nextthink = time + 0.1;
+        self.effects = EF_DIMLIGHT;
+        self.think = barrel_damage;
 };
-
+//---------------------------------------------------------------- END -----
 
 
 /*QUAKED misc_explobox (0 .5 .8) (0 0 0) (32 32 64)
