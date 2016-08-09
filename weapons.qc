@@ -1142,13 +1142,13 @@ Go to the next weapon with ammo
 */
 void() CycleWeaponCommand =
 {
-          if (self.classname != "player") return;
+    
 	local	float	it, am;
 	
 	it = self.items;
 	self.impulse = 0;
 	
-	while (1)
+	while (self.classname == "player")
 	{
 		am = 0;
 
@@ -1232,13 +1232,13 @@ Go to the prev weapon with ammo
 */
 void() CycleWeaponReverseCommand =
 {
-          if (self.classname != "player") return;
+        
 	local float it, am;
 
 	it = self.items;
 	self.impulse = 0;
 
-	while (1)
+	while (self.classname =="player")
 	{
 		am = 0;
 
