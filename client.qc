@@ -1156,37 +1156,64 @@ void() WaterMove =
           
 };
 
-void() CheckWaterJump =
+// Cobalt and Zops improved Waterjump mostly for map dm5. Sort of bugs out Dm3, but meh...
+void ()
+CheckWaterJump =
 {
-	local vector start, end;
-
-// check for a jump-out-of-water
-	makevectors2 (self.angles);
+	
+          if (self.movement_x <= 0) return;
+          
+          local vector start, end;
+	// check for a jump-out-of-water
+	makevectors (self.angles);
 	start = self.origin;
-	start_z = start_z + 8; 
+	start_z = start_z + 8;
 	v_forward_z = 0;
-	normalize(v_forward);
-	end = start + v_forward*24;
+	normalize (v_forward);
+	end = start + v_forward * 24;
 	traceline (start, end, TRUE, self);
 
 	if (trace_fraction < 1)
 	{	// solid at waist
-		start_z = start_z + self.maxs_z - 8;
-		end = start + v_forward*24;
-		self.movedir = trace_plane_normal * -50;
-		traceline (start, end, TRUE, self);
 
+		start_z = start_z + self.maxs_z - 8;
+		end = start + v_forward * 24;
+		
+		traceline (start, end, TRUE, self);
 		if (trace_fraction == 1)
 		{	// open at eye level
-			self.flags = self.flags | FL_WATERJUMP;
-			self.velocity_z = 225;
+                              local float safe;
+                              start = end;
+                            
+                              traceline (start, end + v_right * 16, TRUE, self);
+                              if (trace_fraction == 1) // clear this side
+                              {
+                               safe = safe + 1;
+                              traceline (start, end + v_right * -16, TRUE, self); 
+                              if (trace_fraction == 1) // clear other side
+                              safe = safe + 1;
+                              
+                              
+                              }
+			
+                              if (safe == 2)
+                              {
+                              self.flags = self.flags | FL_WATERJUMP;
+                              local float vj;
+                              if (self.items & IT_SUIT) // Larger boost for suit
+                              vj = 1.1;
+                              else vj = 1.05;
+                              self.velocity_z = (vlen(self.velocity * vj)); 
+			self.movedir = trace_plane_normal * -50;
 			self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
 			self.teleport_time = time + 2;	// safety net
-
-			return;
+                              }
+                              
+                              
 		}
 	}
 };
+
 
 
 /*================
