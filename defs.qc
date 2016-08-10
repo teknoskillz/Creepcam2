@@ -823,4 +823,9 @@ void updateclientchat(entity bclient, float bvisible);
 .float grenade_time;
 .vector last_enemy_origin, grenade_velocity;
 .float	dmgtime;
-float (float mode, entity e1, entity e2) EntitiesTouching; 
+float (float mode, entity e1, entity e2) EntitiesTouching;
+
+float DEF_GIB_HEALTH = -18;
+
+
+

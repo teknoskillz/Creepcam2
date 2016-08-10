@@ -317,7 +317,7 @@ void() misc_explobox =
 {
 	local float	oldz;
 	
-	self.solid = SOLID_BSP; // Cobalt, was BBOX for some reason?
+	self.solid = SOLID_SLIDEBOX; // Cobalt, was BBOX for some reason?
 	self.movetype = MOVETYPE_NONE;
 	precache_model ("maps/b_explob.bsp");
 	setmodel (self, "maps/b_explob.bsp");
@@ -353,7 +353,7 @@ void() misc_explobox2 =
 {
 	local float	oldz;
 	
-	self.solid = SOLID_BSP; // Cobalt, was BBOX for some reason?
+	self.solid = SOLID_SLIDEBOX; // Cobalt, was BBOX for some reason?
 	self.movetype = MOVETYPE_NONE;
 	precache_model2 ("maps/b_exbox2.bsp");
 	setmodel (self, "maps/b_exbox2.bsp");
