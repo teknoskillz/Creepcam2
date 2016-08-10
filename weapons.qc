@@ -39,6 +39,8 @@ void() W_Precache =
 	precache_sound ("weapons/grenade.wav");	// grenade launcher
 	precache_sound ("weapons/bounce.wav");		// grenade bounce
 	precache_sound ("weapons/shotgn2.wav");	// super shotgun
+          
+          precache_sound ("blob/hit1.wav"); // For new axe hit code
 };
 
 float() crandom =
