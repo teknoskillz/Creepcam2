@@ -158,7 +158,7 @@ void(entity c) CC_ShowRec =
 {
 	if ((c.flags & FL_CLIENT) == 0 || (c.creepflags & CF_NOSHOWREC))
 	return;
-	
+	if (c.waterlevel > 2 && c.air_finished > time) return;
 	if (c.creepflags & CF_DOINGLONGMESSAGE)
 	return;
 	

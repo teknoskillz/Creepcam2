@@ -1146,7 +1146,7 @@ void() WaterMove =
           
            for(i = 0; i < ((ii) - 1); i = i + 1)
           {
-           WriteByte (MSG_ONE, ch);
+           WriteByte_apply (MSG_ONE, ch);
           }
          
           WriteByte_apply (MSG_ONE, 0);
