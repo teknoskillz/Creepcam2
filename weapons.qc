@@ -1150,10 +1150,11 @@ void() CycleWeaponCommand =
 	it = self.items;
 	self.impulse = 0;
 	
-	while (self.classname == "player")
+	while (1)
 	{
 		am = 0;
 
+                    
 		if (self.weapon == IT_LIGHTNING)
 		{
 			self.weapon = IT_AXE;
@@ -1240,10 +1241,10 @@ void() CycleWeaponReverseCommand =
 	it = self.items;
 	self.impulse = 0;
 
-	while (self.classname =="player")
+	while (1)
 	{
 		am = 0;
-
+                    
 		if (self.weapon == IT_LIGHTNING)
 		{
 			self.weapon = IT_ROCKET_LAUNCHER;
@@ -1382,7 +1383,7 @@ void() W_WeaponFrame =
 {
 
 
-	if (time < self.attack_finished)
+	if (time < self.attack_finished || self.classname != "player")
 		return;
 
 	if (self.impulse)	// gb, stop wasting performance
