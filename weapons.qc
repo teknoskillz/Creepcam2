@@ -1358,6 +1358,12 @@ void() ImpulseCommands =
 		ServerflagsCommand ();
 	if (self.impulse == 12)
                    CycleWeaponReverseCommand(); 
+         if (self.impulse == 80)
+             {
+             sprint (self, "Skill is set to: ");
+             sprint (self, (ftos(cvar("skill"))));
+             sprint (self, "\n");
+             }
 	if (self.impulse == 123)
 	{
 		if (self.chatvisible) 
@@ -1365,7 +1371,8 @@ void() ImpulseCommands =
 		else
 		self.chatvisible = 1;
 		}
-		
+	
+	
 	if (self.impulse == 255)
 		QuadCheat ();
 		

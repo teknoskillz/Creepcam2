@@ -56,6 +56,7 @@ void(entity e) CC_SendAliases =
 	stuffcmd(e, "alias playerlist \"impulse 152\"\n");
 	// Cobalt removed respawntimer reference
 	
+          stuffcmd(e, "alias skill \"impulse 80\"\n");
 	
 
 
