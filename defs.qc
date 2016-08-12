@@ -824,8 +824,8 @@ void updateclientchat(entity bclient, float bvisible);
 .vector last_enemy_origin, grenade_velocity;
 .float	dmgtime;
 float (float mode, entity e1, entity e2) EntitiesTouching;
-
-float DEF_GIB_HEALTH = -18;
+float max_clients; // Cobalt track total number of allowed clients
+float DEF_GIB_HEALTH = -18; // Cobalt lower gib value 
 
 
 

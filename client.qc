@@ -512,9 +512,9 @@ void() respawn2 =
    
 		CopyToBodyQueue (self);
 		
-	    CC_ConfigureCamera();
-	    
-		if ( self.enemy == world || self.enemy.movedir || self.enemy == self || (self.enemy.solid == SOLID_BSP && self.enemy != world) )  
+  	        CC_ConfigureCamera();
+
+		if ( (!(self.enemy)) || self.enemy.movedir || (self.enemy == self) || ((self.enemy.solid == SOLID_BSP) && self.enemy != world) )  
 		{
 		
 		self.nextthink = time + frametime + (frametime * random(5));

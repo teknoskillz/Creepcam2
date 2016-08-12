@@ -99,7 +99,7 @@ void() W_FireAxe =
 	       {
 		 mes = strcat (mes," hit from behind...");
 		 dam =  dam * 2.5;
-	      if (trace_ent.velocity == self.velocity == '0 0 0')
+	      if (trace_ent.velocity == '0 0 0' &&  self.velocity == '0 0 0')
 	           dam = dam *  3;
 	           else
 	           dam = (dam + ((vlen(self.velocity)) / 75)) * 2.5;
@@ -1422,3 +1422,4 @@ void() SuperDamageSound =
 };
 
 
+ 

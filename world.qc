@@ -368,6 +368,21 @@ void() worldspawn =
 	
 	 // CC_2
 	cvar_set ("coop", "1");
+          
+          
+          local entity ent;
+
+	ent = nextent (world);
+	max_clients = 0;
+	while (ent != world)
+	{
+		max_clients = max_clients + 1;
+		ent = nextent (ent);
+	}
+
+          
+          
+          
 	
 };
 

@@ -197,12 +197,20 @@ void(entity c) CC_ChangeToAnyCam =
 local entity watcher;
     if (WATCHING) // Below Used for when the camera first spawns in and changes to player they last specced
         {
-                watcher = findfloat(world, colormap, c.watch);
-                while(watcher)
+                local float loop;
+                watcher = nextent (world);
+                while(WATCHING)
+                {
+                loop = loop + 1;
+                if (loop > max_clients)
+                WATCHING = 0;
+                if (watcher.colormap == c.watch && watcher.classname == "player")
                 {
                 CC_ChangeToFollowCam(c, watcher);
                 WATCHING = 0; // Turn this off so it only happens once unless you always want it to go to last specced entity
-                watcher = findfloat(watcher, colormap, c.watch);
+                }
+                watcher = nextent (watcher);
+                
                 }
         }
 

@@ -437,6 +437,11 @@ void(float dist) ai_walk =
 		return;
 
 	movetogoal (dist);
+          
+          // Cobalt, stagger walk thinks depending on skill so monsters dont all look like they are marching together
+          // added bonus, monsters will also notice players slightly more often on higher skill settings          
+          if (random () < 0.15) 
+          self.nextthink = self.nextthink - (frametime * cvar("skill"));
 };
 
 
