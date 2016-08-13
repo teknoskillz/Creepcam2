@@ -175,9 +175,17 @@ void() DecodeLevelParms =
 	
 	self.armortype = parm9 * 0.01;
 	self.watch = parm10;
-          parm11 = self.respawncam;
-          parm12 = self.respawn_time + time + 1; 
-	
+          self.respawncam = parm11;
+          
+          if (self.respawncam)
+          {
+          self.respawn_time = parm12;
+
+          if (self.respawn_time > 0)
+             self.respawn_time = self.respawn_time + time + 1; 
+             else
+             self.respawncam = 0;
+	}
 };
 
 /*============
