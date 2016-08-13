@@ -622,8 +622,13 @@ void() PlayerDie =
         self.respawn_time = time + CC_RESPAWN;
 	if (deathmatch || coop)
 		DropBackpack();
-	
-	self.weaponmodel=string_null;
+          if (active_clients > -10)
+          {
+	if (self.super_time > 0) DropQuad ();
+	if (self.invisible_time > 0) 
+	DropRing ();
+          }
+	self.weaponmodel = string_null;
 	self.view_ofs = '0 0 -8';
 	self.deadflag = DEAD_DYING;
 	self.solid = SOLID_NOT;

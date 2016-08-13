@@ -135,11 +135,17 @@ void() SetChangeParms =
 	
 	   parm9 = parm9 + CF_DECODEFLAGS + CF_DECODESHIFT * (self.creepflags & CF_KEEPBETWEENLEVELS);
         if (self.camtype > 0)
+        {
+        
         parm9 = parm9 + CF_STAYASCAM;
+        if (self.respawn_time > time)
+        {
+        parm9 = parm9 - CF_STAYASCAM;
+        parm1 = IT_SHOTGUN | IT_AXE;
+        }
+        }
         parm10 = self.watch;
-        parm11 = self.respawncam;
-        parm12 = self.respawn_time;
-        parm12 = time - parm12;        
+  
 };
 
 void() SetNewParms =
@@ -175,17 +181,7 @@ void() DecodeLevelParms =
 	
 	self.armortype = parm9 * 0.01;
 	self.watch = parm10;
-          self.respawncam = parm11;
-          
-          if (self.respawncam)
-          {
-          self.respawn_time = parm12;
 
-          if (self.respawn_time > 0)
-             self.respawn_time = self.respawn_time + time + 1; 
-             else
-             self.respawncam = 0;
-	}
 };
 
 /*============

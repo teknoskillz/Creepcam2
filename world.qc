@@ -409,10 +409,11 @@ if (!framecount) registercvar ("respawntimer", "15");
 if (framecount > 100)
 {	
 local entity slot;
+local float qc;
 slot = nextent (slot);
 while (clienttype (slot) == CLIENTTYPE_REAL)
 {
-
+          qc = qc + 1;
 	if (slot.classname == "camera") 	
 	if (!slot.button0 && slot.state != 1)
 	slot.fixangle = 1;
@@ -422,7 +423,7 @@ while (clienttype (slot) == CLIENTTYPE_REAL)
 	}
 }	
 	
-
+active_clients = qc;
 };
 
 /*

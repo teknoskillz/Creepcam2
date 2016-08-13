@@ -776,7 +776,8 @@ float SPAM_ACTIONLIMIT    = 10.000;
 // CC_2
 .float watch; // colormap of  CC target
 float WATCHING;  // propogate cam target to next level
-float CC_RESPAWN; // CC respawn timer val 
+float CC_RESPAWN; // CC respawn timer val
+
 // Alternate Setspawnparms to prevent parm9 interference
 .float spawnitems,spawnhealth,spawnarmorvalue,spawnammo_shells,spawnammo_nails,spawnammo_rockets,spawnammo_cells,spawnweapon;
 .float took_damage;
@@ -825,7 +826,9 @@ void updateclientchat(entity bclient, float bvisible);
 .float	dmgtime;
 float (float mode, entity e1, entity e2) EntitiesTouching;
 float max_clients; // Cobalt track total number of allowed clients
+float active_clients; // Cobalt, total # of active players (includes cameras)
 float DEF_GIB_HEALTH = -18; // Cobalt lower gib value 
 
 
 
+ 
