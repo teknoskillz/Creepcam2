@@ -367,12 +367,14 @@ void() execute_changelevel =
 		other = nextent (world);
 	while (clienttype(other) == CLIENTTYPE_REAL)
 	{
-                     if (other.respawncam == 1)
+                     if (other.respawncam == 1) // Cobalt account for Respawn timer case
                      {
-                      other.clientcamera = other;
-	            other.respawncam = 0;
-	            other.think = PlayerPostThink;
-                      
+	            local entity oself;
+                      oself = self;
+                      self = other;
+                      self.watch = 0;
+                      RespawnTimer ();
+                      self = oself;
                      }           
 		other.view_ofs = '0 0 0';
 		other.angles = other.v_angle = pos.mangle;
