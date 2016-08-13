@@ -1293,7 +1293,7 @@ void () DropRing =
 	item.invisible_finished = self.invisible_finished - time;
 	item.flags = FL_ITEM;
 	item.touch = NewRing_touch;
-	item.noise = "announce/invis.wav";
+	item.noise = "items/inv1.wav";
 	item.nextthink = time + 60;
 	item.think = SUB_Remove;
 };
@@ -1335,7 +1335,7 @@ void () DropQuad =
 	item.solid = SOLID_TRIGGER;
 	item.movetype = MOVETYPE_TOSS;
 	item.touch = NewQuad_touch;
-	item.noise = "announce/quad.wav";
+	item.noise = "items/damage.wav";
 	item.glow_size = 150;
 	item.glow_color = 1232;
 	item.nextthink = time + 60;

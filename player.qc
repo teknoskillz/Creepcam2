@@ -611,6 +611,13 @@ void() PlayerDie =
 {
 	local	float	i;
 	
+           if (active_clients > 1)
+          {
+	if (self.super_time > 0) DropQuad ();
+	if (self.invisible_time > 0) 
+	DropRing ();
+          }
+          
 	self.items = self.items - (self.items & IT_INVISIBILITY);
 	self.invisible_finished = 0;	// don't die as eyes
 	self.invincible_finished = 0;
@@ -622,12 +629,7 @@ void() PlayerDie =
         self.respawn_time = time + CC_RESPAWN;
 	if (deathmatch || coop)
 		DropBackpack();
-          if (active_clients > -10)
-          {
-	if (self.super_time > 0) DropQuad ();
-	if (self.invisible_time > 0) 
-	DropRing ();
-          }
+         
 	self.weaponmodel = string_null;
 	self.view_ofs = '0 0 -8';
 	self.deadflag = DEAD_DYING;
