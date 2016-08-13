@@ -367,6 +367,13 @@ void() execute_changelevel =
 		other = nextent (world);
 	while (clienttype(other) == CLIENTTYPE_REAL)
 	{
+                     if (other.respawncam == 1)
+                     {
+                      other.clientcamera = other;
+	            other.respawncam = 0;
+	            other.think = PlayerPostThink;
+                      
+                     }           
 		other.view_ofs = '0 0 0';
 		other.angles = other.v_angle = pos.mangle;
 		other.fixangle = TRUE;		// turn this way immediately
