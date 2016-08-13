@@ -1145,7 +1145,7 @@ Go to the next weapon with ammo
 void() CycleWeaponCommand =
 {
     
-	local	float	it, am;
+	local	float	it, am, brk;
 	
 	it = self.items;
 	self.impulse = 0;
@@ -1153,7 +1153,8 @@ void() CycleWeaponCommand =
 	while (1)
 	{
 		am = 0;
-
+                    brk = brk + 1;
+                    if (brk > 1000000) break;
                     
 		if (self.weapon == IT_LIGHTNING)
 		{
@@ -1236,7 +1237,7 @@ Go to the prev weapon with ammo
 void() CycleWeaponReverseCommand =
 {
         
-	local float it, am;
+	local float it, am,brk;
 
 	it = self.items;
 	self.impulse = 0;
@@ -1245,6 +1246,8 @@ void() CycleWeaponReverseCommand =
 	{
 		am = 0;
                     
+                    brk = brk + 1;
+                    if (brk > 1000000) break;
 		if (self.weapon == IT_LIGHTNING)
 		{
 			self.weapon = IT_ROCKET_LAUNCHER;
