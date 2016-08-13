@@ -137,7 +137,9 @@ void() SetChangeParms =
         if (self.camtype > 0)
         parm9 = parm9 + CF_STAYASCAM;
         parm10 = self.watch;
-	
+        parm11 = self.respawncam;
+        parm12 = self.respawn_time;
+        parm12 = time - parm12;        
 };
 
 void() SetNewParms =
@@ -173,6 +175,8 @@ void() DecodeLevelParms =
 	
 	self.armortype = parm9 * 0.01;
 	self.watch = parm10;
+          parm11 = self.respawncam;
+          parm12 = self.respawn_time + time + 1; 
 	
 };
 
@@ -366,16 +370,7 @@ void() execute_changelevel =
 
 		other = nextent (world);
 	while (clienttype(other) == CLIENTTYPE_REAL)
-	{
-                     if (other.respawncam == 1) // Cobalt account for Respawn timer case
-                     {
-	            local entity oself;
-                      oself = self;
-                      self = other;
-                      self.watch = 0;
-                      RespawnTimer ();
-                      self = oself;
-                     }           
+	{ 
 		other.view_ofs = '0 0 0';
 		other.angles = other.v_angle = pos.mangle;
 		other.fixangle = TRUE;		// turn this way immediately
