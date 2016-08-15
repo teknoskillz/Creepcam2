@@ -697,8 +697,8 @@ void() PutClientInServer =
 	
       //CC_2
       
-	self.respawncam = 0;
-      self.respawn_time = 0;
+	self.respawncam = self.watch =  0;
+          self.respawn_time = 0;
 	self.classname = "player";
 	self.health = 100;
 	self.takedamage = DAMAGE_AIM;
