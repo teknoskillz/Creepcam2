@@ -522,7 +522,7 @@ void() respawn2 =
 		
   	        CC_ConfigureCamera();
 
-		if ( (!(self.enemy)) || self.enemy.movedir || (self.enemy == self) || ((self.enemy.solid == SOLID_BSP) && self.enemy != world) )  
+		if (self.enemy.movedir || self.enemy == self || self.enemy.solid == world.solid)  
 		{
 		
 		self.nextthink = time + 1;
