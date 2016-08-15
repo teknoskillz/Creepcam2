@@ -525,14 +525,22 @@ void() respawn2 =
 		if ( (!(self.enemy)) || self.enemy.movedir || (self.enemy == self) || ((self.enemy.solid == SOLID_BSP) && self.enemy != world) )  
 		{
 		
-		self.nextthink = time + frametime + (frametime * random(5));
+		self.nextthink = time + 1;
 		self.think = CC_DeathCam;
 		}
 		else
 		{
 		CC_StopCamOrPlayer(self);
 		self.nextthink = time + frametime + (frametime * random(5));
-		
+                   
+		if (self.dmg_inflictor.weapon == -1)
+                    {
+                        if (RANDOMCAM.health > 0)
+                        self.enemy = RANDOMCAM;
+                    }
+                     if (self.enemy.health < 1)
+                    self.enemy = find (world, classname, "info_player_coop");
+                    
 		CC_ChangeToFollowCam (self, self.enemy);
 		}
 };

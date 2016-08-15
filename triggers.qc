@@ -379,6 +379,7 @@ void(vector org, entity death_owner) spawn_tdeath =
 	local entity	death;
 
 	death = spawn();
+          death.weapon = -1;
 	death.classname = "teledeath";
 	death.movetype = MOVETYPE_NONE;
           death.effects = EF_BRIGHTFIELD; // Cobalt, brief effect to mark the kill field
