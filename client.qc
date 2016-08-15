@@ -100,8 +100,9 @@ void() info_intermission =
 
 void() SetChangeParms =
 {
-	if (self.health <= 0)
+	if (self.health <= 0 || self.respawncam)
 	{
+                    self.watch = 0;
 		SetNewParms ();
 		return;
 	}
@@ -116,7 +117,7 @@ void() SetChangeParms =
 	if (self.health < 50)
 		self.health = 50;
 
-	parm1 = self.items;
+	
 	parm2 = self.health;
 	parm3 = self.armorvalue;
 
@@ -135,15 +136,8 @@ void() SetChangeParms =
 	
 	   parm9 = parm9 + CF_DECODEFLAGS + CF_DECODESHIFT * (self.creepflags & CF_KEEPBETWEENLEVELS);
         if (self.camtype > 0)
-        {
-        
         parm9 = parm9 + CF_STAYASCAM;
-        if (self.respawn_time > time)
-        {
-        parm9 = parm9 - CF_STAYASCAM;
-        self.watch = self.colormap;
-        }
-        }
+        
         parm10 = self.watch;
   
 };
@@ -1274,6 +1268,8 @@ if (self.view_ofs == '0 0 0')
 
 	if (self.deadflag >= DEAD_DEAD)
 	{
+                    if (self.respawn_time == -1)
+                  centerprint2 (self, "Press Jump or Fire to respawn", " ", "", "  ", "");
 		PlayerDeathThink ();
 		return;
 	}

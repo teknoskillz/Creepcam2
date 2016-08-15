@@ -4,6 +4,8 @@ void (entity c) CC_StopBlink;
 
 void (entity c) CC_ChangeToAnyCam;
 
+void () PlayerDeathThink;
+
 void(entity c) CC_StopCamOrPlayer =
 {
 	local entity l;
@@ -587,18 +589,18 @@ void() CC_RequestNotCam =
 	//bprint(" ^3\n");
 	
 	c_count = c_count - 1;
-   numplayers = numplayers + 1;
+          numplayers = numplayers + 1;
 	CC_ChangeToPlayer(self);
-   stuffcmd(self,"crosshair 5\n");
+         stuffcmd(self,"crosshair 5\n");
 	if ((self.creepflags & CF_DOINGLONGMESSAGE) == 0)
 	centerprint(self, string_null);
 	
 	stuffcmd(self, "-showscores\n");
 
 	CC_ShowNameForAll(self);
-   self.owner = world;
+           self.owner = world;
  
-	self.think = PutClientInServer;
+	self.think = PlayerPreThink;
 	self.nextthink = time + frametime + (frametime * random(5));
 		if (!coop)
 	SetNewParms();

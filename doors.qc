@@ -62,7 +62,9 @@ void() door_blocked =
 
 void() door_hit_top =
 {
-	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+          local float p;
+          p = (random () * 5) + 102;
+	soundpitch (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM, p);
 	self.state = STATE_TOP;
 
 	if (self.spawnflags & DOOR_TOGGLE)
@@ -74,13 +76,18 @@ void() door_hit_top =
 
 void() door_hit_bottom =
 {
-	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+           local float p;
+          p = (rint(random () * 8)) + 90;
+	soundpitch (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM, p);
 	self.state = STATE_BOTTOM;
 };
 
 void() door_go_down =
 {
-	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
+
+   local float p;
+          p = (rint(random () * 5)) + 92;
+          soundpitch (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM, p);
 
 	if (self.max_health)
 	{
@@ -103,7 +110,9 @@ void() door_go_up =
 		return;
 	}
 	
-	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
+         local float p;
+          p = (rint(random () * 5)) + 92;
+          soundpitch (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM, p);
 	self.state = STATE_UP;
 	SUB_CalcMove (self.pos2, self.speed, door_hit_top);
 
@@ -129,7 +138,7 @@ void() door_fire =
 
 	// play use key sound
 	if (self.items)
-		sound (self, CHAN_ITEM, self.noise4, 1, ATTN_NORM);	// gb, door unlock sound bugfix
+          soundpitch (self, CHAN_ITEM, self.noise4, 1, ATTN_NORM, (rint(random () * 10) + 95)); // gb, door unlock sound bugfix
 
 	self.message = string_null;		// no more message
 	oself = self;

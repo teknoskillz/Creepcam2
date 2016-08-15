@@ -828,7 +828,7 @@ float (float mode, entity e1, entity e2) EntitiesTouching;
 float max_clients; // Cobalt track total number of allowed clients
 float active_clients; // Cobalt, total # of active players (includes cameras)
 float DEF_GIB_HEALTH = -18; // Cobalt lower gib value 
-
+void (entity client, string s, ...) centerprint2 = #73;
 
 
  
