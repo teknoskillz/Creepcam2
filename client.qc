@@ -141,7 +141,7 @@ void() SetChangeParms =
         if (self.respawn_time > time)
         {
         parm9 = parm9 - CF_STAYASCAM;
-        parm1 = IT_SHOTGUN | IT_AXE;
+        self.watch = self.colormap;
         }
         }
         parm10 = self.watch;
@@ -168,7 +168,8 @@ void() DecodeLevelParms =
 		if (world.model == "maps/start.bsp")
 			SetNewParms ();		// take away all stuff on starting new episode
 	}
-	
+	self.watch = parm10;
+         
 	self.spawnitems = self.items = parm1;
 	self.spawnhealth =self.health = parm2;
 	self.spawnarmorvalue = self.armorvalue = parm3;
@@ -180,7 +181,7 @@ void() DecodeLevelParms =
 	
 	
 	self.armortype = parm9 * 0.01;
-	self.watch = parm10;
+	
 
 };
 
