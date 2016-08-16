@@ -239,6 +239,11 @@ entity() FindIntermission =
 string nextmap;
 void() GotoNextMap =
 {
+          if (ShubKiller)
+          {
+          nextmap = "maps/start.bsp";
+          serverflags = 0;
+          }          
 	if (cvar("samelevel"))	// if samelevel is set, stay on same level
 		changelevel (mapname);
 
@@ -353,6 +358,12 @@ When the player presses attack or jump, change to the next level
 ============*/
 void() IntermissionThink =
 {
+          
+          if (self == ShubKiller && time < intermission_exittime)
+          {
+          if (self.button0 || self.button1 || self.button2)          
+            intermission_exittime = time;
+          }
 	if (time < intermission_exittime)
 		return;
 
@@ -1661,11 +1672,13 @@ void(entity targ, entity attacker) ClientObituary =
 	attackerteam = attacker.team;
 	targteam = targ.team;
 
-          if (targ.classname == "monster_oldone") // Cobalt Mark who killed Shub
+          // Cobalt Mark who killed Shub from QIP104
+          if (targ.classname == "monster_oldone")
 	{
 		if (attacker.owner)
-			targ.wait = attacker.owner.colormap;
+			ShubKiller = attacker.owner;
 	}
+          
           
 	rnum = random();
           if (attacker.killstring && (attacker.flags & FL_MONSTER)) // Cobalt Optimized and fixed

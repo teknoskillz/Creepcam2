@@ -264,10 +264,10 @@ void() finale_4 =
 	n.frame = 1;
 
            // Cobalt locate Shubkiller and copy his colormap
-          ShubKiller = findfloat (world, colormap, self.wait);
+         
           if (ShubKiller)
           {
-          ShubKiller.skin = n.skin;
+          n.skin = ShubKiller.skin;
 	n.colormap = ShubKiller.colormap;
           }
 	remove (self);
