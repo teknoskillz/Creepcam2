@@ -825,6 +825,13 @@ potential spawning position for coop games
 */
 void() info_player_coop =
 {
+if (world.model == "maps/end.bsp")
+{
+self.movetype = MOVETYPE_BOUNCEMISSILE;
+self.velocity_z = 96;
+setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);          
+}
+          
 };
 
 /*
