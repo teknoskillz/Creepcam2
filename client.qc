@@ -1863,7 +1863,7 @@ void(entity targ, entity attacker) ClientObituary =
 		}
 		else
 		{
-			targ.frags = targ.frags - 1;		// killed self
+		targ.frags = targ.frags - (2 * (skill + 1)));		// killed self
 			rnum = targ.watertype;
 
 			bprint (targ.netname);
