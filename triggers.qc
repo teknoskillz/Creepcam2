@@ -370,6 +370,8 @@ void() tdeath_touch =
 	if (other.health)
 	{
 		T_Damage (other, self, self, 50000);
+                    if (other.classname == "monster_oldone")
+                    ShubKiller = self.owner;
 	}
 };
 
