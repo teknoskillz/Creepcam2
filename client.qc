@@ -100,7 +100,7 @@ void() info_intermission =
 
 void() SetChangeParms =
 {
-	if (self.health <= 0 || self.respawncam)
+	if (self.health <= 0 || self.respawncam > 0)
 	{
                     self.watch = 0;
 		SetNewParms ();
@@ -117,42 +117,37 @@ void() SetChangeParms =
 	if (self.health < 50)
 		self.health = 50;
 
-	
-	parm2 = self.health;
-	parm3 = self.armorvalue;
-
-	if (self.ammo_shells < 25)
-		parm4 = 25;
-
-	else
-		parm4 = self.ammo_shells;
-
-	parm5 = self.ammo_nails;
-	parm6 = self.ammo_rockets;
-	parm7 = self.ammo_cells;
-	parm8 = self.weapon;
+          if (self.ammo_shells < 25)
+		self.ammo_shells = 25;
+          parm1 = self.items;        // no encoding - items is potentially 24 bits
+          parm2 = encode(self.ammo_shells, self.armorvalue, self.health); //  ammo shells, armorvalue, health
+          parm3 = encode(self.ammo_cells, self.ammo_rockets, self.ammo_nails); // Cells, Rockets, nails
+          parm4 = encode(0, self.armortype * 100, self.weapon); // now holds nothing , armortype, weapon
+          parm5 = self.frags;
 	parm9 = self.armortype * 100;
 	
 	
-	   parm9 = parm9 + CF_DECODEFLAGS + CF_DECODESHIFT * (self.creepflags & CF_KEEPBETWEENLEVELS);
+	parm9 = parm9 + CF_DECODEFLAGS + CF_DECODESHIFT * (self.creepflags & CF_KEEPBETWEENLEVELS);
         if (self.camtype > 0)
         parm9 = parm9 + CF_STAYASCAM;
         
         parm10 = self.watch;
-  
+       
 };
 
 void() SetNewParms =
 {
 	parm1 = IT_SHOTGUN | IT_AXE;
-	parm2 = 100;
-	parm3 = 0;
-	parm4 = 25;
+	parm2 = encode(25, 0, 100); //  ammo shells, armorvalue, shells
+          parm3 = 0; // dont need to encode 0 values - was armorvalue
+          parm4 = 1; //  sg Weapon only
 	parm5 = 0;
 	parm6 = 0;
 	parm7 = 0;
-	parm8 = 1;
+	parm8 = 0;
 	parm9 = 0;
+          parm10 = 0;
+          parm11 = 0;
 };
 
 void() DecodeLevelParms =
@@ -162,21 +157,40 @@ void() DecodeLevelParms =
 		if (world.model == "maps/start.bsp")
 			SetNewParms ();		// take away all stuff on starting new episode
 	}
+          self.spawns += 1;
+          
+           self.items = parm1;
+    // These 3 now kept in parm 2 
+    self.health = decode(parm2, LOW8);
+    self.armorvalue = decode(parm2, MID8);
+    self.ammo_shells = decode(parm2, HI8);
+    // these 3 now kept in parm 3
+    self.ammo_nails = decode(parm3, LOW8);
+    self.ammo_rockets = decode(parm3, MID8);
+    self.ammo_cells = decode(parm3, HI8);
+    // These 2 now kept in parm 4, Parm 5 and 6 now freed
+    self.weapon = decode(parm4, LOW8);
+    self.armortype = decode(parm4, MID8) * 0.01;
+       
+          
 	self.watch = parm10;
-         
-	self.spawnitems = self.items = parm1;
-	self.spawnhealth =self.health = parm2;
-	self.spawnarmorvalue = self.armorvalue = parm3;
-	self.spawnammo_shells = self.ammo_shells = parm4;
-	self.spawnammo_nails = self.ammo_nails = parm5;
-	self.spawnammo_rockets = self.ammo_rockets = parm6;
-	self.spawnammo_cells = self.ammo_cells = parm7;
-	self.spawnweapon = self.weapon = parm8;
+          
+          
+             if (self.spawns == 1 && world.model != "maps/start.bsp")
+          {
+          self.frags = parm5;
+          self.spawnitems = self.items;
+	self.spawnhealth = self.health;
+	self.spawnarmorvalue = self.armorvalue;
+	self.spawnammo_shells = self.ammo_shells;
+	self.spawnammo_nails = self.ammo_nails;
+	self.spawnammo_rockets = self.ammo_rockets;
+	self.spawnammo_cells = self.ammo_cells;
+	self.spawnweapon = self.weapon;
+	self.spawnarmortype = self.armortype;
+          }
 	
-	
-	self.armortype = parm9 * 0.01;
-	
-
+           
 };
 
 /*============
@@ -1268,8 +1282,7 @@ if (self.view_ofs == '0 0 0')
 
 	if (self.deadflag >= DEAD_DEAD)
 	{
-                    if (self.respawn_time == -1)
-                  centerprint2 (self, "Press Jump or Fire to respawn", " ", "", "  ", "");
+                
 		PlayerDeathThink ();
 		return;
 	}
@@ -1637,6 +1650,7 @@ called when a player dies
 ============*/
 void(entity targ, entity attacker) ClientObituary =
 {
+
 	local	float rnum;
 	local	string deathstring, deathstring2;
 	deathstring = deathstring2 = string_null;
@@ -1648,8 +1662,14 @@ void(entity targ, entity attacker) ClientObituary =
 	targteam = targ.team;
 
 	rnum = random();
-
-	if (targ.classname == "player")
+          if (attacker.killstring && (attacker.flags & FL_MONSTER)) // Cobalt Optimized and fixed
+			{//gnounc
+                                
+			      bprint (targ.netname);
+				bprint (attacker.killstring);
+			
+			}
+	else if (targ.classname == "player")
 	{
 		if (attacker.classname == "teledeath")
 		{
@@ -1674,13 +1694,14 @@ void(entity targ, entity attacker) ClientObituary =
 			return;
 		}
 
+                      
 		if (attacker.classname == "player" || attacker.killstring) // Cobalt optimized removed FL_MONSTER
 		{
-		
+		        
 			if (targ == attacker)
 			{
 				// killed self
-				attacker.frags = attacker.frags - 1;
+				attacker.frags = attacker.frags - (5 * (skill + 1));
 				bprint (targ.netname);
 				
 				if (targ.weapon == 64 && targ.waterlevel > 1)
@@ -1696,17 +1717,23 @@ void(entity targ, entity attacker) ClientObituary =
 
 					return;
 				}
-				if (targ.weapon == 16)
+				if (targ.weapon == 16 && (random () < (1/3)))
 					bprint (" tries to put the pin back in\n");
-				else if (rnum)
+				else if (rnum < (1/3))
 					bprint (" becomes bored with life\n");
 				else
 					bprint (" checks if his weapon is loaded\n");
 				return;
 			}
-			else if ( (teamplay == 2) && (targteam == attackerteam) &&
-				(attackerteam != 0) )	// gb
+			else if (coop)
 			{
+                                      
+                              
+                                        
+                                        attacker.frags = attacker.frags - (0 - targ.health);
+                                        CC_PlayerKilledPlayer(targ, attacker.owner); // PRIME Creepcam
+                                        if (random () < 0.5)
+                                        {
 				if (rnum < 0.25)
 					deathstring = " mows down a teammate\n";
 
@@ -1714,37 +1741,18 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring = " checks his glasses\n";
 
 				else if (rnum < 0.75)
-					deathstring = " gets a frag for the other team\n";
+					deathstring = " gets a frag for the monsters\n";
 
 				else
 					deathstring = " loses another friend\n";
 
 				bprint (attacker.netname);
 				bprint (deathstring);
-				attacker.frags = attacker.frags - 1;
-				CC_PlayerKilledPlayer(targ, attacker.owner); // PRIME Creepcam
-				return;
-			}
-
-			else
-			{
 				
-				CC_PlayerKilledPlayer(targ, attacker.owner); // PRIME Creepcam
+				return;
+				}		
 
 				rnum = attacker.weapon;
-
-					//FIXME string_nul ??? maybe not necessary	//gnounc
-			if(attacker.killstring) // Cobalt Optimized and fixed
-			{//gnounc
-			      bprint (targ.netname);
-				bprint (attacker.killstring);
-				return;
-			}
-				// Cobalt penalty for killing player in coop
-				if (coop && ((clienttype(attacker)) == (clienttype(targ))))
-				attacker.frags = attacker.frags - 1;
-				else
-				attacker.frags = attacker.frags + 1;
 				
 				if (rnum == IT_AXE)
 				{
@@ -1907,5 +1915,10 @@ void(entity targ, entity attacker) ClientObituary =
 			bprint (" died\n");
 		}
 	}
+        else if (targ.flags & FL_MONSTER)
+             calc_mfrags (attacker,targ);           
+                    		
+		
+        
 };
  

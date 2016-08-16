@@ -451,6 +451,55 @@ void(float chance) CAN_GibZombie =
         chance = random (3);
         delta = self.enemy.origin - self.origin;
         if (vlen(delta) <= 60)
-            if (skill >= chance) // Cobalt edit to meet skill
+            if ((cvar("skill")) >= chance) // Cobalt edit to meet skill
                 T_Damage (self.enemy, self, self, self.enemy.health);
 };
+
+
+void (entity atk, entity trg) calc_mfrags =
+{
+
+          local float score;
+          if (trg.classname == "monster_army")
+              score = 3;
+          else if (trg.classname == "monster_demon1")
+                  score = 6;
+          else if (trg.classname == "monster_dog")
+                  score = 1;    
+          else if (trg.classname == "monster_enforcer")
+                   score = 4;
+          else if (trg.classname == "monster_fish")
+              score = 1;
+          else if (trg.classname == "monster_hell_knight")
+                    score = 5;
+               
+          else if (trg.classname == "monster_knight")
+                score = 4;
+          else if (trg.classname == "monster_ogre")
+               score = 5;
+          else if (trg.classname == "monster_oldone")
+              score = 500;
+          else if (trg.classname == "monster_shalrath")
+              score = 7;
+          else if (trg.classname == "monster_shambler")
+              score = 9;
+          else if (trg.classname == "monster_tarbaby")
+             score = 12;
+          else if (trg.classname == "monster_wizard")
+              score = 2;
+          else if (trg.classname == "monster_zombie")
+                    score = 1;
+         else if (trg.classname == "monster_boss")
+              score = 100;
+          
+          if (trg.deadflag == -1)
+              score = score * 1.25;
+    
+          if (skill > 1)
+           score = score * skill;
+          atk.frags = atk.frags + rint(score); 
+
+          
+          
+};
+ 

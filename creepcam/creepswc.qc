@@ -350,6 +350,7 @@ void() CC_ConfigureCamera =
 	self.velocity = VEC_ORIGIN;
 	self.flags = FL_NOTARGET | FL_CLIENT;
 	self.show_hostile = -1;
+          if (!(self.respawncam))
 	self.frags = 0;
 	setmodel(self, "progs/player.mdl");
 	hack = self.modelindex;
@@ -591,16 +592,16 @@ void() CC_RequestNotCam =
 	c_count = c_count - 1;
           numplayers = numplayers + 1;
 	CC_ChangeToPlayer(self);
-         stuffcmd(self,"crosshair 5\n");
+          stuffcmd(self,"crosshair 5\n");
 	if ((self.creepflags & CF_DOINGLONGMESSAGE) == 0)
 	centerprint(self, string_null);
 	
 	stuffcmd(self, "-showscores\n");
 
 	CC_ShowNameForAll(self);
-           self.owner = world;
+          self.owner = world;
  
-	self.think = PlayerPreThink;
+	self.think = PutClientInServer;
 	self.nextthink = time + frametime + (frametime * random(5));
 		if (!coop)
 	SetNewParms();

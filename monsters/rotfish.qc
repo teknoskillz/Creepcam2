@@ -139,7 +139,12 @@ void() f_death1 =[      $death1,        f_death2        ]
 	sound (self, CHAN_VOICE, "fish/death.wav", 1, ATTN_NORM);
 };
 
-void() f_death2 =[      $death2,        f_death3        ] {self.solid = SOLID_NOT;};	// gb, become nonsolid faster
+void() f_death2 =[      $death2,        f_death3        ] {
+          self.solid = SOLID_NOT;
+          self.movetype = MOVETYPE_FLY;
+          self.velocity_z = self.health;
+          self.avelocity = crandom() * '40 60 25';
+};	// gb, become nonsolid faster
 void() f_death3 =[      $death3,        f_death4        ] {};
 void() f_death4 =[      $death4,        f_death5        ] {};
 void() f_death5 =[      $death5,        f_death6        ] {};

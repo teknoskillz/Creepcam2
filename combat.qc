@@ -110,7 +110,7 @@ void(entity targ, entity attacker) Killed =
 		self.nextthink = time + 1;
 		CC_StopCamOrPlayer(self);
 	}
-
+          if ((targ.flags & FL_MONSTER) || (targ.flags & FL_CLIENT))
 	ClientObituary(self, attacker);
 	
 	self.takedamage = DAMAGE_NO;

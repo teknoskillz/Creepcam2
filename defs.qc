@@ -421,7 +421,7 @@ entity	newmis;			// launch_spike sets this after spawning it
 entity	activator;		// the entity that activated a trigger or brush
 
 entity	damage_attacker;	// set by T_Damage
-float	framecount;
+float	framecount,uptime;
 
 float		skill;
 
@@ -779,7 +779,7 @@ float WATCHING;  // propogate cam target to next level
 float CC_RESPAWN; // CC respawn timer val
 
 // Alternate Setspawnparms to prevent parm9 interference
-.float spawnitems,spawnhealth,spawnarmorvalue,spawnammo_shells,spawnammo_nails,spawnammo_rockets,spawnammo_cells,spawnweapon;
+.float spawns,spawnitems,spawnhealth,spawnarmorvalue,spawnarmortype,spawnammo_shells,spawnammo_nails,spawnammo_rockets,spawnammo_cells,spawnweapon;
 .float took_damage;
 
 float c_max /* = 0.000 */;

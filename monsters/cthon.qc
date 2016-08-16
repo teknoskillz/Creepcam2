@@ -326,7 +326,7 @@ void() boss_awake =
 	self.view_pos = spawn ();
 	  self.view_pos.aiment = self;
 	  self.view_pos.movetype = MOVETYPE_FOLLOW;
-	self.view_pos.effects = EF_BRIGHTFIELD;
+	//self.view_pos.effects = EF_BRIGHTFIELD;
 	
 };
 

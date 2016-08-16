@@ -1,6 +1,7 @@
 ../progs.dat
 defs.qc
 extras/dpextensions.qc
+helpers/mathlib.qc // Cobalt 
 subs.qc
 creepcam/creepmov.qc
 creepcam/creepswc.qc

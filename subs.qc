@@ -346,6 +346,7 @@ void () CC_Spawnparms =
 {
 	self.items = self.spawnitems;
 	self.health =self.spawnhealth;
+          self.armortype = self.spawnarmortype;
 	self.armorvalue = self.spawnarmorvalue;
 	self.ammo_shells = self.spawnammo_shells;
 	self.ammo_nails = self.spawnammo_nails;

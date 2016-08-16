@@ -70,14 +70,7 @@ void makevectors2(vector ang) =
 	makevectors(ang);
 };
 
-float(float v) anglemod =
-{
-	while (v >= 360)
-		v = v - 360;
-	while (v < 0)
-		v = v + 360;
-	return v;
-};
+
 
 /*
 ==============================================================================

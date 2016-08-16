@@ -404,7 +404,7 @@ if (!framecount) registercvar ("respawntimer", "15");
 	CC_RESPAWN = cvar ("respawntimer");
 	skill = cvar("skill");
 	framecount = framecount + 1;
-	
+	uptime = framecount * frametime;
 // Cobalt CC_2 lock camera angles when in worldcam
 if (framecount > 100)
 {	
