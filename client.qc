@@ -1664,10 +1664,20 @@ void(entity targ, entity attacker) ClientObituary =
 	rnum = random();
           if (attacker.killstring && (attacker.flags & FL_MONSTER)) // Cobalt Optimized and fixed
 			{//gnounc
-                                
+                                if (targ.flags & FL_CLIENT)
+                                {
+                                targ.frags = targ.frags - ((0 - targ.health)  * (skill + 1));
 			      bprint (targ.netname);
 				bprint (attacker.killstring);
-			
+                                }
+                                if (targ.flags & FL_MONSTER)
+                                {
+                                          bprint ("A ");
+                                bprint (targ.netname);
+				bprint (attacker.killstring);          
+                                          
+                                }
+                                
 			}
 	else if (targ.classname == "player")
 	{
