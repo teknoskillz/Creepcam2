@@ -132,6 +132,10 @@ void() finale_1 =
 	local entity	pos, pl;
 	local entity	timer;
 
+          // 1998-07-30 Shub kill count fix by Maddes  start
+	killed_monsters = killed_monsters + 1;
+	WriteByte (MSG_ALL, SVC_KILLEDMONSTER);	// FIXME: reliable broadcast
+          // 1998-07-30 Shub kill count fix by Maddes  end
 	intermission_exittime = time + 10000000;	// never allow exit
 	intermission_running = 1;
 
@@ -259,6 +263,13 @@ void() finale_4 =
 	n.angles = '0 290 0';
 	n.frame = 1;
 
+           // Cobalt locate Shubkiller and copy his colormap
+          ShubKiller = findfloat (world, colormap, self.wait);
+          if (ShubKiller)
+          {
+          ShubKiller.skin = n.skin;
+	n.colormap = ShubKiller.colormap;
+          }
 	remove (self);
 
 // switch cd track
@@ -314,3 +325,4 @@ void() monster_oldone =
 
 
 
+ 

@@ -1661,6 +1661,12 @@ void(entity targ, entity attacker) ClientObituary =
 	attackerteam = attacker.team;
 	targteam = targ.team;
 
+          if (targ.classname == "monster_oldone") // Cobalt Mark who killed Shub
+	{
+		if (attacker.owner)
+			targ.wait = attacker.owner.colormap;
+	}
+          
 	rnum = random();
           if (attacker.killstring && (attacker.flags & FL_MONSTER)) // Cobalt Optimized and fixed
 			{//gnounc
@@ -1863,7 +1869,7 @@ void(entity targ, entity attacker) ClientObituary =
 		}
 		else
 		{
-		targ.frags = targ.frags - (2 * (skill + 1)));		// killed self
+		targ.frags = targ.frags - (2 * (skill + 1));		// killed self
 			rnum = targ.watertype;
 
 			bprint (targ.netname);
