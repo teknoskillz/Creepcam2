@@ -216,7 +216,7 @@ void() finale_4 =
 	local entity	n;
 
 	sound (self, CHAN_VOICE, "boss2/pop2.wav", 1, ATTN_NORM);
-	
+	ShubKiller = self.dmg_inflictor.owner;
 	oldo = self.origin;
 
 	z = 16;
@@ -269,6 +269,7 @@ void() finale_4 =
           {
           n.skin = ShubKiller.skin;
 	n.colormap = ShubKiller.colormap;
+          n.effects = 520;
           }
 	remove (self);
 

@@ -1672,12 +1672,6 @@ void(entity targ, entity attacker) ClientObituary =
 	attackerteam = attacker.team;
 	targteam = targ.team;
 
-          // Cobalt Mark who killed Shub from QIP104
-          if (targ.classname == "monster_oldone")
-	{
-		if (attacker.owner)
-			ShubKiller = attacker.owner;
-	}
           
           
 	rnum = random();
