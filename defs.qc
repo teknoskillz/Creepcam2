@@ -773,6 +773,7 @@ float CF_STAYASCAM    = 512.000;
 float SPAM_TIMEINTERVAL    = 3.000;
 float SPAM_ACTIONLIMIT    = 10.000;
 
+entity	shub; // Cobalt moved here to better detect shub
 // CC_2
 .float watch; // colormap of  CC target
 float WATCHING;  // propogate cam target to next level
@@ -829,6 +830,7 @@ float max_clients; // Cobalt track total number of allowed clients
 float active_clients; // Cobalt, total # of active players (includes cameras)
 float DEF_GIB_HEALTH = -18; // Cobalt lower gib value 
 void (entity client, string s, ...) centerprint2 = #73;
-
+.float gravity;
+vector intv;
 
  

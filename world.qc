@@ -368,7 +368,10 @@ void() worldspawn =
 	
 	 // CC_2
 	cvar_set ("coop", "1");
-          
+          world.noise1 = "misc/null.wav";
+          localcmd ("sv_sound_watersplash ");
+          localcmd (world.noise1);
+          localcmd ("\n");
           
           local entity ent;
 
@@ -414,10 +417,13 @@ slot = nextent (slot);
 while (clienttype (slot) == CLIENTTYPE_REAL)
 {
           qc = qc + 1;
-	if (slot.classname == "camera") 	
+	if (slot.classname == "camera")
+          {
+          if (intv)
+          slot.think = CC_RequestNotCam;                   
 	if (!slot.button0 && slot.state != 1)
 	slot.fixangle = 1;
-	
+          }	
 	slot = nextent (slot);
 	
 	}

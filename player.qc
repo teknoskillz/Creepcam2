@@ -548,6 +548,11 @@ void(string gibname, float dm) ThrowGib =
 
 	new = spawn();
 	new.origin = self.origin;
+          if (self == shub && (random () < 0.2))
+          {
+          gibname = self.model;
+          new.scale = (1/10);
+          }
 	setmodel (new, gibname);
 	setsize (new, '0 0 0', '0 0 0');
 	new.velocity = VelocityForDamage (dm);

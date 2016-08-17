@@ -100,13 +100,17 @@ void() info_intermission =
 
 void() SetChangeParms =
 {
-	if (self.health <= 0 || self.respawncam > 0)
-	{
+          // Cobalt - Prevent respawn cams from glitching between levels,
+          // Award ShubKiller their stuff if restarting new game
+	if (self.health <= 0 || self.respawncam > 0 && ShubKiller != self)
+	{ 
                     self.watch = 0;
 		SetNewParms ();
-		return;
+                    return;	
 	}
- 
+
+           
+          
 // remove items
 	self.items = self.items - (self.items & (IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD) );
 	
@@ -116,7 +120,13 @@ void() SetChangeParms =
 
 	if (self.health < 50)
 		self.health = 50;
-
+          
+             if (ShubKiller == self) // Cobalt award for Shubkiller
+             {
+                self.items = self.items | IT_ARMOR3;
+                self.armorvalue = 200;
+                self.armortype = 0.8;
+             }
           if (self.ammo_shells < 25)
 		self.ammo_shells = 25;
           parm1 = self.items;        // no encoding - items is potentially 24 bits
@@ -152,9 +162,12 @@ void() SetNewParms =
 
 void() DecodeLevelParms =
 {
-	if (serverflags)
-	{
-		if (world.model == "maps/start.bsp")
+	if (world.model == "maps/start.bsp")
+          {
+                    local float at,av; // Check to see if player is ShubKiller from last level
+                    av = decode(parm2, MID8);
+                    at = decode(parm4, MID8) * 0.01;
+                    if (av != 200 && at != 0.8)
 			SetNewParms ();		// take away all stuff on starting new episode
 	}
           self.spawns += 1;
@@ -239,9 +252,9 @@ entity() FindIntermission =
 string nextmap;
 void() GotoNextMap =
 {
-          if (ShubKiller)
+          if (clienttype (ShubKiller) == CLIENTTYPE_REAL || self == shub)
           {
-          nextmap = "maps/start.bsp";
+          nextmap = "start";
           serverflags = 0;
           }          
 	if (cvar("samelevel"))	// if samelevel is set, stay on same level
@@ -364,6 +377,9 @@ void() IntermissionThink =
           if (self.button0 || self.button1 || self.button2)          
             intermission_exittime = time;
           }
+          if (ShubKiller && self.viewzoom < 1.5 && (time > shub.lip))
+          self.viewzoom = self.viewzoom + (1/200);
+          
 	if (time < intermission_exittime)
 		return;
 
@@ -1669,7 +1685,7 @@ called when a player dies
 void(entity targ, entity attacker) ClientObituary =
 {
 
-	local	float rnum;
+	local	float rnum, clc;
 	local	string deathstring, deathstring2;
 	deathstring = deathstring2 = string_null;
 	// From GPL QW source
@@ -1686,13 +1702,18 @@ void(entity targ, entity attacker) ClientObituary =
 			{//gnounc
                                 if (targ.flags & FL_CLIENT)
                                 {
-                                targ.frags = targ.frags - ((0 - targ.health)  * (skill + 1));
+                                clc = ((0 - targ.health)  * (skill + 1)); 
+                                targ.frags = targ.frags - clc;
 			      bprint (targ.netname);
 				bprint (attacker.killstring);
                                 }
                                 if (targ.flags & FL_MONSTER)
                                 {
                                           bprint ("A ");
+                                bprint (targ.netname);
+                                bprint (" fought it out with a ");
+                                bprint (attacker.netname);
+                                bprint (" and the ");
                                 bprint (targ.netname);
 				bprint (attacker.killstring);          
                                           
@@ -1731,7 +1752,9 @@ void(entity targ, entity attacker) ClientObituary =
 			if (targ == attacker)
 			{
 				// killed self
-				attacker.frags = attacker.frags - (5 * (skill + 1));
+                                        clc = (5 * (skill + 1));
+                                        SUB_InfoBar (targ,targ,clc);
+				attacker.frags = attacker.frags - clc;
 				bprint (targ.netname);
 				
 				if (targ.weapon == 64 && targ.waterlevel > 1)
@@ -1758,10 +1781,17 @@ void(entity targ, entity attacker) ClientObituary =
 			else if (coop)
 			{
                                       
-                              
-                                        
-                                        attacker.frags = attacker.frags - (0 - targ.health);
+                                       // Killed by teammate or trap
+                                         clc = (0 - targ.health);
+                                          SUB_InfoBar (targ,attacker,clc);
+                                        attacker.frags = attacker.frags - clc;
                                         CC_PlayerKilledPlayer(targ, attacker.owner); // PRIME Creepcam
+                                        if (attacker.killstring)
+                                        {
+                                        bprint (targ.netname);
+                                        bprint (attacker.killstring);
+                                        return;
+                                        }
                                         if (random () < 0.5)
                                         {
 				if (rnum < 0.25)
@@ -1929,6 +1959,9 @@ void(entity targ, entity attacker) ClientObituary =
 
 			if (attacker.solid == SOLID_BSP && attacker != world)
 			{	
+                                        if (shub)
+                                        bprint (" was impaled\n");      
+                                        else
 				bprint (" was squished\n");
 				return;
 			}

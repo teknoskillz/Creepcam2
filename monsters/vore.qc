@@ -190,7 +190,12 @@ void() ShalHome =
 {
 	local vector	dir, vtemp;
 	vtemp = self.enemy.origin + '0 0 10';
-
+          
+          if (self.enemy.classname != "player") // Cobalt, in case enemy dies and is a Camera
+          {
+          self.touch ();
+          return;          
+          }
 	if (self.enemy.health < 1)
 	{
 		remove(self);
@@ -239,6 +244,11 @@ void() ShalMissileTouch =
 */
 void() monster_shalrath =
 {
+          if (mapname == "end" && (random () < 0.2))
+          {
+           monster_tarbaby ();
+           return;           
+          }
 	if (deathmatch)
 	{
 		remove(self);
@@ -282,3 +292,4 @@ void() monster_shalrath =
     CC_AddtoList (self);	
 
 };
+ 

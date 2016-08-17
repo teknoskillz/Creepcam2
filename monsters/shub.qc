@@ -35,7 +35,7 @@ void() finale_3;
 void() finale_4;
 
 
-entity	shub;
+
 
 $frame old1 old2 old3 old4 old5 old6 old7 old8 old9 
 $frame old10 old11 old12 old13 old14 old15 old16 old17 old18 old19 
@@ -132,10 +132,7 @@ void() finale_1 =
 	local entity	pos, pl;
 	local entity	timer;
 
-          // 1998-07-30 Shub kill count fix by Maddes  start
-	killed_monsters = killed_monsters + 1;
-	WriteByte (MSG_ALL, SVC_KILLEDMONSTER);	// FIXME: reliable broadcast
-          // 1998-07-30 Shub kill count fix by Maddes  end
+
 	intermission_exittime = time + 10000000;	// never allow exit
 	intermission_running = 1;
 
@@ -150,27 +147,28 @@ void() finale_1 =
 	if (!pl)
 		error ("no teleporttrain");
 	remove (pl);
-
+          intv = pos.origin;
 	WriteByte (MSG_ALL, SVC_FINALE);
 	WriteString (MSG_ALL, string_null);
 
-	pl = find (world, classname, "player");
+	pl = findflags (world, flags, FL_CLIENT);
 
 	while (pl != world)
 	{
 		pl.view_ofs = '0 0 0';
 		pl.angles = other.v_angle = pos.mangle;
 		pl.fixangle = TRUE;		// turn this way immediately
-		pl.map = self.map;
+		pl.map = self.map;                  
 		pl.nextthink = time + 0.5;
 		pl.takedamage = DAMAGE_NO;
 		pl.solid = SOLID_NOT;
 		pl.movetype = MOVETYPE_NONE;
 		pl.modelindex = 0;
 		setorigin (pl, pos.origin);
-		pl = find (pl, classname, "player");
+		pl = findflags (pl, flags, FL_CLIENT);
 	}	
 	
+          
 	// make fake versions of all players as standins, and move the real
 	// players to the intermission spot
 	
@@ -207,6 +205,69 @@ void() finale_3 =
 	lightstyle(0, "abcdefghijklmlkjihgfedcb");	
 };
 
+void () landing_touch =
+{
+if (other == world)
+self.frame = (random () * 39) + 103;           
+if (other.flags & FL_MONSTER)
+if (other.health > 0)
+{
+self.frame = 37;
+T_Damage (other, self, self.owner, (100 + other.health));
+self.movetype = MOVETYPE_STEP;
+self.gravity = 0;
+self.velocity_z = self.jump_flag / -1.5;          
+}
+};
+void () team_teleport = 
+{
+
+         
+          local float loop, rev, x;
+          local entity slot,img;
+          x = 56;
+          slot = nextent (world);
+          makevectors (self.angles);
+          while (slot.colormap <= active_clients)
+          {
+          loop = loop + 1;
+          if (loop > 2)
+          x = x + 96;
+          
+          if (slot.colormap != self.colormap && (slot.flags & FL_CLIENT))
+          {
+          if (loop & 1)
+          rev = -1;
+          else rev = 1;
+          img = spawn ();
+          setmodel (img, "progs/player.mdl");
+          img.gravity = 5;
+          img.classname = "image";
+          setsize (img, VEC_HULL_MIN, VEC_HULL_MAX);
+          img.colormap = slot.colormap;
+          img.owner = slot;
+          img.solid = SOLID_SLIDEBOX;
+          img.movetype = MOVETYPE_FLY;
+          img.velocity_z = (vlen (img.size)) * -2;
+          img.jump_flag = img.velocity_z;
+          img.effects = 512;
+          img.touch = landing_touch;
+          img.angles = vectoangles (intv - self.origin);
+          img.frame = 73;         
+          setorigin (img, (self.origin + v_up * 512 + (v_right* 32 * rev) + (v_forward * x * -1)));
+          te_teleport (img.origin);
+          }
+        
+          slot = nextent (slot);
+         
+          }    
+           self.think = world.think;
+           shub.lip = time + 3; // Cobalt double up on this float as its not needed tright now
+};
+          
+          
+          
+
 void() finale_4 =
 {
 	// throw tons of meat chunks	
@@ -216,7 +277,7 @@ void() finale_4 =
 	local entity	n;
 
 	sound (self, CHAN_VOICE, "boss2/pop2.wav", 1, ATTN_NORM);
-	ShubKiller = self.dmg_inflictor.owner;
+
 	oldo = self.origin;
 
 	z = 16;
@@ -261,7 +322,7 @@ void() finale_4 =
 	oldo = oldo - '32 264 0';
 	setorigin (n, oldo);
 	n.angles = '0 290 0';
-	n.frame = 1;
+	n.frame = (random () * 2) + 70;
 
            // Cobalt locate Shubkiller and copy his colormap
          
@@ -270,18 +331,44 @@ void() finale_4 =
           n.skin = ShubKiller.skin;
 	n.colormap = ShubKiller.colormap;
           n.effects = 520;
+           if (active_clients > 1)
+          {
+          n.think = team_teleport;
+          n.nextthink = time + 3 + (1/3);
           }
-	remove (self);
+          
+          }
+          setmodel (self,"");
+          
+          self.think = GotoNextMap;
+          self.nextthink = time + 999999;
 
 // switch cd track
-	WriteByte (MSG_ALL, SVC_CDTRACK);
+WriteByte (MSG_ALL, SVC_CDTRACK);
+if (framecount & 1)
+{
+
+	
+	WriteByte (MSG_ALL, 2);
 	WriteByte (MSG_ALL, 3);
-	WriteByte (MSG_ALL, 3);
-	lightstyle(0, "m");	
+}
+else
+{
+WriteByte (MSG_ALL, 9);
+	WriteByte (MSG_ALL, 10);          
+}
+          
+          lightstyle(0, "m");	
 };
 
 //============================================================================
+void (entity a, float d) shub_pain =
+{
 
+                       
+self.velocity_z = self.dmg_take;                    
+          
+};
 
 /*QUAKED monster_oldone (1 0 0) (-16 -16 -24) (16 16 32)
 */
@@ -315,7 +402,7 @@ void() monster_oldone =
 	self.think = old_idle1;
 	self.nextthink = time + 0.1;	
 	self.takedamage = DAMAGE_YES;
-	self.th_pain = SUB_Null;
+	self.th_pain = shub_pain;
 	self.th_die = finale_1;
 	shub = self;
 	

@@ -85,7 +85,8 @@ void(entity targ, entity attacker) Killed =
 
 	oself = self;
 	self = targ;
-	
+	 
+          
 	if (self.health < -99)
 		self.health = -99;		// don't let sbar look bad if a player
 
@@ -99,6 +100,11 @@ void(entity targ, entity attacker) Killed =
 
 	self.enemy = attacker;
 
+            if (self == shub)
+	{
+		if (attacker.owner)
+			ShubKiller = attacker.owner;
+	}
 	// bump the monster counter
 	if (self.flags & FL_MONSTER)
 	{
@@ -115,7 +121,9 @@ void(entity targ, entity attacker) Killed =
 	
 	self.takedamage = DAMAGE_NO;
 	self.touch = SUB_Null;
-
+          
+        
+         
 	monster_death_use();
 	self.th_die ();
 	
@@ -141,7 +149,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 
 	//gnounc -- shub kill crash fix.
 	if (targ.classname == "monster_oldone" && damage < 9999)
-		return;
+		damage = 0;
 
 	// used by buttons and triggers to set activator for target firing
 	damage_attacker = attacker;

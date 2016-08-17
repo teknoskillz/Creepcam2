@@ -396,3 +396,28 @@ traceline (this.absmin, this.absmin - ofs, TRUE, this);
 
 };
 
+void (entity what, entity scr, float val) SUB_InfoBar =
+{
+          
+          if (!(scr.flags & FL_CLIENT)) return;
+          
+   local string txt,tag,sgn;
+   sgn = "+";
+   tag = what.netname;
+    if (what.flags & FL_CLIENT)
+    {
+              sgn = "-";
+              soundpitch (scr, CHAN_AUTO, "enforcer/death1.wav", 1, ATTN_IDLE, (105 - val));
+              scr.dmg_take = val + scr.frags;
+    }
+   if (what == scr) tag = "SelfKill";
+          txt = strcat (sgn,(ftos (val)));
+          txt = strcat (txt,"_");
+          txt = strcat (txt,tag);
+             
+              stuffcmd (scr, "infobar 6 ");		
+              stuffcmd (scr, txt);
+		stuffcmd (scr, "\n");
+          
+          
+}

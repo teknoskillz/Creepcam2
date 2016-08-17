@@ -390,6 +390,7 @@ void() spikeshooter_use =
 {
 	if (self.spawnflags & SPAWNFLAG_LASER)
 	{
+                 self.netname = "LaserBeam";
 	       self.killstring =" got zapped.\n"; // Cobalt for laser traps
 		sound (self, CHAN_VOICE, "enforcer/enfire.wav", 1, ATTN_NORM);
 		LaunchLaser (self.origin, self.movedir);
@@ -433,7 +434,7 @@ void() trap_spikeshooter =
 	self.use = spikeshooter_use;
 	
 	//gnounc
-	self.netname = "spike trap";
+	self.netname = "spike_trap";
 	
 
 	if (self.spawnflags & SPAWNFLAG_LASER)

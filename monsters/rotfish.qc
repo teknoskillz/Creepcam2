@@ -140,7 +140,7 @@ void() f_death1 =[      $death1,        f_death2        ]
 };
 
 void() f_death2 =[      $death2,        f_death3        ] {
-          self.solid = SOLID_NOT;
+          setsize (self, VEC_ORIGIN, VEC_ORIGIN);
           self.movetype = MOVETYPE_FLY;
           self.velocity_z = self.health;
           self.avelocity = crandom() * '40 60 25';

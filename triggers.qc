@@ -370,8 +370,7 @@ void() tdeath_touch =
 	if (other.health)
 	{
 		T_Damage (other, self, self, 50000);
-                    if (other.classname == "monster_oldone")
-                    ShubKiller = self.owner;
+                   
 	}
 };
 
@@ -592,14 +591,42 @@ void() hurt_on =
 
 void() hurt_touch =
 {
+          
+          if (shub.health < 0)
+          {
+            setsize (self, world.mins, world.maxs);
+            if (!world.touch)
+            world.touch = self.touch;            
+                    
+          }
+          
+          if ((other.flags & FL_MONSTER) && shub.health > 0) return;
 	if (other.takedamage)
 	{
-		self.solid = SOLID_NOT;
+                    if (shub.health < 1)
+                    {
+                     if (other.health < 33)
+                     self.dmg = other.health + 100;
+                     else self.dmg = other.health / 5;
+                     if (self.model != world.model)
+                     {                               
+                     self.cnt = self.cnt + 1;
+                     if (self.cnt == 240)  self.think = SUB_Remove;
+                     }
+                    }
+		
 		T_Damage (other, self, self, self.dmg);
+                    if (self.model == world.model) return;
+                    
+                    if (world.touch == self.touch)
+                    self.nextthink = time + (1/3);
+                    else
+                    self.nextthink = time + 1;
+                    self.solid = SOLID_NOT;
 		self.think = hurt_on;
-		self.nextthink = time + 1;
+		
 	}
-
+         
 	return;
 };
 
@@ -612,7 +639,8 @@ void() trigger_hurt =
 {
 	InitTrigger ();
 	self.touch = hurt_touch;
-
+                  
+         
 	if (!self.dmg)
 		self.dmg = 5;
 };
@@ -697,3 +725,4 @@ void() trigger_monsterjump =
 	self.touch = trigger_monsterjump_touch;
 };
 
+ 

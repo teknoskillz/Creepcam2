@@ -498,8 +498,9 @@ void (entity atk, entity trg) calc_mfrags =
           if (skill > 1)
            score = score * skill;
           atk.frags = atk.frags + rint(score); 
-
           
+           SUB_InfoBar (trg,atk,score);
+
           
 };
  
