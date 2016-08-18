@@ -229,6 +229,10 @@ void() boss_shockc10 =[	$shockc10, boss_death1 ] {};
 void() boss_death1 = [$death1, boss_death2] 
 {
 	sound (self, CHAN_VOICE, "boss1/death.wav", 1, ATTN_NORM);
+          
+                    if (self.enemy.health > 0)
+                    calc_mfrags (self.enemy,self);
+          
 };
 
 void() boss_death2 = [$death2, boss_death3] {};
@@ -251,19 +255,7 @@ void() boss_death10 = [$death9, boss_death10]
 	WriteByte (MSG_ALL, SVC_KILLEDMONSTER);	// FIXME: reliable broadcast
 	SUB_UseTargets ();
 	
-          local entity cl;
-          cl = nextent (world);
-          while (cl.colormap <= active_clients)
-          {
-          
-          if (cl.flags & FL_CLIENT)
-          {
-                    if (cl.classname == "player" || (cl.classname == "camera" && cl.respawncam))
-                    calc_mfrags (self,cl);
-          }
-          cl = nextent (cl);
-         
-          }    
+            
           
           
           remove (self);
@@ -368,7 +360,7 @@ void() monster_boss =
 	precache_sound ("boss1/death.wav");
 
 	total_monsters = total_monsters + 1;
-
+          self.flags = FL_MONSTER;
 	self.use = boss_awake;
 	CC_AddtoList (self);
 };
