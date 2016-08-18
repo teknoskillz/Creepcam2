@@ -493,8 +493,12 @@ void (entity atk, entity trg) calc_mfrags =
               score = 100;
           
           if ((trg.health < trg.deadflag) && trg.classname != "monster_zombie")
-              score = score + 2;
-    
+          {
+              if (trg.weapon) 
+              score = score + (0 - trg.health);
+              else
+              score = score * 2;
+          }
           if (skill > 1)
            score = score * skill;
           atk.frags = atk.frags + score; 

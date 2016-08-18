@@ -404,7 +404,12 @@ void (entity what, entity scr, float val) SUB_InfoBar =
    local string txt,tag,sgn;
     eprint (what);
     if ((what.flags & FL_MONSTER) && what.health < what.deadflag)
-           tag = strcat (what.netname, " ^1GIBBED^7"); 
+    {
+           if (what.weapon)
+           tag = strcat (what.netname, " ^1AXE-GIB^7");
+           else
+           tag = strcat (what.netname, " ^1GIBBED^7");
+    }           
    else tag = what.netname;
    if (val > 0)
    sgn = "+";

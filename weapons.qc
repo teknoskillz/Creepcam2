@@ -125,6 +125,12 @@ void() W_FireAxe =
 		 dam = trace_ent.health / 2;
 		 
 		T_Damage (trace_ent, self, self, dam);
+                    if (trace_ent.flags & FL_MONSTER)
+                    {
+                     if (trace_ent.health < trace_ent.deadflag)
+                         trace_ent.weapon = self.weapon;
+                              
+                    }
 		
 	}
 	else
