@@ -195,7 +195,7 @@ void() misc_fireball =
 	self.think = fire_fly;
 
 	//gnounc
-	self.netname = "lava ball";
+	self.netname = "lava_ball";
 	self.killstring = " ate a lavaball\n";
 
 	if (!self.speed)
@@ -222,7 +222,7 @@ void() fire_fly =
 	fireball.touch = fire_touch;
 
 	//gnounc
-	self.netname = "lava ball";
+	self.netname = "lava_ball";
 	self.killstring = " ate a lavaball\n";
 	
 	self.nextthink = time + (random() * 5) + 3;
@@ -363,7 +363,7 @@ void() misc_explobox2 =
 	self.takedamage = DAMAGE_AIM;
 
 	//gnounc
-	self.netname = "exploding barrel";
+	self.netname = "exploding_barrel";
 	self.killstring = " exploded.\n";
 
 	self.origin_z = self.origin_z + 2;
@@ -388,17 +388,12 @@ void(vector org, vector vec) LaunchLaser;
 
 void() spikeshooter_use =
 {
+          sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
 	if (self.spawnflags & SPAWNFLAG_LASER)
-	{
-                 self.netname = "LaserBeam";
-	       self.killstring =" got zapped.\n"; // Cobalt for laser traps
-		sound (self, CHAN_VOICE, "enforcer/enfire.wav", 1, ATTN_NORM);
-		LaunchLaser (self.origin, self.movedir);
-	}
-
+	LaunchLaser (self.origin, self.movedir);
 	else
 	{
-		sound (self, CHAN_VOICE, "weapons/spike2.wav", 1, ATTN_NORM);
+
 		launch_spike (self.origin, self.movedir);
 		newmis.velocity = self.movedir * 500;
 		self.killstring =" was spiked.\n"; // Cobalt, moved here
@@ -407,11 +402,8 @@ void() spikeshooter_use =
 		{
 		newmis.touch = superspike_touch;
 		self.killstring =" was crucified.\n"; // Cobalt for lsuperspike death
+                    }
                }		
-	
-		 
-	}
-	
 	
 	
 };
@@ -440,14 +432,17 @@ void() trap_spikeshooter =
 	if (self.spawnflags & SPAWNFLAG_LASER)
 	{
 		precache_model2 ("progs/laser.mdl");
-		
 		precache_sound2 ("enforcer/enfire.wav");
 		precache_sound2 ("enforcer/enfstop.wav");
+                    self.noise1 = "enforcer/enfire.wav";
 		
 	}
 
 	else
+          {
 		precache_sound ("weapons/spike2.wav");
+                    self.noise1 = "weapons/spike2.wav";
+          }
 };
 
 

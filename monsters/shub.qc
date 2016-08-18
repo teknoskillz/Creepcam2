@@ -393,7 +393,7 @@ void() monster_oldone =
 	//gnounc
 	setmodel (self, "progs/oldone.mdl");
 	self.netname = "Shub-Niggurath";
-	self.killstring = " became one with Shub-Niggurath\n";
+	
 
 	setsize (self, '-160 -128 -24', '160 128 256');
 

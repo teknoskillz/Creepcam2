@@ -256,7 +256,7 @@ void() dog_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowHead ("progs/h_dog.mdl", self.health);
-                    self.deadflag = -1; // Cobalt Gib marker
+                    
 		return;
 	}
 
@@ -370,7 +370,7 @@ void() monster_dog =
 	setsize (self, '-32 -32 -24', '32 32 40');
 	self.health = 25;
 	self.max_health = 25;
-
+           self.deadflag = -35; // Cobalt , marks default gib health
 	self.th_stand = dog_stand1;
 	self.th_walk = dog_walk1;
 	self.th_run = dog_run1;
@@ -382,3 +382,4 @@ void() monster_dog =
 	walkmonster_start();
 	CC_AddtoList (self);
 };
+ 

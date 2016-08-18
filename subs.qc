@@ -399,24 +399,40 @@ traceline (this.absmin, this.absmin - ofs, TRUE, this);
 void (entity what, entity scr, float val) SUB_InfoBar =
 {
           
-          if (!(scr.flags & FL_CLIENT)) return;
+          if (val == 0 || (!(scr.flags & FL_CLIENT))) return;
           
    local string txt,tag,sgn;
+    eprint (what);
+    if ((what.flags & FL_MONSTER) && what.health < what.deadflag)
+           tag = strcat (what.netname, " ^1GIBBED^7"); 
+   else tag = what.netname;
+   if (val > 0)
    sgn = "+";
-   tag = what.netname;
+   else sgn = "-";
+   if ((what.flags & FL_MONSTER) && what.health > 0)
+   tag = strcat ("KILLED BY ",what.netname);
+   else if (what.solid == world.solid || (what.owner != world && (!(what.th_die))))
+   if (scr.watertype < 0)
+   tag = scr.deathtype;         
+  
+      if (val < 0)
+      val = 0 - val;
+
+        
     if (what.flags & FL_CLIENT)
     {
-              sgn = "-";
               soundpitch (scr, CHAN_AUTO, "enforcer/death1.wav", 1, ATTN_IDLE, (105 - val));
               scr.dmg_take = val + scr.frags;
     }
-   if (what == scr) tag = "SelfKill";
+   if (what == scr) tag = "^1Self-Kill^7";
           txt = strcat (sgn,(ftos (val)));
-          txt = strcat (txt,"_");
+          txt = strcat (txt," ");
           txt = strcat (txt,tag);
              
-              stuffcmd (scr, "infobar 6 ");		
+              stuffcmd (scr, "infobar 6 ");
+              stuffcmd (scr, "\"");
               stuffcmd (scr, txt);
+              stuffcmd (scr, "\"");
 		stuffcmd (scr, "\n");
           
           

@@ -458,12 +458,12 @@ void(float chance) CAN_GibZombie =
 
 void (entity atk, entity trg) calc_mfrags =
 {
-
+         if ((!(trg.flags & FL_MONSTER))) return;
           local float score;
           if (trg.classname == "monster_army")
               score = 3;
           else if (trg.classname == "monster_demon1")
-                  score = 6;
+                  score = 7;
           else if (trg.classname == "monster_dog")
                   score = 1;    
           else if (trg.classname == "monster_enforcer")
@@ -476,13 +476,13 @@ void (entity atk, entity trg) calc_mfrags =
           else if (trg.classname == "monster_knight")
                 score = 4;
           else if (trg.classname == "monster_ogre")
-               score = 5;
+               score = 6;
           else if (trg.classname == "monster_oldone")
               score = 500;
           else if (trg.classname == "monster_shalrath")
-              score = 7;
+              score = 8;
           else if (trg.classname == "monster_shambler")
-              score = 9;
+              score = 10;
           else if (trg.classname == "monster_tarbaby")
              score = 12;
           else if (trg.classname == "monster_wizard")
@@ -492,12 +492,12 @@ void (entity atk, entity trg) calc_mfrags =
          else if (trg.classname == "monster_boss")
               score = 100;
           
-          if (trg.deadflag == -1)
-              score = score * 1.25;
+          if ((trg.health < trg.deadflag) && trg.classname != "monster_zombie")
+              score = score + 2;
     
           if (skill > 1)
            score = score * skill;
-          atk.frags = atk.frags + rint(score); 
+          atk.frags = atk.frags + score; 
           
            SUB_InfoBar (trg,atk,score);
 

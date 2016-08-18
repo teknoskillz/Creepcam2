@@ -252,7 +252,7 @@ void() demon_die =
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
-                    self.deadflag = -1; // Cobalt Gib marker
+                    
 		return;
 	}
 
@@ -299,7 +299,8 @@ void() monster_demon1 =
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 300;
 	self.max_health = 300;
-
+          self.deadflag = -80; // Cobalt , marks default gib health
+          self.netname = "Demon";
 	self.th_stand = demon1_stand1;
 	self.th_walk = demon1_walk1;
 	self.th_run = demon1_run1;
@@ -508,4 +509,4 @@ v_z = (self.origin_z);
 	self.solid = SOLID_NOT;
        // This will run the rest of the frames above	
 	undead_demon1 ();   	
-};
+}; 

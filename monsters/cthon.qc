@@ -245,12 +245,15 @@ void() boss_death9 = [$death9, boss_death10]
 	
 };
 
+
 void() boss_death10 = [$death9, boss_death10]
 {
 	killed_monsters = killed_monsters + 1;
 	WriteByte (MSG_ALL, SVC_KILLEDMONSTER);	// FIXME: reliable broadcast
 	SUB_UseTargets ();
 	remove (self);
+          
+          
 };
 
 void(vector p) boss_missile =
@@ -387,16 +390,8 @@ void() lightning_fire =
 
 	self.nextthink = time + 0.1;
 	self.think = lightning_fire;
+          te_lightning3 (self,p1,p2); // Cobalt, DP optimization
 
-	WriteByte (MSG_ALL, SVC_TEMPENTITY);
-	WriteByte (MSG_ALL, TE_LIGHTNING3);
-	WriteEntity (MSG_ALL, world);
-	WriteCoord (MSG_ALL, p1_x);
-	WriteCoord (MSG_ALL, p1_y);
-	WriteCoord (MSG_ALL, p1_z);
-	WriteCoord (MSG_ALL, p2_x);
-	WriteCoord (MSG_ALL, p2_y);
-	WriteCoord (MSG_ALL, p2_z);
 };
 
 void() lightning_use =
@@ -456,3 +451,4 @@ void() event_lightning =
 };
 
 
+ 

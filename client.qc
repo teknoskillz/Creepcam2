@@ -1702,16 +1702,27 @@ void(entity targ, entity attacker) ClientObituary =
 			{//gnounc
                                 if (targ.flags & FL_CLIENT)
                                 {
-                                clc = ((0 - targ.health)  * (skill + 1)); 
-                                targ.frags = targ.frags - clc;
+                                clc = ((targ.health)  * (skill + 1)); 
+                                targ.frags = targ.frags + clc;
+                                SUB_InfoBar (attacker,targ,clc);
 			      bprint (targ.netname);
 				bprint (attacker.killstring);
                                 }
                                 if (targ.flags & FL_MONSTER)
                                 {
+                                          if (targ.netname == "Ogre" || targ.netname == "Enforcer")
+                                          bprint ("An ");
+                                          else
                                           bprint ("A ");
                                 bprint (targ.netname);
-                                bprint (" fought it out with a ");
+                                if (targ.classname == attacker.classname)
+                                   bprint (" fought it out with another ");
+                                else
+                                {
+                                if (attacker.netname == "Ogre" || targ.netname == "Enforcer")
+                                bprint (" fought it out with an ");
+                                else bprint (" fought it out with a ");
+                                }
                                 bprint (attacker.netname);
                                 bprint (" and the ");
                                 bprint (targ.netname);
@@ -1752,9 +1763,9 @@ void(entity targ, entity attacker) ClientObituary =
 			if (targ == attacker)
 			{
 				// killed self
-                                        clc = (5 * (skill + 1));
+                                        clc = (targ.health * (skill + 1));
                                         SUB_InfoBar (targ,targ,clc);
-				attacker.frags = attacker.frags - clc;
+				attacker.frags = attacker.frags + clc;
 				bprint (targ.netname);
 				
 				if (targ.weapon == 64 && targ.waterlevel > 1)
@@ -1778,20 +1789,29 @@ void(entity targ, entity attacker) ClientObituary =
 					bprint (" checks if his weapon is loaded\n");
 				return;
 			}
-			else if (coop)
+			else if (attacker != world)
 			{
                                       
-                                       // Killed by teammate or trap
-                                         clc = (0 - targ.health);
-                                          SUB_InfoBar (targ,attacker,clc);
-                                        attacker.frags = attacker.frags - clc;
-                                        CC_PlayerKilledPlayer(targ, attacker.owner); // PRIME Creepcam
-                                        if (attacker.killstring)
+                                       // Killed by teammate or trap , hazard or Monster telefragged 
+                                         if (targ == shub || targ.classname == "monster_boss")
+                                         {
+                                          calc_mfrags (attacker.owner,targ); 
+                                           return;
+                                         }
+                                          clc = (targ.health * (skill + 1));
+                                        targ.frags = targ.frags + clc;
+                                        if (attacker.killstring) // trap
                                         {
+                                      
+                                        SUB_InfoBar (attacker,targ,clc);
+                                        
                                         bprint (targ.netname);
                                         bprint (attacker.killstring);
                                         return;
                                         }
+                                        SUB_InfoBar (targ,attacker,clc);
+                                        CC_PlayerKilledPlayer(targ, attacker.owner); // PRIME Creepcam
+                                     
                                         if (random () < 0.5)
                                         {
 				if (rnum < 0.25)
@@ -1913,7 +1933,13 @@ void(entity targ, entity attacker) ClientObituary =
 		}
 		else
 		{
-		targ.frags = targ.frags - (2 * (skill + 1));		// killed self
+
+                              clc = (targ.health * (skill + 1));		// killed by world or other
+		          targ.frags = targ.frags + clc;
+                              
+                                 
+                              
+                              local string desc;
 			rnum = targ.watertype;
 
 			bprint (targ.netname);
@@ -1925,8 +1951,8 @@ void(entity targ, entity attacker) ClientObituary =
 
 				else
 					bprint (" sucks it down\n");
-
-				return;
+                                                  desc = "Drowning";
+				
 			}
 
 			else if (rnum == -4)
@@ -1936,8 +1962,8 @@ void(entity targ, entity attacker) ClientObituary =
 
 				else
 					bprint (" can't exist on slime alone\n");
-
-				return;
+                                                  desc = "Slimed";
+			
 			}
 
 			else if (rnum == -5)
@@ -1945,42 +1971,53 @@ void(entity targ, entity attacker) ClientObituary =
 				if (targ.health < -15)
 				{
 					bprint (" burst into flames\n");
-					return;
+					
 				}
 
-				if (random() < 0.5)
+				else if (random() < 0.5)
 					bprint (" turned into hot slag\n");
-
 				else
 					bprint (" visits the Volcano God\n");
-
-				return;
+                                                  desc = "LavaHeat";
+			
 			}
 
-			if (attacker.solid == SOLID_BSP && attacker != world)
+			else if (attacker.solid == SOLID_BSP && attacker != world)
 			{	
                                         if (shub)
+                                        {
                                         bprint (" was impaled\n");      
+                                        desc = "Impaled";
+                                        }
                                         else
+                                        {
 				bprint (" was squished\n");
-				return;
+				desc = "Squished";
+                                        }
 			}
 
-			if (targ.deathtype == "falling")
+			else if (targ.deathtype == "falling")
 			{
-				targ.deathtype = string_null;
+				
 				bprint (" fell to his death\n");
-				return;
+				desc = "Falling";
 			}
+                              else bprint (" just died for some reason...\n");
 
-		
-
-			bprint (" died\n");
+                              if (desc)
+                              {
+		          targ.deathtype = desc;
+                              SUB_InfoBar (attacker,targ,clc);
+			}
+                              if (targ.flags & FL_CLIENT)
+                              targ.deathtype = string_null;
 		}
 	}
         else if (targ.flags & FL_MONSTER)
+        {
              calc_mfrags (attacker,targ);           
-                    		
+                   
+        }                   
 		
         
 };

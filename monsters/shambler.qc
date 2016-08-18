@@ -386,7 +386,7 @@ void() sham_die =
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
-                    self.deadflag = -1; // Cobalt Gib marker
+                    
 		return;
 	}
 
@@ -436,7 +436,7 @@ void() monster_shambler =
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 600;
 	self.max_health = 600;
-
+           self.deadflag = -60; // Cobalt , marks default gib health
 	self.th_stand = sham_stand1;
 	self.th_walk = sham_walk1;
 	self.th_run = sham_run1;
@@ -448,3 +448,4 @@ void() monster_shambler =
 	walkmonster_start();
 	CC_AddtoList (self);
 };
+ 

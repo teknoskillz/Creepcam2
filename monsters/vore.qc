@@ -134,7 +134,7 @@ void() shalrath_die =
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
-                    self.deadflag = -1; // Cobalt Gib marker
+                    
 		return;
 	}
 
@@ -279,7 +279,7 @@ void() monster_shalrath =
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 400;
 	self.max_health = 400;
-
+           self.deadflag = -90; // Cobalt , marks default gib health
 	self.th_stand = shal_stand;
 	self.th_walk = shal_walk1;
 	self.th_run = shal_run1;

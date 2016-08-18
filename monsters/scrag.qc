@@ -370,7 +370,7 @@ void() wiz_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
-                    self.deadflag = -1; // Cobalt Gib marker
+                    
 		return;
 	}
 
@@ -430,7 +430,7 @@ void() monster_wizard =
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 80;
 	self.max_health = 80;
-
+          self.deadflag = -40; // Cobalt , marks default gib health
 	self.th_stand = wiz_stand1;
 	self.th_walk = wiz_walk1;
 	self.th_run = wiz_run1;
@@ -441,3 +441,4 @@ void() monster_wizard =
 	flymonster_start ();
 	CC_AddtoList (self);
 };
+ 

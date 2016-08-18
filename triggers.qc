@@ -639,7 +639,8 @@ void() trigger_hurt =
 {
 	InitTrigger ();
 	self.touch = hurt_touch;
-                  
+              
+          self.killstring = " became one with Shub-Niggurath\n";              
          
 	if (!self.dmg)
 		self.dmg = 5;

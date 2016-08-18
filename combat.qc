@@ -104,6 +104,8 @@ void(entity targ, entity attacker) Killed =
 	{
 		if (attacker.owner)
 			ShubKiller = attacker.owner;
+                    killed_monsters = killed_monsters + 1;
+		WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
 	}
 	// bump the monster counter
 	if (self.flags & FL_MONSTER)

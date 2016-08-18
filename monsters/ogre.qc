@@ -621,7 +621,7 @@ void() ogre_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
-	          self.deadflag = -1; // Cobalt Gib marker
+	          
 		return;
 	}
 
@@ -680,7 +680,7 @@ void() monster_ogre =
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 200;
 	self.max_health = 200;
-
+           self.deadflag = -80; // Cobalt , marks default gib health
 	self.th_stand = ogre_stand1;
 	self.th_walk = ogre_walk1;
 	self.th_run = ogre_run1;

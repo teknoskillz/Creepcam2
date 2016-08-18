@@ -237,7 +237,7 @@ void() hknight_die =
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
-	          self.deadflag = -1; // Cobalt Gib marker
+	          
 		return;
 	}
 
@@ -467,13 +467,13 @@ void() monster_hell_knight =
 
 	//gnounc
 	self.noise = "hknight/sight1.wav";	//gnounc
-	self.netname = "Hell Knight";
+	self.netname = "Hell_Knight";
 	
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 250;
 	self.max_health = 250;
-
+          self.deadflag = -40; // Cobalt , marks default gib health
 	self.th_stand = hknight_stand1;
 	self.th_walk = hknight_walk1;
 	self.th_run = hknight_run1;
@@ -485,3 +485,4 @@ void() monster_hell_knight =
 	walkmonster_start ();
 	CC_AddtoList (self);
 };
+ 

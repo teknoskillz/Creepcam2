@@ -235,7 +235,7 @@ void() knight_die =
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
-		self.deadflag = -1; // Cobalt Gib marker
+		
 		return;
 	}
 
@@ -282,7 +282,7 @@ void() monster_knight =
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 75;
 	self.max_health = 75;
-
+           self.deadflag = -40; // Cobalt , marks default gib health
 	self.th_stand = knight_stand1;
 	self.th_walk = knight_walk1;
 	self.th_run = knight_run1;
@@ -293,3 +293,4 @@ void() monster_knight =
 	walkmonster_start ();
 	CC_AddtoList (self);
 };
+ 

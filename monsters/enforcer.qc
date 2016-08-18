@@ -86,13 +86,23 @@ void() Laser_Touch =
 
 void(vector org, vector vec) LaunchLaser =
 {		
-	if (self.classname == "monster_enforcer")
-		sound (self, CHAN_WEAPON, "enforcer/enfire.wav", 1, ATTN_NORM);
-
+	
+           
+           
 	vec = normalize(vec);
 	
 	newmis = spawn();
-	newmis.classname = "enforcer_laser";	//gnounc
+	if (self.classname == "monster_enforcer")
+          {
+                    newmis.classname = "enforcer_laser";	//gnounc
+		sound (self, CHAN_WEAPON, "enforcer/enfire.wav", 1, ATTN_NORM);
+          }
+          else
+          {
+           newmis.classname = self.netname = "LaserBeam";         
+            newmis.killstring =" got zapped.\n"; // Cobalt for laser traps
+          }
+          
 	newmis.owner = self;
 	newmis.movetype = MOVETYPE_FLY;
 	newmis.solid = SOLID_BBOX;
@@ -326,7 +336,7 @@ void() enf_die =
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
-                    self.deadflag = -1; // Cobalt Gib marker
+                    
 		return;
 	}
 
@@ -371,7 +381,7 @@ void() monster_enforcer =
 	setmodel (self, "progs/enforcer.mdl");
 
 	//gnounc
-	self.netname = "enforcer";
+	self.netname = "Enforcer";
 
 	self.noise = "enforcer/sight1.wav";	//gnounc
 	self.noise1 = "enforcer/sight2.wav";	//gnounc
@@ -381,7 +391,7 @@ void() monster_enforcer =
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 80;
 	self.max_health = 80;
-
+          self.deadflag = -35; // Cobalt , marks default gib health
 	self.th_stand = enf_stand1;
 	self.th_walk = enf_walk1;
 	self.th_run = enf_run1;
@@ -392,3 +402,4 @@ void() monster_enforcer =
 	walkmonster_start();
 	CC_AddtoList (self);
 };
+ 

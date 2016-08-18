@@ -275,7 +275,7 @@ void() army_die =
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
-                    self.deadflag = -1; // Cobalt Gib marker
+                    
 		return;
 	}
 
@@ -326,7 +326,7 @@ void() monster_army =
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 30;
 	self.max_health = 30;
-
+          self.deadflag = -35; // Cobalt , marks default gib health
 	self.th_stand = army_stand1;
 	self.th_walk = army_walk1;
 	self.th_run = army_run1;
@@ -337,3 +337,4 @@ void() monster_army =
 	walkmonster_start ();
 	CC_AddtoList (self);
 };
+ 
