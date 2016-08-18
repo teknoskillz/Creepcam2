@@ -245,15 +245,28 @@ void() boss_death9 = [$death9, boss_death10]
 	
 };
 
-
 void() boss_death10 = [$death9, boss_death10]
 {
 	killed_monsters = killed_monsters + 1;
 	WriteByte (MSG_ALL, SVC_KILLEDMONSTER);	// FIXME: reliable broadcast
 	SUB_UseTargets ();
-	remove (self);
+	
+          local entity cl;
+          cl = nextent (world);
+          while (cl.colormap <= active_clients)
+          {
+          
+          if (cl.flags & FL_CLIENT)
+          {
+                    if (cl.classname == "player" || (cl.classname == "camera" && cl.respawncam))
+                    calc_mfrags (self,cl);
+          }
+          cl = nextent (cl);
+         
+          }    
           
           
+          remove (self);
 };
 
 void(vector p) boss_missile =
