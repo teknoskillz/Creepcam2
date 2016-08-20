@@ -400,12 +400,13 @@ void (entity what, entity scr, float val) SUB_InfoBar =
 {
           
           if (val == 0 || (!(scr.flags & FL_CLIENT))) return;
-          
+      
+            
    local string txt,tag,sgn;
-    eprint (what);
+    //eprint (what);
     if ((what.flags & FL_MONSTER) && what.health < what.deadflag)
     {
-           if (what.weapon)
+           if (what.axhitme > time)
            tag = strcat (what.netname, " ^1AXE-GIB^7");
            else
            tag = strcat (what.netname, " ^1GIBBED^7");
@@ -426,19 +427,35 @@ void (entity what, entity scr, float val) SUB_InfoBar =
         
     if (what.flags & FL_CLIENT)
     {
-              soundpitch (scr, CHAN_AUTO, "enforcer/death1.wav", 1, ATTN_IDLE, (105 - val));
+              soundpitch (scr, CHAN_AUTO, "enforcer/death1.wav", 1, ATTN_IDLE, ((val * 1.5) - val));
               scr.dmg_take = val + scr.frags;
     }
-   if (what == scr) tag = "^1Self-Kill^7";
+    
+   if (what == scr) 
+             tag = "^1Self-Kill^7";
+          
           txt = strcat (sgn,(ftos (val)));
           txt = strcat (txt," ");
           txt = strcat (txt,tag);
-             
-              stuffcmd (scr, "infobar 6 ");
-              stuffcmd (scr, "\"");
+            
+           
+             if (scr.killstring)
+             {
+             scr.killstring = strcat (scr.killstring," ");
+             scr.killstring = strcat (scr.killstring,txt);
+             txt = scr.killstring;
+             }
+             stuffcmd (scr, "infobar 6 ");
+             stuffcmd (scr, "\"");
               stuffcmd (scr, txt);
               stuffcmd (scr, "\"");
 		stuffcmd (scr, "\n");
+                    
+      
+
+                
+              scr.wait = time + 2.5;
+       scr.killstring = strzone (txt);
           
           
-}
+} 

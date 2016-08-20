@@ -616,12 +616,10 @@ void() PlayerDie =
 {
 	local	float	i;
 	
-           if (active_clients > 1)
-          {
+
 	if (self.super_time > 0) DropQuad ();
-	if (self.invisible_time > 0) 
-	DropRing ();
-          }
+	if (self.invisible_time > 0) DropRing ();
+          
           
 	self.items = self.items - (self.items & IT_INVISIBILITY);
 	self.invisible_finished = 0;	// don't die as eyes

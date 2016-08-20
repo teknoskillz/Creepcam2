@@ -592,7 +592,7 @@ void() hurt_on =
 void() hurt_touch =
 {
           
-          if (shub.health < 0)
+          if (shub && shub.health < 0)
           {
             setsize (self, world.mins, world.maxs);
             if (!world.touch)
@@ -603,7 +603,7 @@ void() hurt_touch =
           if ((other.flags & FL_MONSTER) && shub.health > 0) return;
 	if (other.takedamage)
 	{
-                    if (shub.health < 1)
+                    if (shub && shub.health < 1)
                     {
                      if (other.health < 33)
                      self.dmg = other.health + 100;
@@ -618,7 +618,7 @@ void() hurt_touch =
 		T_Damage (other, self, self, self.dmg);
                     if (self.model == world.model) return;
                     
-                    if (world.touch == self.touch)
+                    if (world.touch == self.touch || self != shub)
                     self.nextthink = time + (1/3);
                     else
                     self.nextthink = time + 1;
@@ -639,11 +639,23 @@ void() trigger_hurt =
 {
 	InitTrigger ();
 	self.touch = hurt_touch;
-              
-          self.killstring = " became one with Shub-Niggurath\n";              
-         
-	if (!self.dmg)
+          
+          if (!self.dmg)
 		self.dmg = 5;
+          if (self == shub)          
+          self.killstring = " became one with Shub-Niggurath\n";              
+          else
+          {
+          self.netname = self.owner.netname;
+          self.flags = FL_MONSTER;
+          self.health = 1;
+          setorigin (self, realorigin (self.owner));
+          self.ltime = droptofloor ();
+          setsize (self, self.owner.mins * 1.15, self.owner.maxs * 1.15);
+          self.dmg = 15 * (skill + 1);
+          self.think = SUB_Null;
+          self.killstring = "  got too close to Lord Cython.\n";
+          }
 };
 
 //============================================================================

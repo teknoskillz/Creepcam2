@@ -97,7 +97,9 @@ void(entity targ, entity attacker) Killed =
 
 		return;
 	}
-
+          if (attacker.weapon == -1) // Telefrag
+          self.enemy = attacker.owner;
+          else
 	self.enemy = attacker;
 
             if (self == shub)

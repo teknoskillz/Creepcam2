@@ -572,12 +572,15 @@ void() CC_SwitchToNextPlayer =
 	next = self.owner.tless;
 	if (!next)
 	{
+                    if (self.button2 && RANDOMCAM.health > 0)
+                        next = RANDOMCAM;
+                    else
 		next = playerlist;
 		if (next == self.owner)
-		{
-			return;
-		}
+		return;
+		
 	}
+          if (next)
 	CC_ChangeToFollowCam(self, next);
 };
 
@@ -603,7 +606,7 @@ void() CC_RequestNotCam =
  
 	self.think = PutClientInServer;
 	self.nextthink = time + frametime + (frametime * random(5));
-		if (!coop)
+		if (self.spawns < 1)
 	SetNewParms();
 	else
 	CC_Spawnparms ();

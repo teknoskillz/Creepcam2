@@ -100,9 +100,12 @@ void() info_intermission =
 
 void() SetChangeParms =
 {
+          
+          // if (time > self.wait) strunzone (self.killstring); // Unzone the string just in case
+          
           // Cobalt - Prevent respawn cams from glitching between levels,
           // Award ShubKiller their stuff if restarting new game
-	if (self.health <= 0 || self.respawncam > 0 && ShubKiller != self)
+	if ((self.health <= 0 || self.respawncam > 0) && ShubKiller != self)
 	{ 
                     self.watch = 0;
 		SetNewParms ();
@@ -126,6 +129,7 @@ void() SetChangeParms =
                 self.items = self.items | IT_ARMOR3;
                 self.armorvalue = 200;
                 self.armortype = 0.8;
+                self.watch = -2;
              }
           if (self.ammo_shells < 25)
 		self.ammo_shells = 25;
@@ -164,46 +168,42 @@ void() DecodeLevelParms =
 {
 	if (world.model == "maps/start.bsp")
           {
-                    local float at,av; // Check to see if player is ShubKiller from last level
-                    av = decode(parm2, MID8);
-                    at = decode(parm4, MID8) * 0.01;
-                    if (av != 200 && at != 0.8)
+                     // Check to see if player is ShubKiller from last level
+                    self.watch = parm10;
+                    if (self.watch != -2)
 			SetNewParms ();		// take away all stuff on starting new episode
 	}
-          self.spawns += 1;
+            else if (self.spawns)
+             {
+              CC_Spawnparms ();
+              return;              
+             }
+                     self.items = parm1;
+                     if (self.spawns < 1)
+                     self.spawnitems = parm1;
+              // These 3 now kept in parm 2 
+              self.health = decode(parm2, LOW8);
+               if (self.spawns < 1) self.spawnhealth = self.health;
+              self.armorvalue = decode(parm2, MID8);
+               if (self.spawns < 1) self.spawnarmorvalue = self.armorvalue;
+              self.ammo_shells = decode(parm2, HI8);
+               if (self.spawns < 1) self.spawnammo_shells = self.ammo_shells;
+              // these 3 now kept in parm 3
+              self.ammo_nails = decode(parm3, LOW8);
+              if (self.spawns < 1) self.spawnammo_nails = self.ammo_nails;
+              self.ammo_rockets = decode(parm3, MID8);
+              if (self.spawns < 1) self.spawnammo_rockets = self.ammo_rockets;
+              self.ammo_cells = decode(parm3, HI8);
+              if (self.spawns < 1) self.spawnammo_cells = self.ammo_cells;
+              // These 2 now kept in parm 4, Parm 5 and 6 now freed
+              self.weapon = decode(parm4, LOW8);
+              if (self.spawns < 1) self.spawnweapon = self.weapon;
+              self.armortype = decode(parm4, MID8) * 0.01;
+              if (self.spawns < 1) self.spawnarmortype = self.armortype;
+              self.frags = parm5;
+              self.watch = parm10;              
           
-           self.items = parm1;
-    // These 3 now kept in parm 2 
-    self.health = decode(parm2, LOW8);
-    self.armorvalue = decode(parm2, MID8);
-    self.ammo_shells = decode(parm2, HI8);
-    // these 3 now kept in parm 3
-    self.ammo_nails = decode(parm3, LOW8);
-    self.ammo_rockets = decode(parm3, MID8);
-    self.ammo_cells = decode(parm3, HI8);
-    // These 2 now kept in parm 4, Parm 5 and 6 now freed
-    self.weapon = decode(parm4, LOW8);
-    self.armortype = decode(parm4, MID8) * 0.01;
-       
           
-	self.watch = parm10;
-          
-          
-             if (self.spawns == 1 && world.model != "maps/start.bsp")
-          {
-          self.frags = parm5;
-          self.spawnitems = self.items;
-	self.spawnhealth = self.health;
-	self.spawnarmorvalue = self.armorvalue;
-	self.spawnammo_shells = self.ammo_shells;
-	self.spawnammo_nails = self.ammo_nails;
-	self.spawnammo_rockets = self.ammo_rockets;
-	self.spawnammo_cells = self.ammo_cells;
-	self.spawnweapon = self.weapon;
-	self.spawnarmortype = self.armortype;
-          }
-	
-           
 };
 
 /*============
@@ -544,6 +544,7 @@ void() respawn =
 
 	else
 	{	// restart the entire server
+          objerror ("Deathmatch and coop set to zero");
 		localcmd ("restart\n");
 	}
 };
@@ -551,33 +552,34 @@ void() respawn =
 void() spikeshooter_use;
 void() respawn2 =
 {
+          
+        
     CC_AntiSpamAction(self);
     CC_DeadGuyRespawning(self);  //PRIME Creep Cam Stuff
    
-		CopyToBodyQueue (self);
+                        local entity newcam;
+                        newcam = self.enemy;
+  		    CopyToBodyQueue (self);
 		
   	        CC_ConfigureCamera();
 
-		if (self.enemy.movedir || self.enemy == self || self.enemy.solid == world.solid)  
-		{
-		
+		if (mapname == "e1m7" || newcam.enemy.movedir || newcam.enemy == self || newcam.enemy.solid == world.solid || newcam.health < 1)  
+		{		
 		self.nextthink = time + 1;
 		self.think = CC_DeathCam;
 		}
 		else
-		{
-		CC_StopCamOrPlayer(self);
-		self.nextthink = time + frametime + (frametime * random(5));
-                   
-		if (self.dmg_inflictor.weapon == -1)
                     {
-                        if (RANDOMCAM.health > 0)
-                        self.enemy = RANDOMCAM;
-                    }
-                     if (self.enemy.health < 1)
-                    self.enemy = find (world, classname, "info_player_coop");
-                    
-		CC_ChangeToFollowCam (self, self.enemy);
+                        if (RANDOMCAM.health > 0 && newcam != self)
+                        newcam = RANDOMCAM;
+                        else newcam = find(world, classname, "info_teleport_destination");
+                        
+                        if (!newcam)
+                        newcam = find(world, classname, "info_intermission");
+                               
+                    CC_StopCamOrPlayer(self);
+		self.nextthink = time + frametime + (frametime * random(5));
+		CC_ChangeToFollowCam (self, newcam);
 		}
 };
 
@@ -614,20 +616,16 @@ Returns the entity to spawn at
 ============*/
 entity() SelectSpawnPoint =
 {
-	local   entity spot, thing;
-	local   float   numspots, totalspots;
-	local   float   pcount;
-	local entity spots;
-
-	numspots = 0;
-	totalspots = 0;
-
-	// testinfo_player_start is only found in regioned levels
+	local	entity spot;
+	local	entity thing;
+	local	float  pcount;
+	
+// testinfo_player_start is only found in regioned levels
 	spot = find (world, classname, "testplayerstart");
 	if (spot)
 		return spot;
 		
-	// choose a info_player_deathmatch point
+// choose a info_player_deathmatch point
 	if (coop)
 	{
 		lastspawn = find(lastspawn, classname, "info_player_coop");
@@ -638,72 +636,189 @@ entity() SelectSpawnPoint =
 	}
 	else if (deathmatch)
 	{
+	//~ random respawn start
+		local float	freespots, totalspots;
+		local entity	lastfreespot;
 
-		// ok, find all spots that don't have players nearby
-		spots = world;
-		spot = find (world, classname, "info_player_deathmatch");       
+		totalspots = 0;
 
+		// DRS: This loop checks to find an area clear of players
+		// within 1000qu.  No visibility checks are performed in order
+		// to assure that you are in a relativly unpopulated area...
+		freespots = 0;
+		lastfreespot = world;
+
+		spot = find(world, classname, "info_player_deathmatch");
 		while (spot)
 		{
 			totalspots = totalspots + 1;
 
-			thing=findradius(spot.origin, 84);
-			pcount=0;               
-
-			while (thing)
+			if (spot != lastspawn)
 			{
-				if (thing.classname == "player")
-					pcount=pcount + 1;                      
-
-				thing=thing.chain;      
-			}
-
-			if (pcount == 0) 
-			{
-				spot.goalentity = spots;
-				spots = spot;
-				numspots = numspots + 1;
+				pcount = 0;
+				thing = findradius(spot.origin, 1000);		// search for players // 84
+				while ( (thing!=world) && (pcount == 0) )
+				{
+					if ((thing.classname == "player") && (thing.health > 0))	// player found
+						pcount = 1;
+					thing = thing.chain;
+				}
+				if (!pcount)					// this is a free spot
+				{
+					spot.goalentity = lastfreespot;		// create reverse free spot list
+					lastfreespot = spot;			// begin of reverse free spot list
+					freespots = freespots + 1;
+				}
 			}
 
 			// Get the next spot in the chain
-			spot = find (spot, classname, "info_player_deathmatch");                
+			spot = find(spot, classname, "info_player_deathmatch");
 		}
-		totalspots=totalspots - 1;
 
-		if (!numspots) 
+		if (totalspots)
 		{
-			// ack, they are all full, just pick one at random
-			totalspots = rint((random() * totalspots));
-			spot = find (world, classname, "info_player_deathmatch");       
+			if (freespots)
+			{
+				// We now have the number of frre spots available on the map
+				// Generate a random number between 0 and (freespots - 1)
+				freespots = freespots - 0.01;	// random() result varies between 0.0 and (n-1).99
+				freespots = floor(random() * freespots);
 
-			while (totalspots > 0) 
+				spot = lastfreespot;
+				while (freespots)
+				{
+					spot = spot.goalentity;
+					freespots = freespots - 1;
+				}
+				lastspawn = spot;
+				return spot;
+			}
+		}
+			
+		// DRS: This loop checks to find an area clear of players
+		// within 1000qu.  Visibilty check is performed to at least
+		// try and give you a relatively clear start...a failsafe for
+		// the first loop, or if you are playing on a small level.
+		freespots = 0;
+		lastfreespot = world;
+
+		spot = find(world, classname, "info_player_deathmatch");
+		while (spot)
+		{
+			totalspots = totalspots + 1;
+
+			if (spot != lastspawn)
+			{
+				pcount = 0;
+				thing = findradius(spot.origin, 1000);		// search for players // 84
+				while ( (thing!=world) && (pcount == 0) )
+				{
+					if ((thing.classname == "player") && (thing.health > 0) && visible(thing))	// player found
+						pcount = 1;
+					thing = thing.chain;
+				}
+				if (!pcount)					// this is a free spot
+				{
+					spot.goalentity = lastfreespot;		// create reverse free spot list
+					lastfreespot = spot;			// begin of reverse free spot list
+					freespots = freespots + 1;
+				}
+			}
+
+			// Get the next spot in the chain
+			spot = find(spot, classname, "info_player_deathmatch");
+		}
+
+		if (totalspots)
+		{
+			if (freespots)
+			{
+				// We now have the number of frre spots available on the map
+				// Generate a random number between 0 and (freespots - 1)
+				freespots = freespots - 0.01;	// random() result varies between 0.0 and (n-1).99
+				freespots = floor(random() * freespots);
+
+				spot = lastfreespot;
+				while (freespots)
+				{
+					spot = spot.goalentity;
+					freespots = freespots - 1;
+				}
+				lastspawn = spot;
+				return spot;
+			}
+		}
+			// DRS: This failsafe attempts to find a spot without
+			// Telefragging.
+			// ack, they are all guarded
+			// loop through all spots to find free spots (radius 32)
+			freespots = 0;
+			lastfreespot = world;
+
+			spot = find(world, classname, "info_player_deathmatch");
+			while (spot)
+			{
+				if (spot != lastspawn)
+				{
+					pcount = 0;
+					thing = findradius(spot.origin, 32);		// search for players
+					while ( (thing!=world) && (pcount == 0) )
+					{
+						if ((thing.classname == "player") && (thing.health > 0))	// player found
+							pcount = 1;
+						thing = thing.chain;
+					}
+					if (!pcount)					// this is a free spot
+					{
+						spot.goalentity = lastfreespot;		// create reverse free spot list
+						lastfreespot = spot;			// begin of reverse free spot list
+						freespots = freespots + 1;
+					}
+				}
+
+				// Get the next spot in the chain
+				spot = find(spot, classname, "info_player_deathmatch");
+			}
+
+			if (freespots)
+			{
+				// We now have the number of free spots available on the map
+				// Generate a random number between 0 and (freespots - 1)
+				freespots = freespots - 0.01;	// random() result varies between 0.0 and (n-1).99
+				freespots = floor(random() * freespots);
+
+				spot = lastfreespot;
+				while (freespots)
+				{
+					spot = spot.goalentity;
+					freespots = freespots - 1;
+				}
+				lastspawn = spot;
+				return spot;
+			}
+
+			// DRS: This is the last failsafe, pick a random spot, 
+			// Telefragging is guaranteed
+			// ack, they are all full, just pick one at random
+			// Generate a random number between 0 and (totalspots - 1)
+			totalspots = totalspots - 0.01;	// random() result varies between 0.0 and (n-1).99
+			totalspots = floor(random() * totalspots);
+
+			spot = find(world, classname, "info_player_deathmatch");
+			while (totalspots)
 			{
 				totalspots = totalspots - 1;
-				spot = find (spot, classname, "info_player_deathmatch");
+				spot = find(spot, classname, "info_player_deathmatch");
 			}
+			lastspawn = spot;
 			return spot;
-		}
 		
-		// We now have the number of spots available on the map in numspots
-		// Generate a random number between 1 and numspots
-		numspots = numspots - 1;
-	
-		numspots = rint((random() * numspots ) );
-
-		spot = spots;
-		while (numspots > 0) 
-		{
-			spot = spot.goalentity;
-			numspots = numspots - 1;
-		}
-	
-		return spot;
+ 	//~ random respawn end
 	}
 
 	if (serverflags)
 	{	// return with a rune to start
 		spot = find (world, classname, "info_player_start2");
-	
 		if (spot)
 			return spot;
 	}
@@ -714,7 +829,6 @@ entity() SelectSpawnPoint =
 	
 	return spot;
 };
-
 /*===========
 PutClientInServer
 
@@ -731,7 +845,7 @@ void() PutClientInServer =
 	return;
 	
       //CC_2
-      
+          
 	self.respawncam = self.watch =  0;
           self.respawn_time = 0;
 	self.classname = "player";
@@ -792,7 +906,7 @@ void() PutClientInServer =
 	self.watermove_time = time + 0.25;
 	//stuffcmd(self, "-attack\n");            // Supa, prevent shooting after respawning in MP
 	self.attack_finished = time + 0.8; // Cobalt this is better
-	
+	self.spawns += 1;
 	
 	
 

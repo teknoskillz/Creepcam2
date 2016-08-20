@@ -80,7 +80,7 @@ void() W_FireAxe =
 		trace_ent.axhitme = 1;
 
                 if (trace_ent.flags & FL_MONSTER) // PRIME , Cobalt detection for behind an enemy
-                makevectors(trace_ent.angles);
+                makevectors2(trace_ent.angles);
                 else
 		makevectors(trace_ent.v_angle);
 		
@@ -123,14 +123,14 @@ void() W_FireAxe =
                }
 		 else
 		 dam = trace_ent.health / 2;
+                     if (dam)
+                     if (trace_ent.flags & FL_MONSTER)
+                     trace_ent.axhitme = time + 3; 
 		 
 		T_Damage (trace_ent, self, self, dam);
-                    if (trace_ent.flags & FL_MONSTER)
-                    {
-                     if (trace_ent.health < trace_ent.deadflag)
-                         trace_ent.weapon = self.weapon;
+                    
                               
-                    }
+                    
 		
 	}
 	else
@@ -1399,6 +1399,13 @@ Called every frame so impulse events can be handled as well as possible
 void() W_WeaponFrame =
 {
 
+           if (time > self.wait)
+             {    if (self.killstring != string_null)
+                  {
+                  strunzone (self.killstring);
+                  self.killstring = "";
+                  }
+             }
 
 	if (time < self.attack_finished || self.classname != "player")
 		return;

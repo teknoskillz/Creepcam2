@@ -104,7 +104,14 @@ void() boss_rise13	=[	$rise13, boss_rise14 ] {};
 void() boss_rise14	=[	$rise14, boss_rise15 ] {};
 void() boss_rise15	=[	$rise15, boss_rise16 ] {};
 void() boss_rise16	=[	$rise16, boss_rise17 ] {};
-void() boss_rise17	=[	$rise17, boss_missile1 ] {};
+void() boss_rise17	=[	$rise17, boss_missile1 ] 
+{
+            self.groundentity = spawn ();
+            self.groundentity.owner = self;
+            self.groundentity.think = trigger_hurt;
+            self.groundentity.nextthink = time + frametime;          
+          
+};
 
 void() boss_idle1	=[	$walk1, boss_idle2 ]
 {
@@ -254,9 +261,9 @@ void() boss_death10 = [$death9, boss_death10]
 	killed_monsters = killed_monsters + 1;
 	WriteByte (MSG_ALL, SVC_KILLEDMONSTER);	// FIXME: reliable broadcast
 	SUB_UseTargets ();
-	
-            
-          
+	self.groundentity.effects = 4;
+          self.groundentity.nextthink = time + random () + frametime;
+          self.groundentity.think = SUB_Remove;
           
           remove (self);
 };
@@ -273,7 +280,7 @@ void(vector p) boss_missile =
 	org = self.origin + p_x*v_forward + p_y*v_right + p_z*'0 0 1';
 	
 	// lead the player on hard mode
-	if (skill > 1)
+	if (cvar("skill") > 1) 
 	{
 		t = vlen(self.enemy.origin - org) / 300;
 		vec = self.enemy.velocity;
@@ -294,7 +301,12 @@ void(vector p) boss_missile =
 	newmis.velocity = vec*300;
 	newmis.touch = T_MissileTouch; // rocket explosion
 	sound (self, CHAN_WEAPON, "boss1/throw.wav", 1, ATTN_NORM);
-
+          if (skill > 1)
+          {
+          newmis.scale = 2;
+          newmis.effects = EF_FLAME;
+          newmis.modelflags = 3;
+          }
 	if (random () < 0.5) // Cobalt put cython killstrings here for randomization each attack
 	self.killstring = " was assaulted by Cythons fury.\n";
        else
@@ -334,8 +346,9 @@ void() boss_awake =
 	self.view_pos = spawn ();
 	  self.view_pos.aiment = self;
 	  self.view_pos.movetype = MOVETYPE_FOLLOW;
-	//self.view_pos.effects = EF_BRIGHTFIELD;
-	
+            //self.view_pos.effects = EF_BRIGHTFIELD;
+            
+                        
 };
 
 
@@ -383,7 +396,9 @@ void() lightning_fire =
 
 		return;
 	}
-	
+	le1.effects = le2.effects = EF_MUZZLEFLASH;
+          te_smallflash (le1.absmin);
+          te_smallflash (le2.absmin);
 	p1 = (le1.mins + le1.maxs) * 0.5;
 	p1_z = le1.absmin_z - 16;
 	
