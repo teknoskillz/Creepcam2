@@ -366,7 +366,9 @@ void() monster_dog =
 	self.noise = "dog/dsight.wav";	
 	self.netname = "Rottweiler";
 	self.killstring = " was mauled by a Rottweiler\n";
-
+          if (cvar("skill") > 1) 
+          setsize (self, '-16 -16 -24', '16 16 16');
+          else
 	setsize (self, '-32 -32 -24', '32 32 40');
 	self.health = 25;
 	self.max_health = 25;
