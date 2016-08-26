@@ -563,7 +563,7 @@ void() respawn2 =
 		
   	        CC_ConfigureCamera();
 
-		if (mapname == "e1m7" || newcam.enemy.movedir || newcam.enemy == self || newcam.enemy.solid == world.solid || newcam.health < 1)  
+		if (self.dmg_inflictor = last_tdeath || mapname == "e1m7" || newcam.enemy.movedir || newcam.enemy == self || newcam.enemy.solid == world.solid || newcam.health < 1)  
 		{		
 		self.nextthink = time + 1;
 		self.think = CC_DeathCam;

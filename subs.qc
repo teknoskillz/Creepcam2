@@ -373,6 +373,106 @@ float(vector veca, vector vecb) crossproduct =
 };
 
 
+void(entity ent) slope_angles =
+{
+   local vector org, org2, ang, pitchdir, rolldir, norm;
+   local float pitch_sin, roll_sin, pitch, roll;
+
+// ent is an observer or not initialized yet
+   if (ent.movetype == MOVETYPE_NOCLIP)
+      return;
+
+//   if (ent.size == VEC_0)   // not initialized
+//   if (ent.origin == VEC_0)
+//      return;
+
+// hack to avoid traceline runaways for ents placed upside down 
+   if (ent.angles_x > 90 || ent.angles_x < -90)
+      return;
+
+   if (ent.angles_z > 90 || ent.angles_z < -90)
+      return;
+
+// trace line downwards and try to hit a ground plane
+   org = ent.origin;
+
+
+   org2 = org + '0 0 -16';   // use small dist to account for thin walkways and such 
+   traceline(org, org2, MOVE_NOMONSTERS, ent);
+
+// if unsuccessful, then increment and trace again
+   while ((trace_fraction == 1) && (org_z - org2_z >= ent.mins_z))   
+   {
+      org2 = org2 + '0 0 -8';
+      traceline(org, org2, MOVE_NOMONSTERS, ent);
+
+      if (org2_z <= -1024)   // prevent runaways
+         break;
+   }
+
+   norm = trace_plane_normal;
+
+   if (checkbottom(ent) &&      // on ground
+       (trace_fraction != 1) &&    // touching the ground
+       (norm_x || norm_y))      // ground plane is a slope
+   {
+      if (!(ent.owner.flags & FL_CLIENT))
+      ang = ent.owner.angles;
+      else 
+      {          
+      ang = ent.owner.v_angle;
+         ang_x = 0;
+         ang_z = 0;
+      }
+      if (ent.owner.flags & FL_CLIENT)
+         ang_z = 0;   // no roll, for client rollangle
+   
+      makevectors(ang);
+   
+      pitchdir = vreverse(v_forward);
+      rolldir = v_right;
+   
+      pitch_sin = pitchdir_x*norm_x + pitchdir_y*norm_y + pitchdir_z*norm_z;
+      pitch = RAD2DEG*asin(pitch_sin);
+      roll_sin = rolldir_x*norm_x + rolldir_y*norm_y + rolldir_z*norm_z;
+      roll = RAD2DEG*asin(roll_sin);
+   
+      if (ent.owner.flags & FL_CLIENT)
+      {
+         ent.angles_x = pitch;
+         ent.angles_z = roll;
+         return;
+      }
+   
+      if (ent.owner.flags & FL_MONSTER)
+      {
+         if (ent.enemy == world)   // currently not eyeing somebody
+         {
+            ent.idealpitch = pitch/3;
+            changepitch(ent);
+         }
+         ent.idealroll = roll/3;
+         changeroll(self);
+         return;
+      }
+   
+      if (ent.owner.flags & FL_CLIENT)
+      {
+         ent.angles_x = ent.angles_x + pitch/3;
+         ent.angles_z = ent.angles_z + roll/3;
+      }
+   }
+   else if (ent.owner.flags & FL_MONSTER)   // not on a slope, so adjust back to normal
+   {
+      if (ent.enemy == world)
+      {   
+         ent.idealpitch = 0;
+         changepitch(ent);
+      }
+      ent.idealroll = 0;
+      changeroll(self);
+   }
+};
 
 // For player model only for now
 void (entity this) MatchSurfaceAngles =
@@ -403,6 +503,10 @@ void (entity what, entity scr, float val) SUB_InfoBar =
       
             
    local string txt,tag,sgn;
+   local entity ast;
+   local float bonus;
+   
+
     //eprint (what);
     if ((what.flags & FL_MONSTER) && what.health < what.deadflag)
     {
@@ -433,11 +537,29 @@ void (entity what, entity scr, float val) SUB_InfoBar =
     
    if (what == scr) 
              tag = "^1Self-Kill^7";
+               if (what.flags & FL_MONSTER)
+   {
+    ast = what.enemy;
+    if (ast.flags & FL_CLIENT)
+    if (ast != scr && ast.health > 0 && ast.dmg_inflictor == what)              
+    if ((ceil (vlen (what.origin - ast.origin))) < 325)
+    {
+    tag = strcat (what.netname, " ^2TEAMWORK^7");
+    tag = strcat (tag, " ");
+    tag = strcat (tag, "(");
+    tag = strcat (tag, ast.netname);
+    tag = strcat (tag, ")");
+     bonus = (100 - ast.health) * (skill + 1);
+     if (bonus > 0) val = val + bonus;
+    }              
+   }
+   
           
           txt = strcat (sgn,(ftos (val)));
           txt = strcat (txt," ");
           txt = strcat (txt,tag);
             
+   
            
              if (scr.killstring)
              {
@@ -445,14 +567,24 @@ void (entity what, entity scr, float val) SUB_InfoBar =
              scr.killstring = strcat (scr.killstring,txt);
              txt = scr.killstring;
              }
-             stuffcmd (scr, "infobar 6 ");
-             stuffcmd (scr, "\"");
+             local float t;
+             t = strlennocol (txt);
+             if (t < 6) t = 6;
+             if (t > 12) t = 12;
+             stuffcmd (scr, "infobar ");
+             stuffcmd (scr, (ftos(t)));
+
+             stuffcmd (scr, " \"");
               stuffcmd (scr, txt);
               stuffcmd (scr, "\"");
 		stuffcmd (scr, "\n");
                     
       
-
+             if (bonus > 0)
+             {
+             soundpitch (self, CHAN_AUTO, "misc/secret.wav", 1, ATTN_IDLE, 30);
+             scr.frags = scr.frags + bonus;          
+             }
                 
               scr.wait = time + 2.5;
        scr.killstring = strzone (txt);

@@ -830,7 +830,8 @@ float max_clients; // Cobalt track total number of allowed clients
 float active_clients; // Cobalt, total # of active players (includes cameras)
 float DEF_GIB_HEALTH = -18; // Cobalt lower gib value 
 void (entity client, string s, ...) centerprint2 = #73;
-.float gravity;
+.float gravity,idealroll;
 vector intv;
+entity last_tdeath;
 
  

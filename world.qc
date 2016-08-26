@@ -467,7 +467,7 @@ void(entity ent) CopyToBodyQueue =
 {
 
 	
-	bodyqueue_head.angles = ent.angles;
+	
 	bodyqueue_head.model = ent.model;
 	bodyqueue_head.modelindex = ent.modelindex;
 	bodyqueue_head.frame = ent.frame;
@@ -478,19 +478,16 @@ void(entity ent) CopyToBodyQueue =
 	setsize (bodyqueue_head, ent.mins, ent.maxs);
 	setorigin (bodyqueue_head, ent.origin);
 	bodyqueue_head = bodyqueue_head.owner;
-	
+        bodyqueue_head.effects = EF_NOSHADOW;
+        slope_angles (bodyqueue_head);
+	bodyqueue_head.angles_y = ent.angles_y;
+          
 	// Cobalt , experiment with Sevens code to match angles of corpse to floor, cases like slopes - to be improved at later date
 
        
 
-       //traceline (ent.origin - '0 0 22', ent.origin - '0 33', TRUE, ent);
-	//ocal vector tempi;
-       //tempi = trace_plane_normal;
-	
-       bodyqueue_head.angles_x = ent.mangle_x - 90; 
-	//bodyqueue_head.angles_z = tempi_x - 90;
-	
 	
 };
 
 
+ 

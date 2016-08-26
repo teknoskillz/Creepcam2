@@ -686,5 +686,79 @@ float(float parmval, float bits, float pos) g_decode =
 };
 
 
+void(entity ent) changeroll =
+{
+	local vector ang;
+	local float current, ideal, move, rspeed;
+//bprint ("Rolling\n");
+// mod down the current angle
+
+          if (ent.flags& FL_CLIENT) // Real client
+	ang = anglemod_view(ent.v_angle);
+          else // Bot
+	ang = anglemod_view(ent.angles);
+	current = ang_z;
+	ideal = ent.idealroll;
+	rspeed = 2; // >> ent.roll_speed;
+   
+	if (current == ideal)
+		return;
+	
+	move = ideal - current;
+
+//print("ideal=");
+//	print(ftos(ideal));
+//	print("\n");
+
+//	print(" current=");
+//	print(ftos(current));
+//	print("\n");
+	
+//	print(" move=");
+//	print(ftos(move));
+//	print("\n");
+
+/*	if (ideal > current)
+	{
+		if (move > 180)
+			move = move - 360;
+	}
+	else
+	{
+		if (move < -180)
+			move = move + 360;
+	}*/
+
+	ang_z = move;
+	ang = anglemod_view(ang);
+	move = ang_z;
+		
+	if (move > 0)
+	{
+		if (move > rspeed)
+			move = rspeed;
+	}
+	else
+	{
+		if (move < (0 - rspeed))
+			move = 0 - rspeed;
+	}
+
+//	print(" move2=");
+//	print(ftos(move));
+//	print("\n");
+
+	current = current + move;
+
+//	print(" current2=");
+//	print(ftos(move));
+//	print("\n");
+
+//	ent.angles_z = ideal;
+	ent.angles_z = current;
+};
+
+
+
 
  

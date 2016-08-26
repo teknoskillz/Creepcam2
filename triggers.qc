@@ -353,6 +353,7 @@ void() tdeath_touch =
 	if (other == self.owner)
 		return;
 
+          last_tdeath = self;
 // frag anyone who teleports in on top of an invincible player
 	if (other.classname == "player")
 	{
@@ -642,7 +643,7 @@ void() trigger_hurt =
           
           if (!self.dmg)
 		self.dmg = 5;
-          if (self == shub)          
+          if (shub)          
           self.killstring = " became one with Shub-Niggurath\n";              
           else
           {

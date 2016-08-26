@@ -678,6 +678,7 @@ launch_spike
 Used for both the player and the ogre
 ===============
 */
+//float VAL;
 void(vector org, vector dir) launch_spike =
 {
 	newmis = spawn ();
@@ -694,9 +695,17 @@ void(vector org, vector dir) launch_spike =
 	setmodel (newmis, "progs/spike.mdl");
 	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
 	setorigin (newmis, org);
-
+         // newmis.gravity = VAL;
 	newmis.velocity = dir * 1000;
+          /*if (pointcontents (newmis.origin) < -1)
+          {
+                    newmis.movetype = MOVETYPE_TOSS;
+                    newmis.gravity = -0.5;
+                    newmis.velocity = newmis.velocity * (1/5);
+                    
+          }*/
 };
+
 
 void() W_FireSuperSpikes =
 {
@@ -712,6 +721,9 @@ void() W_FireSuperSpikes =
 	setmodel (newmis, "progs/s_spike.mdl");
 	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
 	self.punchangle_x = -2;
+          
+                    
+           
 };
 
 void(float ox) W_FireSpikes =
