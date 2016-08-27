@@ -244,11 +244,20 @@ void() ShalMissileTouch =
 */
 void() monster_shalrath =
 {
-          if (mapname == "end" && (random () < 0.2))
+          if (mapname == "end" && (random () < (1/3)))
           {
+           if (random () < 0.5)
            monster_tarbaby ();
+           else
+           {
+           if (random () < (1/3))
+           monster_hell_knight ();
+           else monster_demon1 ();
+           }
+           
            return;           
           }
+           
 	if (deathmatch)
 	{
 		remove(self);
