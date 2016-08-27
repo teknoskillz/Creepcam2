@@ -396,7 +396,8 @@ void() Wiz_Missile =
 /*
 	QUAKED monster_wizard (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
-
+void () monster_hell_knight;
+void () monster_enforcer;
 void() monster_wizard =
 {
 	if (deathmatch)
@@ -404,6 +405,19 @@ void() monster_wizard =
 		remove(self);
 		return;
 	}
+           if (mapname == "end" && (random () < (1/3)))
+          {
+           if (random () < 0.5)
+           monster_enforcer ();
+           else
+           {
+           if (random () < (1/3))
+           monster_hell_knight ();
+           else monster_demon1 ();
+           }
+           
+           return;           
+          }
 	
 	precache_model ("progs/wizard.mdl");
 	precache_model ("progs/h_wizard.mdl");
