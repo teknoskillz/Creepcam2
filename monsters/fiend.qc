@@ -181,7 +181,7 @@ void()	demon1_jump8	=[ 	$leap8,		demon1_jump9	] {};
 void()	demon1_jump9	=[ 	$leap9,		demon1_jump10	] {};
 void()	demon1_jump10	=[ 	$leap10,	demon1_jump1	] 
 {
-	self.nextthink = time + 3; // if three seconds pass, assume demon is stuck and jump again
+	self.nextthink = time + frametime + random (); // if three seconds pass, assume demon is stuck and jump again
 };
 
 void()	demon1_jump11	=[ 	$leap11,	demon1_jump12	] {};
