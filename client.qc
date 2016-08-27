@@ -907,6 +907,7 @@ void() PutClientInServer =
 	//stuffcmd(self, "-attack\n");            // Supa, prevent shooting after respawning in MP
 	self.attack_finished = time + 0.8; // Cobalt this is better
 	self.spawns += 1;
+          if (self.spawns == 1) ShowMapAuthor ();
 	
 	
 

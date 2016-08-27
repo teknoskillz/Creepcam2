@@ -488,6 +488,32 @@ void(entity ent) CopyToBodyQueue =
 
 	
 };
+void () ShowMapAuthor =
+{
+local string aut;
+if (mapname == "dm3" || mapname == "start" || mapname == "e1m1"|| mapname == "e2m1" || mapname == "e2m2" || mapname == "e2m3" || mapname == "e2m4" || mapname == "e2m5" || mapname == "e2m6" || mapname == "e3m1" || mapname == "end")
+aut = "John Romero";
+else if (mapname == "dm1" || mapname == "e1m2" || mapname == "e1m3" || mapname == "e1m4" || mapname == "e1m5" || mapname == "e2m7" || mapname == "e3m5" || mapname == "e4m1")
+aut = "Tim Willits";   
+else if (mapname == "dm6" || mapname == "dm5" || mapname == "dm4" || mapname == "dm2" || mapname == "e1m8" || mapname == "e1m6" || mapname == "e1m7" || mapname == "e3m2" || mapname == "e3m4" || mapname == "e3m7")
+aut = "American McGee"; 
+else if (mapname == "e3m6")
+aut = "American McGee & Tim Willits";
+else if (mapname == "e4m2" || mapname == "e4m3" || mapname == "e4m5" || mapname == "e4m6" || mapname == "e4m7" || mapname == "e4m8")
+aut = "Sandy Petersen";  
+else return;
+
+aut = strcat (". By: ", aut);
+aut = strcat (world.message, aut);
+  stuffcmd (self, "infobar 15");
+
+             stuffcmd (self, " \"");
+              stuffcmd (self, aut);
+              stuffcmd (self, "\"");
+		stuffcmd (self, "\n");
+
+          
+};
 
 
  
