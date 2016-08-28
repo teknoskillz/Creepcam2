@@ -396,8 +396,7 @@ void() Wiz_Missile =
 /*
 	QUAKED monster_wizard (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
-void () monster_hell_knight;
-void () monster_enforcer;
+
 void() monster_wizard =
 {
 	if (deathmatch)

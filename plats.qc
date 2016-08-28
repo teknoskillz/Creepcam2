@@ -303,6 +303,19 @@ void() train_next =
 
 	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
 	SUB_CalcMove (targ.origin - self.mins, self.speed, train_wait);
+
+          if (self.model == "progs/teleport.mdl")
+          {
+
+          if (cvar("skill") > 1)
+          {
+          if (random () < 0.33) self.speed = 20;
+          else
+          self.speed = 100 + (random () * 75);
+          }
+          
+          
+          }
 };
 
 void() func_train_find =
@@ -318,7 +331,10 @@ void() func_train_find =
 	{	// not triggered, so start immediately
 		self.nextthink = self.ltime + 0.1;
 		self.think = train_next;
+                    
 	}
+          
+         
 };
 
 /*QUAKED func_train (0 .5 .8) ?
@@ -384,8 +400,10 @@ void() misc_teleporttrain =
 	if (!self.speed)
 		self.speed = 100;
 
+          
 	if (!self.target)
 		objerror ("func_train without a target");
+          TTRAIN = self;
 
 	self.cnt = 1;
 	self.solid = SOLID_NOT;
@@ -410,3 +428,4 @@ void() misc_teleporttrain =
 	self.think = func_train_find;
 };
 
+ 

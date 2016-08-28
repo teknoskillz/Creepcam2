@@ -94,7 +94,7 @@ void(vector org, vector vec) LaunchLaser =
 	newmis = spawn();
 	if (self.classname == "monster_enforcer")
           {
-                    newmis.classname = "enforcer_laser";	//gnounc
+                    newmis.classname = newmis.netname = "enforcer_laser";	//gnounc
 		sound (self, CHAN_WEAPON, "enforcer/enfire.wav", 1, ATTN_NORM);
           }
           else

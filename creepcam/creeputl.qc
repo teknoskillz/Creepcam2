@@ -66,7 +66,7 @@ void(entity e) CC_SendAliases =
 
 void(entity e) CC_WriteHelpInfo = 
 {
-   sprint(e, " ^5Creeierpcam version 2.07 commands^7:\n^2Spectate^7   ^3Watch Player^7\n^2Join^7       ^3Join the fight^7\n^2MySpecs^7    ^3Spectators Watching You^7\n^2AllSpecs^7   ^3List All Spectators^7\n^2ShowCam^7    ^3Toggle cam Display^7\n^2AutoSwitch^7 ^3Toggle AutoSwitch Mode^7\n^2PlayerList^7 ^3List All Players^7\n\n^5Use fire button to switch between players when spectating^7\n");
+   sprint(e, " ^5Creeierpcam version 2.073 commands^7:\n^2Spectate^7   ^3Watch Player^7\n^2Join^7       ^3Join the fight^7\n^2MySpecs^7    ^3Spectators Watching You^7\n^2AllSpecs^7   ^3List All Spectators^7\n^2ShowCam^7    ^3Toggle cam Display^7\n^2AutoSwitch^7 ^3Toggle AutoSwitch Mode^7\n^2PlayerList^7 ^3List All Players^7\n\n^5Use fire button to switch between players when spectating^7\n");
 };
 
 
@@ -193,17 +193,17 @@ void(string s) CC_StuffToAllCams =
 	stuffcmd(c, s);
 	
 };
-entity fighter;
+
 void() CC_BlinkThink = 
 {
 	local entity l;
 	l = playerlist;
 	while (l != world)
 	{
-		if (l.clink != world)
+		if (l.clink != world && (l.flags & FL_CLIENT))
 		CC_ShowRec(l);
 		
-	     if (l.attack_finished > time && l.took_damage > time)
+	     if (l.attack_finished > time && l.took_damage > time) // Cobalt - try to tag playerlist ents if fighting
 		{
 
 		fighter = l;

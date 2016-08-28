@@ -350,7 +350,7 @@ void(vector org) spawn_tfog =
 
 void() tdeath_touch =
 {
-	if (other == self.owner)
+	if (other == self.owner || (other == shub && (!(self.owner.flags & FL_CLIENT))))
 		return;
 
           last_tdeath = self;
@@ -369,10 +369,9 @@ void() tdeath_touch =
 	}
 
 	if (other.health)
-	{
-		T_Damage (other, self, self, 50000);
+          T_Damage (other, self, self, 50000);
                    
-	}
+	
 };
 
 

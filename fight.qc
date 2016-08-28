@@ -210,7 +210,7 @@ void() ai_melee =
 
 	if (vlen(delta) > 60)
 		return;
-		
+	CAN_GibZombie (skill); // CC_2 Prime - gib zombies chance	
 	ldmg = (random() + random() + random()) * 3;
 	T_Damage (self.enemy, self, self, ldmg);
 };
@@ -459,6 +459,7 @@ void(float chance) CAN_GibZombie =
 void (entity atk, entity trg) calc_mfrags =
 {
          if ((!(trg.flags & FL_MONSTER))) return;
+         
           local float score;
           if (trg.classname == "monster_army")
               score = 3;
@@ -503,6 +504,8 @@ void (entity atk, entity trg) calc_mfrags =
            score = score * skill;
           atk.frags = atk.frags + score; 
           
+          
+        
            SUB_InfoBar (trg,atk,score);
 
           

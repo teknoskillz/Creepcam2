@@ -430,6 +430,8 @@ while (clienttype (slot) == CLIENTTYPE_REAL)
 }	
 	
 active_clients = qc;
+
+VelocityPhysics ();
 };
 
 /*

@@ -413,6 +413,8 @@ void(float side)	Demon_Melee =
 		else
 		self.killstring = " was shredded by a Fiend\n";
 		
+                    CAN_GibZombie (skill); // CC_2 Prime - Demon gib zombies chance
+                    
     sound (self, CHAN_WEAPON, "demon/dhit2.wav", 1, ATTN_NORM);
 	ldmg = 10 + 5*random();
 	T_Damage (self.enemy, self, self, ldmg);	

@@ -17,7 +17,7 @@
     See file, 'COPYING', for details.
 */
 
-
+void () RandomMonster;
 void() SUB_Null = {};
 
 void() SUB_Remove = {remove(self);};
@@ -499,15 +499,14 @@ traceline (this.absmin, this.absmin - ofs, TRUE, this);
 void (entity what, entity scr, float val) SUB_InfoBar =
 {
           
+
           if (val == 0 || (!(scr.flags & FL_CLIENT))) return;
       
-            
+      
    local string txt,tag,sgn;
    local entity ast;
    local float bonus;
    
-
-    //eprint (what);
     if ((what.flags & FL_MONSTER) && what.health < what.deadflag)
     {
            if (what.axhitme > time)
@@ -590,4 +589,75 @@ void (entity what, entity scr, float val) SUB_InfoBar =
        scr.killstring = strzone (txt);
           
           
-} 
+};
+
+void () VelocityPhysics = 
+{
+
+
+
+local entity r;
+local vector ctr, low, high, small, large;
+
+r = find (world, classname, "plat");
+	while (r.velocity_z != 0)
+	{
+	
+
+	//bprint ("Plat ");
+	//bprint (r.model);
+	//bprint (" Is moving...waterlevel is ");
+	//bprint (ftos (r.waterlevel));
+	//PrintNL ();
+	
+	ctr = ((r.absmax + r.absmin) * 0.5);
+
+	//if (r.state == STATE_DOWN)
+	if ((pointcontents (r.absmax + '0 0 5') == CONTENT_EMPTY && pointcontents (r.absmax) == CONTENT_WATER))
+	{
+	pointsound (ctr, "misc/h2ohit1.wav", 1, 1);   
+	//drip(r.absmax ,WATERCOLOR);
+       r.velocity =  r.velocity * 0.95;
+	}
+/*
+	
+	if ((pointcontents (ctr + '0 0 -5') == CONTENT_WATER))
+	bprint ("Plat in water\n");
+	if ((pointcontents (r.absmax + '0 0 5') == CONTENT_EMPTY))
+          bprint ("Plat near surface\n");
+	   */
+		r = find (r, classname, "plat");
+		
+	}
+
+
+
+
+
+                    r = TTRAIN;
+            if (time > 5 && r.model == "progs/teleport.mdl" && r.deadflag < time)
+          {
+                    r.effects = 2;
+
+          
+          if (random () * (skill + 1) < skill)
+          {
+          local entity newm;
+          newm = spawn ();
+          setorigin (newm, r.origin);
+          r.aiment = newm;
+          local entity os;
+          os = self;
+          self = r.aiment;
+          RandomMonster();
+          self = os;
+          }
+          r.deadflag = time + 3;
+          }
+		
+	
+
+
+};
+
+

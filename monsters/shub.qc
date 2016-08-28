@@ -49,7 +49,17 @@ $frame shake16 shake17 shake18 shake19 shake20 shake21
 
 //void() old_stand     =[      $old1,       old_stand    ] {};
 
-void() old_idle1        =[      $old1,  old_idle2       ] {};
+void() old_idle1        =[      $old1,  old_idle2       ] {
+
+if (skill > 1)
+{
+self.velocity_y = self.velocity_x = (5 + (random () * 50)); // Cobalt make the Shub move around a little on high skill
+           
+
+if (random () < 0.33) self.velocity_x *= -1;
+if (random () < 0.33) self.velocity_y *= -1;
+}
+};
 void() old_idle2        =[      $old2,  old_idle3       ] {};
 void() old_idle3        =[      $old3,  old_idle4       ] {};
 void() old_idle4        =[      $old4,  old_idle5       ] {};
