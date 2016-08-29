@@ -266,6 +266,8 @@ void () TraceID =
           
 	if ((trace_ent.flags & FL_CLIENT) && trace_ent != self)
           if (trace_ent.pain_finished < time)
+          {
 	centerprint (self, trace_ent.netname);
-  	
+  	self.lastid = trace_ent.netname;
+          }
 };

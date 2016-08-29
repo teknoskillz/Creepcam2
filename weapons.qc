@@ -1432,9 +1432,18 @@ void() W_WeaponFrame =
 		W_Attack ();
 	}
           
-          if (self.movement == VEC_ORIGIN && (self.flags & FL_CLIENT))
+          if (self.movement == VEC_ORIGIN)
+          {                    
+          if (self.flags & FL_CLIENT))
 	TraceID ();
-          
+          }  else
+          {
+          if (self.lastid)
+          {
+          self.lastid = string_null;
+          centerprint (self, "\n");          
+          }
+          }
 };
 
 /*
