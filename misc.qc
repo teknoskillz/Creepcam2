@@ -390,16 +390,23 @@ void() spikeshooter_use =
 {
           sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
 	if (self.spawnflags & SPAWNFLAG_LASER)
-	LaunchLaser (self.origin, self.movedir);
-	else
+          {
+                    self.netname = "Laser Sentry";
+                    if (framecount & 1)
+            self.killstring =" got zapped.\n"; // Cobalt for laser traps
+          else self.killstring =" was killed by a laserbeam.\n"; 
+	LaunchLaser (self.origin, self.movedir);                    
+          }
+          else
 	{
 
 		launch_spike (self.origin, self.movedir);
 		newmis.velocity = self.movedir * 500;
 		self.killstring =" was spiked.\n"; // Cobalt, moved here
-
+                    self.netname = "Spike Trap";
 		if (self.spawnflags & SPAWNFLAG_SUPERSPIKE)
 		{
+                    self.netname = "Superspike Trap";
 		newmis.touch = superspike_touch;
 		self.killstring =" was crucified.\n"; // Cobalt for lsuperspike death
                     }

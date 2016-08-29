@@ -2116,8 +2116,14 @@ void(entity targ, entity attacker) ClientObituary =
 				bprint (" fell to his death\n");
 				desc = "Falling";
 			}
-                              else bprint (" just died for some reason...\n");
-
+                              else 
+                              {
+                                       // eprint (attacker);
+                                       if (attacker.killstring )
+                                                 bprint (attacker.killstring);
+                                       else
+                              bprint (" just died for some reason...\n");
+                              }
                               if (desc)
                               {
 		          targ.deathtype = desc;

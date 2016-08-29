@@ -92,22 +92,16 @@ void(vector org, vector vec) LaunchLaser =
 	vec = normalize(vec);
 	
 	newmis = spawn();
-	if (self.classname == "monster_enforcer")
-          {
-                    newmis.classname = newmis.netname = "enforcer_laser";	//gnounc
+	if (self.flags & FL_MONSTER)
 		sound (self, CHAN_WEAPON, "enforcer/enfire.wav", 1, ATTN_NORM);
-          }
-          else
-          {
-           newmis.classname = self.netname = "LaserBeam";         
-            newmis.killstring =" got zapped.\n"; // Cobalt for laser traps
-          }
+            
+          
           
 	newmis.owner = self;
 	newmis.movetype = MOVETYPE_FLY;
 	newmis.solid = SOLID_BBOX;
 	newmis.effects = EF_DIMLIGHT;
-
+          newmis.classname = "LaserBeam"; 
 	setmodel (newmis, "progs/laser.mdl");
 	setsize (newmis, '0 0 0', '0 0 0');		
 
@@ -128,7 +122,7 @@ void() enforcer_fire =
 	local vector org;
 
 		if (random () < 0.5) // Cobalt alternate killstring
-       self.killstring = " was neutralized by an Enforcer.\n";
+          self.killstring = " was neutralized by an Enforcer.\n";
 	else
 	self.killstring = " was blasted by an Enforcer.\n";
 	
