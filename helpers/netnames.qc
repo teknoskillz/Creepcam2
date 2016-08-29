@@ -268,6 +268,16 @@ void () TraceID =
           if (trace_ent.pain_finished < time)
           {
 	centerprint (self, trace_ent.netname);
-  	self.lastid = trace_ent.netname;
+  	self.lastid = trace_ent.colormap;
           }
+          
+          if (trace_fraction == 1 || trace_ent.model == world.model)
+          {
+          if (self.lastid)
+          {
+          centerprint (self, "");
+          self.lastid = 0;
+          }
+          }
+          
 };
