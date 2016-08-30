@@ -98,7 +98,7 @@ void() CC_LongMessageThink =
                     local string ms;
                     ms = "^2Creepiercam^7 ";
                     ms = strcat (ms, version);
-                    ms = strcat (ms, "\n\nby ^5PrimalLove ^7& €ƒ…ÃÏÂÁÌÔ…ƒ‚^7\n");
+                    ms = strcat (ms, "\n\n by €ƒ…ÃÏÂÁÌÔ…ƒ‚ & ^5PrimalLove ^7\n");
                     ms = strcat (ms, "^3Based on Creepcam v1.1 Beta 5 by Jeff Preshing^7");
                     ms = strcat (ms, "\n\nType ^2creepcam^7 in the console\nfor more information.");
                     centerprint(self.owner,ms);                              

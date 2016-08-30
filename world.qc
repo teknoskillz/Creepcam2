@@ -405,10 +405,13 @@ void() StartFrame =
 if (!framecount) 
 {          
           registercvar ("respawntimer", "15");	
-          version = "v2.079\n"; // Current version of Creepiercam
-          
-         
-
+          version = "v2.09\n"; // Current version of Creepiercam
+          local string hname;
+          hname = "\"^2Coop with Creepiercam^7 ";
+          hname = strcat (hname, version);
+          hname = strcat (hname, "\"");
+          localcmd ("hostname ");
+          localcmd (hname);
 }	
 	CC_RESPAWN = cvar ("respawntimer");
 	skill = cvar("skill");
