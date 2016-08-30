@@ -577,8 +577,9 @@ void() monster_zombie =
 		zombie_cruc1 ();
 	}
 	else
-	{
-		walkmonster_start();
-		CC_AddtoList (self);
-	}	
+	walkmonster_start();
+		
+		
+          CC_AddtoList (self);
+          
 };

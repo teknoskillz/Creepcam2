@@ -66,7 +66,7 @@ void(entity e) CC_SendAliases =
 
 void(entity e) CC_WriteHelpInfo = 
 {
-   sprint(e, "ç ^5Creeierpcam version 2.073 commands^7:\n^2Spectate^7   ^3Watch Player^7\n^2Join^7       ^3Join the fight^7\n^2MySpecs^7    ^3Spectators Watching You^7\n^2AllSpecs^7   ^3List All Spectators^7\n^2ShowCam^7    ^3Toggle cam Display^7\n^2AutoSwitch^7 ^3Toggle AutoSwitch Mode^7\n^2PlayerList^7 ^3List All Players^7\n\n^5Use fire button to switch between players when spectating^7\n");
+   sprint(e, "ç ^5Creeierpcam version 2.078 commands^7:\n^2Spectate^7   ^3Watch Player^7\n^2Join^7       ^3Join the fight^7\n^2MySpecs^7    ^3Spectators Watching You^7\n^2AllSpecs^7   ^3List All Spectators^7\n^2ShowCam^7    ^3Toggle cam Display^7\n^2AutoSwitch^7 ^3Toggle AutoSwitch Mode^7\n^2PlayerList^7 ^3List All Players^7\n\n^5Use fire button to switch between players when spectating^7\n");
 };
 
 
@@ -116,9 +116,15 @@ void(entity targ, float pauselen, string msg) CC_LongMessage =
 
 void(entity c) CC_ClearNameForAll = 
 {
+           // Cobalt - Try to reduce net traffic by not blanking the scoreboard name when they are a respawn cam 
+           // mostly for Nightmare skill with laggy players, long netnames can possibly overflow it
+          if (!c.respawncam)
+          {
 	WriteByte(MSG_ALL, SVC_UPDATENAME);
 	WriteByte(MSG_ALL, c.colormap - 1);
 	WriteString(MSG_ALL, string_null);
+          }
+          
 };
 
 void(entity c) CC_ShowNameForAll = 
@@ -221,12 +227,12 @@ void() CC_BlinkThink =
 		if (showflag)
 		{
 			CC_StuffToAllCams("+showscores\n");
-         scoreshowtime = time + 4;
+                              scoreshowtime = time + 4;
 		}
 		else
 		{
 			CC_StuffToAllCams("-showscores\n");
-         scoreshowtime = time + 116;
+                              scoreshowtime = time + 116;
 		}
 		showflag = !showflag;
 	}

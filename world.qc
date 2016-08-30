@@ -517,5 +517,3 @@ aut = strcat (world.message, aut);
           
 };
 
-
- 
