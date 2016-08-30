@@ -402,8 +402,14 @@ void() StartFrame =
 	c_max = 16;
 
 // CC_2	
-if (!framecount) registercvar ("respawntimer", "15");	
-	
+if (!framecount) 
+{          
+          registercvar ("respawntimer", "15");	
+          version = "v2.079\n"; // Current version of Creepiercam
+          
+         
+
+}	
 	CC_RESPAWN = cvar ("respawntimer");
 	skill = cvar("skill");
 	framecount = framecount + 1;
@@ -492,6 +498,7 @@ void(entity ent) CopyToBodyQueue =
 };
 void () ShowMapAuthor =
 {
+         
 local string aut;
 if (mapname == "dm3" || mapname == "start" || mapname == "e1m1"|| mapname == "e2m1" || mapname == "e2m2" || mapname == "e2m3" || mapname == "e2m4" || mapname == "e2m5" || mapname == "e2m6" || mapname == "e3m1" || mapname == "end")
 aut = "John Romero";
@@ -504,6 +511,7 @@ aut = "American McGee & Tim Willits";
 else if (mapname == "e4m2" || mapname == "e4m3" || mapname == "e4m5" || mapname == "e4m6" || mapname == "e4m7" || mapname == "e4m8")
 aut = "Sandy Petersen";  
 else return;
+
 
 aut = strcat (". By: ", aut);
 aut = strcat (world.message, aut);

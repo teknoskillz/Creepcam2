@@ -1,4 +1,5 @@
 
+
 void(entity c) CC_AddtoList = 
 {
 	local entity l;
@@ -66,7 +67,11 @@ void(entity e) CC_SendAliases =
 
 void(entity e) CC_WriteHelpInfo = 
 {
-   sprint(e, " ^5Creeierpcam version 2.078 commands^7:\n^2Spectate^7   ^3Watch Player^7\n^2Join^7       ^3Join the fight^7\n^2MySpecs^7    ^3Spectators Watching You^7\n^2AllSpecs^7   ^3List All Spectators^7\n^2ShowCam^7    ^3Toggle cam Display^7\n^2AutoSwitch^7 ^3Toggle AutoSwitch Mode^7\n^2PlayerList^7 ^3List All Players^7\n\n^5Use fire button to switch between players when spectating^7\n");
+   local string msg;
+   msg = strcat (" ^5Creeierpcam ", version);
+   msg = strcat (msg, " commands^7:\n^2Spectate^7   ^3Watch Player^7\n^2Join^7       ^3Join the fight^7\n^2MySpecs^7    ^3Spectators Watching You^7\n^2AllSpecs^7   ^3List All Spectators^7\n^2ShowCam^7    ^3Toggle cam Display^7\n^2AutoSwitch^7 ^3Toggle AutoSwitch Mode^7\n^2PlayerList^7 ^3List All Players^7\n\n^5Use fire button to switch between players when spectating^7\n");
+   sprint (e, msg);
+   //sprint(e, " ^5Creeierpcam v 2.079 commands^7:\n^2Spectate^7   ^3Watch Player^7\n^2Join^7       ^3Join the fight^7\n^2MySpecs^7    ^3Spectators Watching You^7\n^2AllSpecs^7   ^3List All Spectators^7\n^2ShowCam^7    ^3Toggle cam Display^7\n^2AutoSwitch^7 ^3Toggle AutoSwitch Mode^7\n^2PlayerList^7 ^3List All Players^7\n\n^5Use fire button to switch between players when spectating^7\n");
 };
 
 
@@ -74,6 +79,8 @@ void() CC_LongMessageThink =
 {
 	if (self.state == 0)
 	{
+                    stuffcmd (self.owner, "bf 0 0 0 5.5 0.75\n");
+                    self.owner.flags = self.owner.flags | FL_NOTARGET;
 		if (self.owner.creepflags & CF_DOINGLONGMESSAGE)
 		{
 			self.nextthink = time + 1;
@@ -85,6 +92,18 @@ void() CC_LongMessageThink =
 	self.lefty = self.lefty - 1;
 	if (self.lefty > 1)
 	{
+                    if (self.deathtype == "motd")
+                    {
+                    
+                    local string ms;
+                    ms = "^2Creepiercam^7 ";
+                    ms = strcat (ms, version);
+                    ms = strcat (ms, "\n\nby ^5PrimalLove ^7& €ƒ…ÃÏÂÁÌÔ…ƒ‚^7\n");
+                    ms = strcat (ms, "^3Based on Creepcam v1.1 Beta 5 by Jeff Preshing^7");
+                    ms = strcat (ms, "\n\nType ^2creepcam^7 in the console\nfor more information.");
+                    centerprint(self.owner,ms);                              
+                    }
+                    else
 		centerprint(self.owner, self.deathtype);
 		self.nextthink = time + 0.7;
 	}
@@ -97,6 +116,8 @@ void() CC_LongMessageThink =
 		else
 		{
 			self.owner.creepflags = self.owner.creepflags - CF_DOINGLONGMESSAGE;
+                              if (self.owner.flags & FL_NOTARGET)
+                              self.owner.flags = self.owner.flags - FL_NOTARGET;
 			remove(self);
 		}
 	}
@@ -104,10 +125,12 @@ void() CC_LongMessageThink =
 
 void(entity targ, float pauselen, string msg) CC_LongMessage = 
 {
+          
 	local entity s;
 	s = spawn();
-	s.lefty = MOVETYPE_FLYMISSILE;
-	s.deathtype = msg;
+	s.lefty = 9;
+	s.deathtype = msg;        
+          //strzone (s.deathtype);
 	s.owner = targ;
 	s.think = CC_LongMessageThink;
 	s.nextthink = time + pauselen;
@@ -441,3 +464,4 @@ void() CC_PlayerImpulses =
 	   
        	   
 };
+ 

@@ -600,16 +600,16 @@ void() CC_RequestNotCam =
 	centerprint(self, string_null);
 	
 	stuffcmd(self, "-showscores\n");
-
+          if (!self.respawncam)
 	CC_ShowNameForAll(self);
           self.owner = world;
  
 	self.think = PutClientInServer;
 	self.nextthink = time + frametime + (frametime * random(5));
-		if (self.spawns < 1)
-	SetNewParms();
-	else
-	CC_Spawnparms ();
+          //if (self.spawns < 1)
+	//SetNewParms();
+	//else
+	//CC_Spawnparms ();
 	CC_AntiSpamAction(self);
 };
 

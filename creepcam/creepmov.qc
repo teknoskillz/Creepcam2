@@ -664,3 +664,4 @@ void(entity cam) CC_DoCamAlgorithm =
 	
 };
 
+ 

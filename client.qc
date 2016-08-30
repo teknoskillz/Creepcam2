@@ -93,6 +93,7 @@ This is the camera point for the intermission.
 Use mangle instead of angle, so you can set pitch or roll as well as yaw.  'pitch roll yaw'*/
 void() info_intermission =
 {
+          if (!INFI) INFI = self;
 };
 
 
@@ -104,10 +105,12 @@ void() SetChangeParms =
           
           // Cobalt - Prevent respawn cams from glitching between levels,
           // Award ShubKiller their stuff if restarting new game
+          self.levels += 1;
 	if ((self.health <= 0 || self.respawncam > 0) && ShubKiller != self)
 	{ 
                     self.watch = 0;
 		SetNewParms ();
+                    parm4 = encode(self.levels, 0, 1);
                     return;	
 	}
 
@@ -135,7 +138,7 @@ void() SetChangeParms =
           parm1 = self.items;        // no encoding - items is potentially 24 bits
           parm2 = encode(self.ammo_shells, self.armorvalue, self.health); //  ammo shells, armorvalue, health
           parm3 = encode(self.ammo_cells, self.ammo_rockets, self.ammo_nails); // Cells, Rockets, nails
-          parm4 = encode(0, self.armortype * 100, self.weapon); // now holds nothing , armortype, weapon
+          parm4 = encode(self.levels, self.armortype * 100, self.weapon); // now holds levels , armortype, weapon
           parm5 = self.frags;
 	parm9 = self.armortype * 100;
 	
@@ -201,8 +204,7 @@ void() DecodeLevelParms =
               if (self.spawns < 1) self.spawnarmortype = self.armortype;
               self.frags = parm5;
               self.watch = parm10;              
-          
-          
+              
 };
 
 /*============

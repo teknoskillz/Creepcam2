@@ -832,9 +832,10 @@ float DEF_GIB_HEALTH = -18; // Cobalt lower gib value
 void (entity client, string s, ...) centerprint2 = #73;
 .float gravity,idealroll;
 vector intv;
-.float lastid;
-entity last_tdeath,TTRAIN,fighter;
+.float lastid,levels;
+entity last_tdeath,TTRAIN,fighter,INFI;
 void (vector org) spawn_tfog;
 void (vector org, entity death_owner) spawn_tdeath;
 void (float chance) CAN_GibZombie;
+string version;
  
