@@ -600,7 +600,7 @@ void() CC_RequestNotCam =
 	centerprint(self, string_null);
 	
 	stuffcmd(self, "-showscores\n");
-          if (!self.respawncam)
+          //if (!self.respawncam)
 	CC_ShowNameForAll(self);
           self.owner = world;
  

@@ -58,6 +58,11 @@ void() multi_trigger =
 			return;
 		found_secrets = found_secrets + 1;
 		WriteByte (MSG_ALL, SVC_FOUNDSECRET);
+                     self.aflag = skill + 1;
+                     self.netname = "^3Found Secret area^7";
+                    SUB_InfoBar (self,self.enemy,self.aflag);
+                    self.enemy.secrets += 1;
+                    self.enemy.frags = self.enemy.frags + self.aflag;
 	}
 
 	if (self.noise != string_null)

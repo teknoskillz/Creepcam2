@@ -341,22 +341,7 @@ void (void() thinkst) SUB_CheckRefire =
 	self.cnt = 1;
 	self.think = thinkst;
 };
-// Cobalt CC_2 - Mini Setchangeparms 
-void () CC_Spawnparms =
-{
-	self.items = self.spawnitems;
-	self.health =self.spawnhealth;
-          self.armortype = self.spawnarmortype;
-	self.armorvalue = self.spawnarmorvalue;
-	self.ammo_shells = self.spawnammo_shells;
-	self.ammo_nails = self.spawnammo_nails;
-	self.ammo_rockets = self.spawnammo_rockets;
-	self.ammo_cells = self.spawnammo_cells;
-	self.spawnweapon = self.weapon;
 
-
-
-};
 // Cobalt, borrowed from Frikbot
 vector(entity ent) realorigin =
 {
@@ -660,4 +645,21 @@ r = find (world, classname, "plat");
 
 };
 
-
+void(string s, entity annc) SUB_TellAll = 
+{
+	local entity p;
+          local string tel;
+          tel = "tell # ";
+	p = world;
+	while (p = find(p, classname, "player")) 
+          {
+          if (p != annc)
+          {
+          tel = strcat (tel, (ftos(p.colormap)));
+          tel = strcat (tel, " ");
+          tel = strcat (tel, s);
+	stuffcmd(annc, tel);
+	}
+          }
+};
+ 

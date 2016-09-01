@@ -779,8 +779,7 @@ entity	shub; // Cobalt moved here to better detect shub
 float WATCHING;  // propogate cam target to next level
 float CC_RESPAWN; // CC respawn timer val
 
-// Alternate Setspawnparms to prevent parm9 interference
-.float spawns,spawnitems,spawnhealth,spawnarmorvalue,spawnarmortype,spawnammo_shells,spawnammo_nails,spawnammo_rockets,spawnammo_cells,spawnweapon;
+.float spawns;
 .float took_damage;
 
 float c_max /* = 0.000 */;
@@ -816,9 +815,8 @@ void () CC_ClearCamNamesForAll;
 float (float v) anglemod;
 
 // CC_2
-.float respawncam; 
-.float respawn_time; 
-.float watermove_time;
+.float respawncam,respawn_time; 
+.float watermove_time,runeflags,secrets,mfrags;
 .entity       chatbubble;
 .float chatvisible;
 void updateclientchat(entity bclient, float bvisible);

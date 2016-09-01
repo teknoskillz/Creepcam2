@@ -141,20 +141,23 @@ void(entity c) CC_ClearNameForAll =
 {
            // Cobalt - Try to reduce net traffic by not blanking the scoreboard name when they are a respawn cam 
            // mostly for Nightmare skill with laggy players, long netnames can possibly overflow it
-          if (!c.respawncam)
+          if (!c.respawncam && !c.aflag)
           {
 	WriteByte(MSG_ALL, SVC_UPDATENAME);
 	WriteByte(MSG_ALL, c.colormap - 1);
 	WriteString(MSG_ALL, string_null);
+          c.aflag = c.colormap;
           }
           
 };
 
 void(entity c) CC_ShowNameForAll = 
 {
+          if (!c.aflag) return; // Cobalt - already showing name in scoreboard
 	WriteByte(MSG_ALL, SVC_UPDATENAME);
 	WriteByte(MSG_ALL, c.colormap - 1);
 	WriteString(MSG_ALL, c.netname);
+          c.aflag = 0;
 };
 
 void() CC_ClearCamNamesForAll = 
@@ -167,6 +170,7 @@ void() CC_ClearCamNamesForAll =
 		c = l.clink;
 		while (c != world)
 		{
+                              if (c.flags & FL_CLIENT)
 			CC_ClearNameForAll(c);
 			c = c.clink;
 		}
@@ -175,6 +179,7 @@ void() CC_ClearCamNamesForAll =
 	c = freecamlist;
 	while (c != world)
 	{
+                    if (c.flags & FL_CLIENT)
 		CC_ClearNameForAll(c);
 		c = c.clink;
 	}
@@ -263,6 +268,7 @@ void() CC_BlinkThink =
 
 void() CC_SpawnBlinker = 
 {
+       
 	local entity e;
 	e = spawn();
 	e.think = CC_BlinkThink;

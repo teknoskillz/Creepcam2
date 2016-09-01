@@ -1061,9 +1061,13 @@ void() key_touch =
 	sprint (other, "You got the ");
 	sprint (other, self.netname);
 	sprint (other,"\n");
-
 	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
+           if (active_clients > 1)
+          {
+          self.wad = strcat ("I found the ", self.netname);
+          SUB_TellAll (self.wad, other);
+          }
 	other.items = other.items | self.items;
 
 	if (!coop)
@@ -1196,19 +1200,31 @@ void() sigil_touch =
 
 	if (other.health <= 0)
 		return;
-
-	centerprint (other, "You got the rune!");
-
+          local string type;
+          type = "You got the ";
+          type = strcat (type, self.netname);
+          type = strcat (type, " !");
+	centerprint (other, type);
 	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
+          
+             if (active_clients > 1)
+          {
+          self.wad = strcat ("I picked up the ", self.netname);
+          SUB_TellAll (self.wad, other);
+          }
+          
+          other.air_finished = -1; // Cobalt, sound fx to player
 	self.solid = SOLID_NOT;
 	self.model = string_null;
+          other.runeflags = other.runeflags | (self.spawnflags & 15);
 	serverflags = serverflags | (self.spawnflags & 15);
 	self.classname = string_null;		// so rune doors won't find it
 	
 	activator = other;
 	SUB_UseTargets();				// fire all targets / killtargets
-};
+          self.effects = EF_NODRAW; // Cobalt dont transmit to network this ent
+          };
 
 
 /*QUAKED item_sigil (0 .5 .8) (-16 -16 -24) (16 16 32) E1 E2 E3 E4
@@ -1227,24 +1243,28 @@ void() item_sigil =
 	{
 		precache_model ("progs/end1.mdl");
 		setmodel (self, "progs/end1.mdl");
+                    self.netname = "Rune of Resistance";
 	}
 
 	if (self.spawnflags & 2)
 	{
 		precache_model2 ("progs/end2.mdl");
 		setmodel (self, "progs/end2.mdl");
+                    self.netname = "Rune of Strength";
 	}
 
 	if (self.spawnflags & 4)
 	{
 		precache_model2 ("progs/end3.mdl");
 		setmodel (self, "progs/end3.mdl");
+                    self.netname = "Rune of Haste";
 	}
 
 	if (self.spawnflags & 8)
 	{
 		precache_model2 ("progs/end4.mdl");
 		setmodel (self, "progs/end4.mdl");
+                    self.netname = "Rune of Regeneration";
 	}
 	
 	self.touch = sigil_touch;

@@ -140,6 +140,7 @@ void() SetChangeParms =
           parm3 = encode(self.ammo_cells, self.ammo_rockets, self.ammo_nails); // Cells, Rockets, nails
           parm4 = encode(self.levels, self.armortype * 100, self.weapon); // now holds levels , armortype, weapon
           parm5 = self.frags;
+          parm6 = self.runeflags;
 	parm9 = self.armortype * 100;
 	
 	
@@ -174,37 +175,40 @@ void() DecodeLevelParms =
                     self.watch = parm10;
                     if (self.watch != -2)
 			SetNewParms ();		// take away all stuff on starting new episode
+                    if (serverflags) 
+                    self.frags = parm5;
 	}
-            else if (self.spawns)
-             {
-              CC_Spawnparms ();
-              return;              
-             }
+            else if (self.spawns && self.dmg != -1)
+             setspawnparms (self);
+             
+             
+            
+             
                      self.items = parm1;
-                     if (self.spawns < 1)
-                     self.spawnitems = parm1;
               // These 3 now kept in parm 2 
               self.health = decode(parm2, LOW8);
-               if (self.spawns < 1) self.spawnhealth = self.health;
               self.armorvalue = decode(parm2, MID8);
-               if (self.spawns < 1) self.spawnarmorvalue = self.armorvalue;
               self.ammo_shells = decode(parm2, HI8);
-               if (self.spawns < 1) self.spawnammo_shells = self.ammo_shells;
               // these 3 now kept in parm 3
               self.ammo_nails = decode(parm3, LOW8);
-              if (self.spawns < 1) self.spawnammo_nails = self.ammo_nails;
+              
               self.ammo_rockets = decode(parm3, MID8);
-              if (self.spawns < 1) self.spawnammo_rockets = self.ammo_rockets;
+              
               self.ammo_cells = decode(parm3, HI8);
-              if (self.spawns < 1) self.spawnammo_cells = self.ammo_cells;
+              
               // These 2 now kept in parm 4, Parm 5 and 6 now freed
               self.weapon = decode(parm4, LOW8);
-              if (self.spawns < 1) self.spawnweapon = self.weapon;
+               
               self.armortype = decode(parm4, MID8) * 0.01;
-              if (self.spawns < 1) self.spawnarmortype = self.armortype;
-              self.frags = parm5;
-              self.watch = parm10;              
               
+              if (!self.spawns)
+              {                        
+              self.frags = parm5;
+              self.runeflags = parm6;
+              self.watch = parm10;
+              ShowMapAuthor ();              
+              }
+             
 };
 
 /*============
@@ -421,6 +425,37 @@ void() execute_changelevel =
 		other.movetype = MOVETYPE_NONE;
 		other.modelindex = 0;
 		setorigin (other, pos.origin);
+                    
+                     if (other == self.aiment)
+                    {
+                    self.netname = "^2Found the level exit^7";
+                    self.aflag = (5 * (skill + 1));
+                      if (other.health > 0)
+                    self.aflag = self.aflag + other.health;
+                    SUB_InfoBar (self,other,self.aflag);
+                    other.frags = other.frags  + self.aflag;
+                    } 
+                    
+                     if (total_monsters && (other.mfrags == total_monsters))
+                    {
+                    self.netname = "^5YOU DESTROYED  A L L  MONSTERS!^7";
+                    SUB_InfoBar (self,other,total_monsters);
+                    other.frags = other.frags  + total_monsters;
+                    }  
+                    else if (killed_monsters == total_monsters)
+                    {
+                    pos.netname = "^6All Monsters killed!^7";
+                    pos.aflag = ceil (total_monsters / 2);
+                    SUB_InfoBar (pos,other,pos.aflag);
+                    other.frags = other.frags  + pos.aflag;          
+                    }
+                      
+                    if (total_secrets && (other.secrets == total_secrets))
+                    {
+                    self.netname = "^3FOUND ALL SECRET AREAS!^7";
+                    SUB_InfoBar (self,other,(total_secrets * (skill + 1)));
+                    other.frags = other.frags  + (total_secrets * (skill + 1));
+                    }
 	
 	other = nextent (other);
 	}
@@ -470,7 +505,7 @@ void() changelevel_touch =
 		T_Damage (other, self, self, 50000);
 		return;
 	}
-
+          self.aiment = other; // Cobalt - mark the player who exits the level to award points
 	bprint (other.netname);
 	bprint (" exited the level\n");
 	
@@ -847,6 +882,7 @@ void() PutClientInServer =
 	
       //CC_2
           
+	  self.dmg = 2;
 	self.respawncam = self.watch =  0;
           self.respawn_time = 0;
 	self.classname = "player";
@@ -858,7 +894,7 @@ void() PutClientInServer =
 	self.max_health = 100;
 	self.flags = FL_CLIENT;
 	self.air_finished = time + 12;
-	self.dmg = 2;   		// initial water damage
+	   		// initial water damage
 	self.super_damage_finished = 0;
 	self.radsuit_finished = 0;
 	self.invisible_finished = 0;
@@ -867,7 +903,7 @@ void() PutClientInServer =
 	self.invincible_time = 0;
 
 	DecodeLevelParms ();
-	
+        
 	W_SetCurrentAmmo ();
 
 	self.attack_finished = time;
@@ -908,7 +944,7 @@ void() PutClientInServer =
 	//stuffcmd(self, "-attack\n");            // Supa, prevent shooting after respawning in MP
 	self.attack_finished = time + 0.8; // Cobalt this is better
 	self.spawns += 1;
-          if (self.spawns == 1) ShowMapAuthor ();
+          
 	
 	
 
@@ -2137,6 +2173,7 @@ void(entity targ, entity attacker) ClientObituary =
 	}
         else if (targ.flags & FL_MONSTER)
         {
+              attacker.mfrags += 1;
              calc_mfrags (attacker,targ);           
                    
         }                   
