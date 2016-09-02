@@ -603,7 +603,7 @@ void() CC_RequestNotCam =
           //if (!self.respawncam)
 	CC_ShowNameForAll(self);
           self.owner = world;
- 
+          self.th_melee = SUB_Null;
 	self.think = PutClientInServer;
 	self.nextthink = time + frametime + (frametime * random(5));
           //if (self.spawns < 1)

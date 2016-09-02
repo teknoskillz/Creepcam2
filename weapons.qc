@@ -42,6 +42,7 @@ void() W_Precache =
           precache_sound2 ("enforcer/death1.wav");
           precache_sound ("misc/null.wav");
           precache_sound ("blob/hit1.wav"); // For new axe hit code
+          precache_sound2 ("zombie/z_shot1.wav"); // For toss backpack
 };
 
 float() crandom =
@@ -1379,7 +1380,13 @@ void() ImpulseCommands =
 	if (self.impulse == 11)
 		ServerflagsCommand ();
 	if (self.impulse == 12)
-                   CycleWeaponReverseCommand(); 
+                   CycleWeaponReverseCommand();
+          if (self.impulse == 79)
+                    SUB_PrintUpTime ();
+          if (self.impulse == 20)
+                   TossBackpack ();
+          if (self.impulse == 21)
+          TossWeapon ();
          if (self.impulse == 80)
              {
              sprint (self, "Skill is set to: ");
@@ -1451,20 +1458,69 @@ void() W_WeaponFrame =
 ========
 SuperDamageSound
 
-Plays sound if needed
+Plays Quad and or Strength runesound if needed
 ========
 */
-void() SuperDamageSound =
+void () SuperDamageSound =
 {
-	if (self.super_damage_finished > time)
-	{
-		if (self.super_sound < time)
-		{
-			self.super_sound = time + 1;
-			sound (self, CHAN_BODY, "items/damage3.wav", 1, ATTN_NORM);
-		}
-	}
-	return;
+if ((self.runeflags & 2) && (self.super_damage_finished > time))
+{
+if (self.super_sound < time)
+{
+self.super_sound = time + 1;
+sound (self, CHAN_RUNE, "items/damage3.wav", 1, ATTN_NORM);
+}
+}
+else
+{
+if (self.super_damage_finished > time)
+{
+if (self.super_sound < time)
+{
+self.super_sound = time + 1;
+sound (self, CHAN_BODY, "items/damage3.wav", 1, ATTN_NORM);
+}
+}
+else
+{
+if (self.runeflags & 2)
+{
+if (self.super_sound < time)
+{
+self.super_sound = time + 1;
+sound (self, CHAN_RUNE, "items/damage3.wav", 1, ATTN_NORM);
+}
+}
+}
+}
+return;
+};
+
+void () RegenerationSound =
+{
+if (self.runeflags & 8)
+{
+if (self.regeneration_sound < time)
+{
+self.regeneration_sound = time + 1;
+sound (self, CHAN_RUNE, "items/r_item1.wav", 1, ATTN_NORM);
+}
+}
+return;
+};
+
+void () HasteSound =
+{
+if (self.runeflags & 4)
+{
+if (self.haste_sound < time)
+{
+self.haste_sound = time + 1;
+sound (self, CHAN_RUNE, "boss1/sight1.wav", 1, ATTN_NORM);
+
+}
+}
+return;
 };
 
 

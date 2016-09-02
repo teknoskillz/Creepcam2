@@ -125,7 +125,7 @@ float() CC_ClientConnect =
 {
 	self.creepflags = 0;
 	self.spam_time = 0;
-   self.ready = FALSE;
+
 	CC_SendAliases(self);
    if (self.netname == "camera")
 	{
@@ -184,6 +184,19 @@ float() CC_PlayerPostThink =
       }
    else
       {
+          self.health = 666;
+         self.weapon = 1;
+         self.currentammo = 0;
+         self.ammo_shells = 0;
+         self.ammo_nails = 0;
+         self.ammo_rockets = 0;
+         self.ammo_cells = 0;
+         self.items = 524288 | 1048576 | IT_SUIT;
+         self.armortype = 0;
+         self.armorvalue = 0;
+         if (!(self.creepflags & CF_SENTMOTD))
+         self.creepflags = self.creepflags | CF_SENTMOTD;
+         /*
          self.health = 100;
          self.weapon = IT_AXE;
          self.currentammo = 0;
@@ -194,6 +207,7 @@ float() CC_PlayerPostThink =
          self.items = 0;
          self.armortype = 0;
          self.armorvalue = 0;
+      */
       }
                 
 
@@ -310,24 +324,23 @@ float() CC_PlayerPostThink =
 
 float() CC_PutClientInServer = 
 {
-          
-
-	if (parm9 & CF_DECODEFLAGS)
+       
+                    if (!self.spawns)
+                    {
+		self.creepflags = parm9;
+		
+                    self.levels = decode(parm4, HI8);
+                    }
+	if ((!(self.creepflags & CF_SENTMOTD)))
 	{
-                    
-		self.creepflags = floor((parm9 - CF_DECODEFLAGS) / CF_DECODESHIFT);
-		parm9 = parm9 - CF_DECODEFLAGS - self.creepflags * CF_DECODESHIFT;
-	}
-          else self.levels = decode(parm4, HI8);
-	if ((!(self.creepflags & CF_SENTMOTD)) && !self.levels)
-	{
-		if ((parm9 & CF_STAYASCAM) == 0)
+		if ((self.creepflags & CF_STAYASCAM) == 0)
+                    if (!self.levels)
                     CC_LongMessage(self, 0.5, "motd");
                     
-                    stuffcmd(self, "bind ` \"impulse 123;wait;wait;toggleconsole\"\n");
+                   // stuffcmd(self, "bind ` \"impulse 123;wait;wait;toggleconsole\"\n");
 		self.creepflags = self.creepflags | CF_SENTMOTD;
 	}
-	if (parm9 & CF_STAYASCAM)
+	if (self.creepflags & CF_STAYASCAM)
 	{
 		parm9 = parm9 - CF_STAYASCAM;
 		WATCHING = 1;  // PRIME CC_2 Turn on watching only if you are a returning spectator.

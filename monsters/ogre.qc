@@ -71,7 +71,7 @@ $frame pull1 pull2 pull3 pull4 pull5 pull6 pull7 pull8 pull9 pull10 pull11
 void() OgreGrenadeExplode =
 {
 	T_RadiusDamage (self, self.owner, 40, world);
-	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM, self.p_adj);
 
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
@@ -97,7 +97,7 @@ void() OgreGrenadeTouch =
 		return;
 	}
 
-	sound (self, CHAN_VOICE, "weapons/bounce.wav", 1, ATTN_NORM);	// bounce sound
+	soundpitch (self, CHAN_VOICE, "weapons/bounce.wav", 1, ATTN_NORM, self.p_adj);	// bounce sound
 
 	if (self.velocity == '0 0 0')
 		self.avelocity = '0 0 0';
@@ -301,7 +301,7 @@ void() ogre_stand4	=[	$stand4,	ogre_stand5	] {ai_stand();};
 void() ogre_stand5	=[	$stand5,	ogre_stand6	] 
 {
 	if (random() < 0.2)
-		sound (self, CHAN_VOICE, "ogre/ogidle.wav", 1, ATTN_IDLE);
+		soundpitch (self, CHAN_VOICE, "ogre/ogidle.wav", 1, ATTN_IDLE, self.p_adj);
 
 	ai_stand();
 };
@@ -330,7 +330,7 @@ void() ogre_walk3	=[	$walk3,		ogre_walk4	]
 	ai_walk(2);
 
 	if (random() < 0.2)
-		sound (self, CHAN_VOICE, "ogre/ogidle.wav", 1, ATTN_IDLE);
+		soundpitch (self, CHAN_VOICE, "ogre/ogidle.wav", 1, ATTN_IDLE, self.p_adj);
 };
 
 void() ogre_walk4	=[	$walk4,		ogre_walk5	] {ai_walk(2);};
@@ -340,7 +340,7 @@ void() ogre_walk6	=[	$walk6,		ogre_walk7	]
 	ai_walk(5);
 
 	if (random() < 0.1)
-		sound (self, CHAN_VOICE, "ogre/ogdrag.wav", 1, ATTN_IDLE);
+		soundpitch (self, CHAN_VOICE, "ogre/ogdrag.wav", 1, ATTN_IDLE);
 };
 
 void() ogre_walk7	=[	$walk7,		ogre_walk8	] {ai_walk(3);};
@@ -368,7 +368,7 @@ if (self.ammo_rockets < 10)
 	ai_run(9);
 
 	if (random() < 0.2)
-		sound (self, CHAN_VOICE, "ogre/ogidle2.wav", 1, ATTN_IDLE);
+		soundpitch (self, CHAN_VOICE, "ogre/ogidle2.wav", 1, ATTN_IDLE, self.p_adj);
 };
 
 void() ogre_run2	=[	$run2,		ogre_run3	] {ai_run(12);};
@@ -380,7 +380,7 @@ void() ogre_run7	=[	$run7,		ogre_run8	] {ai_run(13);};
 void() ogre_run8	=[	$run8,		ogre_run1	] {ai_run(24);};
 
 void() ogre_swing1	=[	$swing1,		ogre_swing2	] {ai_charge(11);
-sound (self, CHAN_WEAPON, "ogre/ogsawatk.wav", 1, ATTN_NORM);};
+soundpitch (self, CHAN_WEAPON, "ogre/ogsawatk.wav", 1, ATTN_NORM, self.p_adj);};
 void() ogre_swing2	=[	$swing2,		ogre_swing3	] {ai_charge(1);};
 void() ogre_swing3	=[	$swing3,		ogre_swing4	] {ai_charge(4);};
 void() ogre_swing4	=[	$swing4,		ogre_swing5	] {ai_charge(13);};
@@ -432,7 +432,7 @@ void() ogre_swing13	=[	$swing13,		ogre_swing14 ] {ai_charge(8);};
 void() ogre_swing14	=[	$swing14,		ogre_run1	] {ai_charge(9);};
 
 void() ogre_smash1	=[	$smash1,		ogre_smash2	] {ai_charge(6);
-sound (self, CHAN_WEAPON, "ogre/ogsawatk.wav", 1, ATTN_NORM);
+soundpitch (self, CHAN_WEAPON, "ogre/ogsawatk.wav", 1, ATTN_NORM, self.p_adj);
 };
 void() ogre_smash2	=[	$smash2,		ogre_smash3	] {ai_charge(0);};
 void() ogre_smash3	=[	$smash3,		ogre_smash4	] {ai_charge(0);};
@@ -539,7 +539,7 @@ void(entity attacker, float damage)	ogre_pain =
 	if (self.pain_finished > time)
 		return;
 
-	sound (self, CHAN_VOICE, "ogre/ogpain1.wav", 1, ATTN_NORM);		
+	soundpitch (self, CHAN_VOICE, "ogre/ogpain1.wav", 1, ATTN_NORM, self.p_adj);		
 
 	r = random();
 	
@@ -616,7 +616,7 @@ void() ogre_die =
 	// check for gib
 	if (self.health < -80)
 	{
-		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM, self.p_adj);
 		ThrowHead ("progs/h_ogre.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
@@ -625,7 +625,7 @@ void() ogre_die =
 		return;
 	}
 
-	sound (self, CHAN_VOICE, "ogre/ogdth.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "ogre/ogdth.wav", 1, ATTN_NORM, self.p_adj);
 	
 	if (random() < 0.5)
 		ogre_die1 ();

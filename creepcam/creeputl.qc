@@ -56,10 +56,10 @@ void(entity e) CC_SendAliases =
 	stuffcmd(e, "alias autoswitch \"impulse 122\"\n");
 	stuffcmd(e, "alias playerlist \"impulse 152\"\n");
 	// Cobalt removed respawntimer reference
-	
+	stuffcmd (e, "alias exit quit\n");
           stuffcmd(e, "alias skill \"impulse 80\"\n");
-	
-
+	stuffcmd(e, "alias !uptime \"impulse 79\"\n");
+          stuffcmd (e, "alias tossammo \" impulse 20\"\n");
 
 	   stuffcmd(e, "cl_movement 0");
            stuffcmd (e, "cl_nolerp 0");
@@ -439,6 +439,12 @@ entity(float targ) CC_GetPlayerIndexedBy =
 
 void() CC_PlayerImpulses = 
 {
+          if (self.impulse == 80)
+             {
+             sprint (self, "Skill is set to: ");
+             sprint (self, (ftos(cvar("skill"))));
+             sprint (self, "\n");
+             }
 	if (self.impulse == 100)
 	{
 		CC_RequestCam();

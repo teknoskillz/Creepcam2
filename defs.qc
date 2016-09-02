@@ -379,7 +379,7 @@ float	CHAN_VOICE		= 2;
 float	CHAN_ITEM		= 3;
 float	CHAN_BODY		= 4;
 float	CHAN_LIQUID		= 5; // PRIME SoundPitch
-
+float     CHAN_RUNE = 6;
 float	ATTN_NONE		= 0;
 float	ATTN_NORM		= 1;
 float	ATTN_IDLE		= 2;
@@ -421,7 +421,7 @@ entity	newmis;			// launch_spike sets this after spawning it
 entity	activator;		// the entity that activated a trigger or brush
 
 entity	damage_attacker;	// set by T_Damage
-float	framecount,uptime;
+float	framecount;
 
 float		skill;
 
@@ -778,13 +778,13 @@ entity	shub; // Cobalt moved here to better detect shub
 .float watch; // colormap of  CC target
 float WATCHING;  // propogate cam target to next level
 float CC_RESPAWN; // CC respawn timer val
-
+float uptime;
 .float spawns;
 .float took_damage;
 
 float c_max /* = 0.000 */;
 float c_count /* = 0.000 */;
-.float ready; 
+.float p_adj; // Soundpitch adjustment 
 .float oldteam; 
 float intermission_running /* = 0.000 */; 
 float numplayers; 
@@ -815,9 +815,9 @@ void () CC_ClearCamNamesForAll;
 float (float v) anglemod;
 
 // CC_2
-.float respawncam,respawn_time; 
-.float watermove_time,runeflags,secrets,mfrags;
-.entity       chatbubble;
+.float respawncam,respawn_time,spawn1_time; 
+.float watermove_time,runeflags,secrets,mfrags,deaths,items2,regen_time,regeneration_sound,haste_sound;
+.entity       chatbubble,spawn_ent;
 .float chatvisible;
 void updateclientchat(entity bclient, float bvisible);
 .float grenade_time;
@@ -835,5 +835,7 @@ entity last_tdeath,TTRAIN,fighter,INFI;
 void (vector org) spawn_tfog;
 void (vector org, entity death_owner) spawn_tdeath;
 void (float chance) CAN_GibZombie;
-string version;
+string version,mtitle;
+void () CycleWeaponReverseCommand, CycleWeaponCommand;
+
  

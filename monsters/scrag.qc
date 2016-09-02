@@ -223,7 +223,7 @@ void() Wiz_FastFire =
 		dst = self.enemy.origin - 13*self.movedir;
 	
 		vec = normalize(dst - self.origin);
-		sound (self, CHAN_WEAPON, "wizard/wattack.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_WEAPON, "wizard/wattack.wav", 1, ATTN_NORM, self.p_adj);
 		launch_spike (self.origin, vec);
 		newmis.velocity = vec*600;
 		newmis.owner = self.owner;
@@ -240,7 +240,7 @@ void() Wiz_StartFast =
 {
 	local	entity	missile;
 	
-	sound (self, CHAN_WEAPON, "wizard/wattack.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_WEAPON, "wizard/wattack.wav", 1, ATTN_NORM, self.p_adj);
 	self.v_angle = self.angles;
 	makevectors2 (self.angles);
 
@@ -276,10 +276,10 @@ void() Wiz_idlesound =
 	{
 	 	self.waitmin = time + 2;
 	 	if (wr > 4.5) 
-	 		sound (self, CHAN_VOICE, "wizard/widle1.wav", 1,  ATTN_IDLE);
+	 		soundpitch (self, CHAN_VOICE, "wizard/widle1.wav", 1,  ATTN_IDLE, self.p_adj);
 
 	 	if (wr < 1.5)
-	 		sound (self, CHAN_VOICE, "wizard/widle2.wav", 1, ATTN_IDLE);
+	 		soundpitch (self, CHAN_VOICE, "wizard/widle2.wav", 1, ATTN_IDLE, self.p_adj);
 	}
 	return;
 };
@@ -349,7 +349,7 @@ void()	wiz_death1	=[	$death1,		wiz_death2	]
 	self.velocity_y = -200 + 400*random();
 	self.velocity_z = 100 + 100*random();
 	self.flags = self.flags - (self.flags & FL_ONGROUND);
-	sound (self, CHAN_VOICE, "wizard/wdeath.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "wizard/wdeath.wav", 1, ATTN_NORM, self.p_adj);
 };
 
 void()	wiz_death2	=[	$death2,		wiz_death3	] {};
@@ -365,7 +365,7 @@ void() wiz_die =
 // check for gib
 	if (self.health < -40)
 	{
-		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM, (self.p_adj / 1.5));
 		ThrowHead ("progs/h_wizard.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
@@ -380,7 +380,7 @@ void() wiz_die =
 
 void(entity attacker, float damage) Wiz_Pain =
 {
-	sound (self, CHAN_VOICE, "wizard/wpain.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "wizard/wpain.wav", 1, ATTN_NORM, self.p_adj);
 	if (random()*70 > damage)
 		return;		// didn't flinch
 

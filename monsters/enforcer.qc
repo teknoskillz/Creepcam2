@@ -147,7 +147,7 @@ void()	enf_stand7	=[	$stand7,	enf_stand1	] {ai_stand();};
 void()	enf_walk1	=[	$walk1 ,	enf_walk2	]
 {
 	if (random() < 0.2)
-		sound (self, CHAN_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);
+		soundpitch (self, CHAN_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE, self.p_adj);
 	ai_walk(2);
 };
 
@@ -170,7 +170,7 @@ void()	enf_walk16	=[	$walk16,	enf_walk1	] {ai_walk(2);};
 void()	enf_run1	=[	$run1  ,	enf_run2	] 
 {
 	if (random() < 0.2)
-		sound (self, CHAN_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);
+		soundpitch (self, CHAN_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE, self.p_adj);
 	ai_run(18);
 };
 
@@ -247,10 +247,10 @@ void(entity attacker, float damage)	enf_pain =
 
 	
 	if (r < 0.5)
-		sound (self, CHAN_VOICE, "enforcer/pain1.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_VOICE, "enforcer/pain1.wav", 1, ATTN_NORM, self.p_adj);
 
 	else
-		sound (self, CHAN_VOICE, "enforcer/pain2.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_VOICE, "enforcer/pain2.wav", 1, ATTN_NORM, self.p_adj);
 
 	if (r < 0.2)
 	{
@@ -325,7 +325,7 @@ void() enf_die =
 	// check for gib
 	if (self.health < -35)
 	{
-		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM, self.p_adj);
 		ThrowHead ("progs/h_mega.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
@@ -335,7 +335,7 @@ void() enf_die =
 	}
 
 	// regular death
-	sound (self, CHAN_VOICE, "enforcer/death1.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "enforcer/death1.wav", 1, ATTN_NORM, self.p_adj);
 
 	if (random() > 0.5)
 		enf_die1 ();

@@ -658,8 +658,137 @@ void(string s, entity annc) SUB_TellAll =
           tel = strcat (tel, (ftos(p.colormap)));
           tel = strcat (tel, " ");
           tel = strcat (tel, s);
+          tel = strcat (tel, "\n");
 	stuffcmd(annc, tel);
 	}
           }
 };
+
+void (float lv, vector col, float sty, entity point) SUB_CastLight =
+{
+
+          local vector lite;
+          lite = '9 9 9';
+          if (point.classname != "light_fluoro")
+          lite = getlight (point.origin);
+          else
+          point.angles = GetRandomVector ();
+	
+       if (lite == VEC_ORIGIN)
+	point.effects = point.effects | EF_FULLBRIGHT;
+	
+point.light_lev = lv; //150;
+point.color = col; //'1 1 1'; // color (does not affect radius), typical value '1 1 1' (bright white), can be up to '255 255 255' (nuclear blast)
+point.style = sty; //12; //rint (random () * 10) + 1; // light style (like normal light entities, flickering torches or switchable, etc)
+point.pflags = 128;
+//p.angles = '45 10 -50';
+
+
+};
+
+void (float flag) SUB_BlinkRune =
+{
+
+//  bprint("blink rune\n");
+
+if (self.items2 & flag)
+self.items2 = 0;
+else
+self.items2 = flag;
+return;
+};
+
+void () SUB_ShowMapAuthor =
+{
+if (self == world)
+{          
+local string aut;
+if (mapname == "dm3" || mapname == "start" || mapname == "e1m1"|| mapname == "e2m1" || mapname == "e2m2" || mapname == "e2m3" || mapname == "e2m4" || mapname == "e2m5" || mapname == "e2m6" || mapname == "e3m1" || mapname == "end")
+aut = ". By John Romero";
+else if (mapname == "dm1" || mapname == "e1m2" || mapname == "e1m3" || mapname == "e1m4" || mapname == "e1m5" || mapname == "e2m7" || mapname == "e3m5" || mapname == "e4m1")
+aut = ". By Tim Willits";   
+else if (mapname == "dm6" || mapname == "dm5" || mapname == "dm4" || mapname == "dm2" || mapname == "e1m8" || mapname == "e1m6" || mapname == "e1m7" || mapname == "e3m2" || mapname == "e3m4" || mapname == "e3m7")
+aut = ". By American McGee"; 
+else if (mapname == "e3m6")
+aut = ". By American McGee & Tim Willits\n";
+else if (mapname == "e4m2" || mapname == "e4m3" || mapname == "e4m5" || mapname == "e4m6" || mapname == "e4m7" || mapname == "e4m8")
+aut = ". By Sandy Petersen";  
+else return;
+local string ms;
+ms = world.message;
+aut = strzone (strcat (ms, aut));
+mtitle = aut;
+
+} 
+};
+void () SUB_PrintUpTime =
+{
+
+
+          local float mtime,stime,htime;
+
+         // days = num_seconds / (60 * 60 * 24);
+         // num_seconds -= days * (60 * 60 * 24);
+         // hours = num_seconds / (60 * 60);
+         // num_seconds -= hours * (60 * 60);
+     
+          mtime = rint(floor(uptime / 60));
+          htime = rint(floor(uptime / (3600)));
+          
+          if (uptime < 60)
+          stime = rint(uptime);
+	else
+          {
+          if (mtime && !htime)
+          stime = floor (uptime - (mtime * 60));
+          else if (htime && !mtime)
+          stime = floor (uptime - (htime * 3600));     
+          else if (mtime && htime)
+          stime = floor (uptime - ((mtime * 60) + (htime * 3600)));     
+          }          
+          
+          
+
+          
+
+          bprint ("Total Quake server uptime ");
+	if (stime < 60 && (!mtime && !htime))
+	{
+	bprint (ftos(stime));
+	bprint (" Seconds.\n");
+	}
+	else
+	{
+		
+		
+          if (htime > 0)
+          {                    
+	bprint (ftos(htime));
+          if (htime != 1)
+	bprint (" Hours ");
+          else
+              bprint (" Hour ");
+           if (!mtime && !stime)
+                    bprint (".\n");    
+	}
+	if (mtime > 0)
+          {                    
+	bprint (ftos(mtime));
+          if (mtime != 1)
+	bprint (" Minutes ");
+          else
+          bprint (" Minute ");
+          if (!stime)
+                    bprint (".\n");
+	}
+          if (stime > 0)
+          {
+	bprint (ftos(stime));
+	bprint (" Seconds.\n");
+	}
+       }
+          
+          
+};
+
  

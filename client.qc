@@ -141,10 +141,8 @@ void() SetChangeParms =
           parm4 = encode(self.levels, self.armortype * 100, self.weapon); // now holds levels , armortype, weapon
           parm5 = self.frags;
           parm6 = self.runeflags;
-	parm9 = self.armortype * 100;
-	
-	
-	parm9 = parm9 + CF_DECODEFLAGS + CF_DECODESHIFT * (self.creepflags & CF_KEEPBETWEENLEVELS);
+	parm9 = CF_DECODEFLAGS + CF_DECODESHIFT * (self.creepflags & CF_KEEPBETWEENLEVELS);
+          
         if (self.camtype > 0)
         parm9 = parm9 + CF_STAYASCAM;
         
@@ -157,7 +155,7 @@ void() SetNewParms =
 	parm1 = IT_SHOTGUN | IT_AXE;
 	parm2 = encode(25, 0, 100); //  ammo shells, armorvalue, shells
           parm3 = 0; // dont need to encode 0 values - was armorvalue
-          parm4 = 1; //  sg Weapon only
+          parm4 = encode(self.levels, 0, 1); //  levels + sg Weapon only
 	parm5 = 0;
 	parm6 = 0;
 	parm7 = 0;
@@ -178,9 +176,16 @@ void() DecodeLevelParms =
                     if (serverflags) 
                     self.frags = parm5;
 	}
-            else if (self.spawns && self.dmg != -1)
+            else if (self.spawns)
+            {
+             if (!self.th_melee)         
              setspawnparms (self);
-             
+             else 
+             {
+             SetNewParms ();
+             self.th_melee = world.th_melee;
+             }
+            }
              
             
              
@@ -206,7 +211,7 @@ void() DecodeLevelParms =
               self.frags = parm5;
               self.runeflags = parm6;
               self.watch = parm10;
-              ShowMapAuthor ();              
+                            
               }
              
 };
@@ -429,9 +434,11 @@ void() execute_changelevel =
                      if (other == self.aiment)
                     {
                     self.netname = "^2Found the level exit^7";
-                    self.aflag = (5 * (skill + 1));
+                    self.aflag = (5 * (skill + 1)) - self.deaths;
                       if (other.health > 0)
                     self.aflag = self.aflag + other.health;
+                    self.aflag = self.aflag - self.deaths;
+                    if (self.aflag < 0) self.aflag = 0;
                     SUB_InfoBar (self,other,self.aflag);
                     other.frags = other.frags  + self.aflag;
                     } 
@@ -636,6 +643,10 @@ void() ClientKill =
 	set_suicide_frame ();
 	self.modelindex = modelindex_player;
 	self.frags = self.frags - 2;	// extra penalty
+          self.deaths += 1;
+          if (self.super_time > 0) DropQuad ();
+	if (self.invisible_time > 0) DropRing ();
+          if (self.runeflags > 0) DropRune ();
 	respawn();
 	CC_AntiSpamAction(self); // PRIME Creepcam
 };
@@ -883,6 +894,7 @@ void() PutClientInServer =
       //CC_2
           
 	  self.dmg = 2;
+            if (!self.spawn1_time) self.spawn1_time = time + 9;
 	self.respawncam = self.watch =  0;
           self.respawn_time = 0;
 	self.classname = "player";
@@ -945,9 +957,7 @@ void() PutClientInServer =
 	self.attack_finished = time + 0.8; // Cobalt this is better
 	self.spawns += 1;
           
-	
-	
-
+        
 };
 
 
@@ -1509,6 +1519,88 @@ void() CheckPowerups =
 	if (self.health <= 0)
 		return;
 
+          // Runes
+          
+if (self.runeflags & 2)
+{
+if (time < self.attack_finished)
+SUB_BlinkRune(64);
+else self.items2 = 64;
+}
+
+if ((self.runeflags & 4))
+{
+if (time < self.attack_finished)
+SUB_BlinkRune(128);
+else self.items2 = 128;
+}
+
+
+
+
+if (self.runeflags & 8)
+{
+          local float m,v;
+if (self.regen_time < time)
+   {
+if (random () < 0.15)
+SUB_BlinkRune(256);
+if (self.velocity != VEC_ORIGIN)
+m = 3;
+else
+m = 5;
+if (self.attack_finished > time)
+m = (m * 0.5);
+self.regen_time = time;
+if (self.health < 150)
+{
+
+self.health = self.health + m;
+if (self.health > 150)
+self.health = 150;
+self.regen_time = self.regen_time + 0.5;
+RegenerationSound ();
+}
+if ((self.armortype < 0.6))
+v = 100;
+else
+v = (self.armortype * 250);
+
+if (((self.armorvalue < v) && (self.armortype != 0)))
+  {
+  local float y;
+  if (self.waterlevel == 3)
+  y = 55;
+  else 
+  y = 140;
+self.armorvalue = self.armorvalue + m;
+if (!self.velocity)
+if ( self.armorvalue >= v)
+sound (self, CHAN_AUTO, "items/armor1.wav", 1, ATTN_STATIC);
+else if (time > self.attack_finished)
+soundpitch (self, CHAN_RUNE, "items/armor1.wav", 1, ATTN_STATIC, y);
+//sound (self, CHAN_AUTO, "items/itembk2.wav", 1, ATTN_STATIC);
+
+if (self.armorvalue > v)
+self.armorvalue = v;
+if (v == 100)
+self.regen_time = self.regen_time + 0.35;
+else
+   {
+self.regen_time = (self.regen_time + (v * 0.0055));
+
+//RegenerationSound ();
+
+   }
+ }
+}
+else self.items2 = 256;
+
+}
+          
+          
+          
+          
 	// invisibility
 	if (self.invisible_finished)
 	{
@@ -1811,6 +1903,10 @@ void() ClientDisconnect =
 	if (gameover)
 		return;
 
+          if (self.super_time > 0) DropQuad ();
+	if (self.invisible_time > 0) DropRing ();
+          if (self.runeflags > 0) DropRune ();
+          
 		 sound (self, CHAN_BODY, "player/tornoff2.wav", 1, ATTN_NONE);
      if(self.classname == "player")
        {   

@@ -412,11 +412,17 @@ if (!framecount)
           hname = strcat (hname, "\"");
           localcmd ("hostname ");
           localcmd (hname);
+          
+          SUB_ShowMapAuthor ();
+          
 }	
 	CC_RESPAWN = cvar ("respawntimer");
 	skill = cvar("skill");
 	framecount = framecount + 1;
-	uptime = framecount * frametime;
+	uptime = (gettime (3));
+          
+                    
+            
 // Cobalt CC_2 lock camera angles when in worldcam
 if (framecount > 100)
 {	
@@ -432,7 +438,16 @@ while (clienttype (slot) == CLIENTTYPE_REAL)
           slot.think = CC_RequestNotCam;                   
 	if (!slot.button0 && slot.state != 1)
 	slot.fixangle = 1;
-          }	
+          }
+          if ((time > slot.spawn1_time + frametime) && time < (slot.spawn1_time + frametime * 2)) // Cobalt - announce map title
+                     {
+          stuffcmd (slot, "infobar 15");
+          stuffcmd (slot, " \"");
+          stuffcmd (slot, mtitle);
+          stuffcmd (slot, "\"");
+          stuffcmd (slot, "\n");
+          } 
+	
 	slot = nextent (slot);
 	
 	}
@@ -494,37 +509,7 @@ void(entity ent) CopyToBodyQueue =
 	bodyqueue_head.angles_y = ent.angles_y;
           
 	// Cobalt , experiment with Sevens code to match angles of corpse to floor, cases like slopes - to be improved at later date
-
-       
-
 	
 };
-void () ShowMapAuthor =
-{
-         
-local string aut;
-if (mapname == "dm3" || mapname == "start" || mapname == "e1m1"|| mapname == "e2m1" || mapname == "e2m2" || mapname == "e2m3" || mapname == "e2m4" || mapname == "e2m5" || mapname == "e2m6" || mapname == "e3m1" || mapname == "end")
-aut = "John Romero";
-else if (mapname == "dm1" || mapname == "e1m2" || mapname == "e1m3" || mapname == "e1m4" || mapname == "e1m5" || mapname == "e2m7" || mapname == "e3m5" || mapname == "e4m1")
-aut = "Tim Willits";   
-else if (mapname == "dm6" || mapname == "dm5" || mapname == "dm4" || mapname == "dm2" || mapname == "e1m8" || mapname == "e1m6" || mapname == "e1m7" || mapname == "e3m2" || mapname == "e3m4" || mapname == "e3m7")
-aut = "American McGee"; 
-else if (mapname == "e3m6")
-aut = "American McGee & Tim Willits";
-else if (mapname == "e4m2" || mapname == "e4m3" || mapname == "e4m5" || mapname == "e4m6" || mapname == "e4m7" || mapname == "e4m8")
-aut = "Sandy Petersen";  
-else return;
 
-
-aut = strcat (". By: ", aut);
-aut = strcat (world.message, aut);
-  stuffcmd (self, "infobar 15");
-
-             stuffcmd (self, " \"");
-              stuffcmd (self, aut);
-              stuffcmd (self, "\"");
-		stuffcmd (self, "\n");
-
-          
-};
 

@@ -263,19 +263,20 @@ void() FoundTarget =
 	if(self.classname == "enforcer")
 	{
 		local float rsnd;
+                    if (!self.p_adj) self.p_adj = 100;
 
 		rsnd = rint(random() * 3);			
 		if (rsnd == 1)
-			sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+			soundpitch (self, CHAN_VOICE, self.noise, 1, ATTN_NORM, self.p_adj);
 		else if (rsnd == 2)
-			sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+			soundpitch (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM, self.p_adj);
 		else if (rsnd == 0)
-			sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
+			soundpitch (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM, self.p_adj);
 		else
-			sound (self, CHAN_VOICE, self.noise4, 1, ATTN_NORM);
+			soundpitch (self, CHAN_VOICE, self.noise4, 1, ATTN_NORM, self.p_adj);
 	}
 	else
-			sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+			soundpitch (self, CHAN_VOICE, self.noise, 1, ATTN_NORM, self.p_adj);
 
 	HuntTarget ();
 };

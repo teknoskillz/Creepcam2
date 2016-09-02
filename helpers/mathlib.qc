@@ -758,7 +758,531 @@ void(entity ent) changeroll =
 	ent.angles_z = current;
 };
 
+vector () GetRandomVector =
+{
+	local vector vec;
+	local float r;
+
+	r = random ();
+	if ((r < 0.5))
+	{
+		if ((r < 0.25))
+		{
+			if ((r < 0.05))
+			{
+				vec = VEC_ORIGIN;
+			}
+			else
+			{
+				if ((r < 0.1))
+				{
+					vec = '0 0 12';
+				}
+				else
+				{
+					if ((r < 0.15))
+					{
+						vec = '0 12 0';
+					}
+					else
+					{
+						if ((r < 0.2))
+						{
+							vec = '12 0 0';
+						}
+						else
+						{
+							vec = '12 12 0';
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			if ((r < 0.3))
+			{
+				vec = '12 0 12';
+			}
+			else
+			{
+				if ((r < 0.35))
+				{
+					vec = '0 12 12';
+				}
+				else
+				{
+					if ((r < 0.4))
+					{
+						vec = '0 12 12';
+					}
+					else
+					{
+						if ((r < 0.45))
+						{
+							vec = '-12 12 0';
+						}
+						else
+						{
+							vec = '-12 12 16';
+						}
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		if ((r < 0.75))
+		{
+			if ((r < 0.55))
+			{
+				vec = '0 0 16';
+			}
+			else
+			{
+				if ((r < 0.6))
+				{
+					vec = '12 12 -16';
+				}
+				else
+				{
+					if ((r < 0.65))
+					{
+						vec = '12 12 0';
+					}
+					else
+					{
+						if ((r < 0.7))
+						{
+							vec = '12 0 12';
+						}
+						else
+						{
+							vec = '12 0 12';
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			if ((r < 0.8))
+			{
+				vec = '0 0 12';
+			}
+			else
+			{
+				if ((r < 0.85))
+				{
+					vec = '0 0 -12';
+				}
+				else
+				{
+					if ((r < 0.9))
+					{
+						vec = '0 -12 0';
+					}
+					else
+					{
+						if ((r < 0.95))
+						{
+							vec = '-12 0 0';
+						}
+						else
+						{
+							vec = '0 0 -16';
+						}
+					}
+				}
+			}
+		}
+	}
+	return (vec);
+};
+
+//==========================================================================
+//  check.qc -- by Patrick Martin               Last updated:  9-8-1997
+//--------------------------------------------------------------------------
+//  This file contains code that determines whether an entity or a
+//  location is inside the various contents found in Quake.
+//==========================================================================
+
+//-------------------------------------------------------- New Code --------
+//  This checks for obstacles such as solid entities or walls inside
+//  the bbox and along its borders.  If an obstacle is met, FALSE is
+//  returned.
+//--------------------------------------------------------------------------
+float(entity head, vector spot) PM_TraceCheck =
+{
+        local   vector  p1, p2;
+
+// Check for obstacles inside the bbox.
+// Order:  1)--- to +++    2)+-- to -++    3)++- to --+    4)-+- to +-+
+        p1 = spot + self.mins;
+        p2 = spot + self.maxs;
+        traceline (p1, p2, FALSE, head);
+        if (trace_fraction < 1)  return FALSE;
+
+        p1_x = spot_x + self.maxs_x;
+        p2_x = spot_x + self.mins_x;
+        traceline (p1, p2, FALSE, head);
+        if (trace_fraction < 1)  return FALSE;
+
+        p1_y = spot_y + self.maxs_y;
+        p2_y = spot_y + self.mins_y;
+        traceline (p1, p2, FALSE, head);
+        if (trace_fraction < 1)  return FALSE;
+
+        p1_x = spot_x + self.mins_x;
+        p2_x = spot_x + self.maxs_x;
+        traceline (p1, p2, FALSE, head);
+        if (trace_fraction < 1)  return FALSE;
+
+// Check for obstacles along the bbox boundaries.
+// Order:  1)+++ to ++-    2)+-+ to +--    3)--+ to ---    4)-++ to -+-
+//         5)--- to +--    6)+-- to ++-    7)++- to -+-    8)-+- to ---
+//         9)+++ to -++   10)-++ to --+   11)--+ to -+-   12)-+- to +++
+        p1 = p2 = spot + self.maxs;
+        p2_z = spot_z + self.mins_z;
+        traceline (p1, p2, FALSE, head);
+        if (trace_fraction < 1)  return FALSE;
+
+        p1_x = p2_x = spot_x + self.mins_x;
+        traceline (p1, p2, FALSE, head);
+        if (trace_fraction < 1)  return FALSE;
+
+        p1_y = p2_y = spot_y + self.mins_x;
+        traceline (p1, p2, FALSE, head);
+        if (trace_fraction < 1)  return FALSE;
+
+        p1_x = p2_x = spot_x + self.maxs_x;
+        traceline (p1, p2, FALSE, head);
+        if (trace_fraction < 1)  return FALSE;
+
+        p1 = p2 = spot + self.mins;
+        p2_x = spot_x + self.maxs_x;
+        traceline (p1, p2, FALSE, head);
+        if (trace_fraction < 1)  return FALSE;
+
+        p1 = p2;
+        p2_y = spot_y + self.maxs_y;
+        traceline (p1, p2, FALSE, head);
+        if (trace_fraction < 1)  return FALSE;
+
+        p1 = p2;
+        p2_x = spot_x + self.mins_x;
+        traceline (p1, p2, FALSE, head);
+        if (trace_fraction < 1)  return FALSE;
+
+        p1 = p2;
+        p2_y = spot_y + self.mins_y;
+        traceline (p1, p2, FALSE, head);
+        if (trace_fraction < 1)  return FALSE;
+
+        p1 = p2 = spot + self.maxs;
+        p2_x = spot_x + self.mins_x;
+        traceline (p1, p2, FALSE, head);
+        if (trace_fraction < 1)  return FALSE;
+
+        p1 = p2;
+        p2_y = spot_y + self.mins_y;
+        traceline (p1, p2, FALSE, head);
+        if (trace_fraction < 1)  return FALSE;
+
+        p1 = p2;
+        p2_x = spot_x + self.maxs_x;
+        traceline (p1, p2, FALSE, head);
+        if (trace_fraction < 1)  return FALSE;
+
+        p1 = p2;
+        p2_y = spot_y + self.maxs_y;
+        traceline (p1, p2, FALSE, head);
+        return (trace_fraction == 1);
+};
+
+//-------------------------------------------------------- New Code --------
+//  This checks if a bbox is inside a wall or sky.  The bbox's origin
+//  and corners are checked.  If any one points is within a solid or sky,
+//  TRUE is returned.
+//--------------------------------------------------------------------------
+float(entity head, vector spot) PM_InWall =
+{
+        local   vector  p;
+
+// Check origin.
+        p = spot;
+        if (pointcontents(p) == CONTENT_SOLID)  return TRUE;
+        if (pointcontents(p) == CONTENT_SKY)    return TRUE;
+
+// Check bbox faces.
+// Order:  1)-00  2)+00  3)0-0  4)0+0  5)00-  6)00+
+        p_x = spot_x + head.mins_x; // back
+        if (pointcontents(p) == CONTENT_SOLID)  return TRUE;
+        if (pointcontents(p) == CONTENT_SKY)    return TRUE;
+
+        p_x = spot_x + head.maxs_x; // front
+        if (pointcontents(p) == CONTENT_SOLID)  return TRUE;
+        if (pointcontents(p) == CONTENT_SKY)    return TRUE;
+
+        p = spot;
+        p_y = spot_y + head.mins_y; // left
+        if (pointcontents(p) == CONTENT_SOLID)  return TRUE;
+        if (pointcontents(p) == CONTENT_SKY)    return TRUE;
+
+        p_y = spot_y + head.maxs_y; // right
+        if (pointcontents(p) == CONTENT_SOLID)  return TRUE;
+        if (pointcontents(p) == CONTENT_SKY)    return TRUE;
+
+        p = spot;
+        p_z = spot_z + head.mins_z; // bottom
+        if (pointcontents(p) == CONTENT_SOLID)  return TRUE;
+        if (pointcontents(p) == CONTENT_SKY)    return TRUE;
+
+        p_z = spot_z + head.maxs_z; // top
+        if (pointcontents(p) == CONTENT_SOLID)  return TRUE;
+        if (pointcontents(p) == CONTENT_SKY)    return TRUE;
+
+// Check bbox corners.
+
+
+//       1)+++  Upper max corner
+        p_x = spot_x + head.maxs_x;
+        p_y = spot_y + head.maxs_y;
+        if (pointcontents(p) == CONTENT_SOLID)  return TRUE;
+        if (pointcontents(p) == CONTENT_SKY)    return TRUE;
+
+	 // 2)-++ 
+        p_x = spot_x + head.mins_x;
+        if (pointcontents(p) == CONTENT_SOLID)  return TRUE;
+        if (pointcontents(p) == CONTENT_SKY)    return TRUE;
+
+	 // 3)+-+
+        p_x = spot_x + head.maxs_x;
+        p_y = spot_y + head.mins_y;
+        if (pointcontents(p) == CONTENT_SOLID)  return TRUE;
+        if (pointcontents(p) == CONTENT_SKY)    return TRUE;
+
+	 
+	 // 4)--+ 
+        p_x = spot_x + head.mins_x;
+        if (pointcontents(p) == CONTENT_SOLID)  return TRUE;
+        if (pointcontents(p) == CONTENT_SKY)    return TRUE;
+
+	 
+	 // 5)++- 
+        p_x = spot_x + head.maxs_x;
+        p_y = spot_y + head.maxs_y;
+        p_z = spot_z + head.mins_z;
+        if (pointcontents(p) == CONTENT_SOLID)  return TRUE;
+        if (pointcontents(p) == CONTENT_SKY)    return TRUE;
+
+	 // 6)-+-
+        p_x = spot_x + head.mins_x;
+        if (pointcontents(p) == CONTENT_SOLID)  return TRUE;
+        if (pointcontents(p) == CONTENT_SKY)    return TRUE;
+
+	 // 7)+--
+        p_x = spot_x + head.maxs_x;
+        p_y = spot_y + head.mins_y;
+        if (pointcontents(p) == CONTENT_SOLID)  return TRUE;
+        if (pointcontents(p) == CONTENT_SKY)    return TRUE;
+
+	 // 8)---  Lower min corner
+        p_x = spot_x + head.mins_x;
+        if (pointcontents(p) == CONTENT_SOLID)  return TRUE;
+        return (pointcontents(p) == CONTENT_SKY);
+};
+
+//-------------------------------------------------------- New Code --------
+//  This is a variation of InWall.  The bbox is checked if it is a
+//  empty air; that is not inside solid, water, or anything else.
+//  If any one point is within a brush, FALSE is returned.
+//--------------------------------------------------------------------------
+float(entity head, vector spot) PM_InEmpty =
+{
+        local   vector  p;
+
+// Check origin.
+        p = spot;
+        if (pointcontents(p) != CONTENT_EMPTY)  return FALSE;
+
+// Check bbox faces.
+// Order:  1)-00  2)+00  3)0-0  4)0+0  5)00-  6)00+
+        p_x = spot_x + head.mins_x;
+        if (pointcontents(p) != CONTENT_EMPTY)  return FALSE;
+
+        p_x = spot_x + head.maxs_x;
+        if (pointcontents(p) != CONTENT_EMPTY)  return FALSE;
+
+        p = spot;
+        p_y = spot_y + head.mins_y;
+        if (pointcontents(p) != CONTENT_EMPTY)  return FALSE;
+
+        p_y = spot_y + head.maxs_y;
+        if (pointcontents(p) != CONTENT_EMPTY)  return FALSE;
+
+        p = spot;
+        p_z = spot_z + head.mins_z;
+        if (pointcontents(p) != CONTENT_EMPTY)  return FALSE;
+
+        p_z = spot_z + head.maxs_z;
+        if (pointcontents(p) != CONTENT_EMPTY)  return FALSE;
+
+// Check bbox corners.
+// Order:  1)+++  2)-++  3)+-+  4)--+  5)++-  6)-+-  7)+--  8)---
+        p_x = spot_x + head.maxs_x;
+        p_y = spot_y + head.maxs_y;
+        if (pointcontents(p) != CONTENT_EMPTY)  return FALSE;
+
+        p_x = spot_x + head.mins_x;
+        if (pointcontents(p) != CONTENT_EMPTY)  return FALSE;
+
+        p_x = spot_x + head.maxs_x;
+        p_y = spot_y + head.mins_y;
+        if (pointcontents(p) != CONTENT_EMPTY)  return FALSE;
+
+        p_x = spot_x + head.mins_x;
+        if (pointcontents(p) != CONTENT_EMPTY)  return FALSE;
+
+        p_x = spot_x + head.maxs_x;
+        p_y = spot_y + head.maxs_y;
+        p_z = spot_z + head.mins_z;
+        if (pointcontents(p) != CONTENT_EMPTY)  return FALSE;
+
+        p_x = spot_x + head.mins_x;
+        if (pointcontents(p) != CONTENT_EMPTY)  return FALSE;
+
+        p_x = spot_x + head.maxs_x;
+        p_y = spot_y + head.mins_y;
+        if (pointcontents(p) != CONTENT_EMPTY)  return FALSE;
+
+        p_x = spot_x + head.mins_x;
+        return (pointcontents(p) == CONTENT_EMPTY);
+};
+
+//-------------------------------------------------------- New Code --------
+//  This checks if the entity is in a body of liquid.
+//--------------------------------------------------------------------------
+float(entity head) PM_InLiquid =
+{
+local float score;
+local vector here;
+here = head.origin;
+   if (head.flags & FL_CLIENT) // Cobalt added for players and bots
+{	
+
+	 here_z = here_z - 20; // right at players feet
+if (pointcontents (head.absmax - '0 0 56') == CONTENT_WATER) score = score + 1;
+if (pointcontents (head.absmax - '0 0 56') == CONTENT_SLIME) score = score + 1;
+if (pointcontents (head.absmax - '0 0 56') == CONTENT_LAVA) score = score + 1;
+
+if (pointcontents (head.absmax - '0 32 56') == CONTENT_WATER) score = score + 1;
+if (pointcontents (head.absmax - '0 32 56') == CONTENT_SLIME) score = score + 1;
+if (pointcontents (head.absmax - '0 32 56') == CONTENT_LAVA) score = score + 1;
+
+if (pointcontents (head.absmin - '0 -32 0') == CONTENT_WATER) score = score + 1;
+if (pointcontents (head.absmin - '0 -32 0') == CONTENT_SLIME) score = score + 1;
+if (pointcontents (head.absmin - '0 -32 0') == CONTENT_LAVA) score = score + 1;
+}
+
+     
+        if (pointcontents(here) == CONTENT_WATER)  score = score + 1;
+        if (pointcontents(here) == CONTENT_SLIME)  score = score + 1;
+        if (pointcontents(here) == CONTENT_LAVA)   score = score + 1;
+	 
+	  if (pointcontents(head.absmin) == CONTENT_WATER)  score = score + 1;
+        if (pointcontents(head.absmin) == CONTENT_SLIME)  score = score + 1;
+        if (pointcontents(head.absmin) == CONTENT_LAVA)   score = score + 1;
+	 
+	  if (pointcontents(head.absmax) == CONTENT_WATER)  score = score + 1;
+        if (pointcontents(head.absmax) == CONTENT_SLIME)  score = score + 1;
+        if (pointcontents(head.absmax) == CONTENT_LAVA)   score = score + 1;
+
+	 if (score)
+	 {
+	 local string val;
+	 val = strcat ("^5PM_InLiquid  () SCORE: ", (ftos(score)));
+	 val = strcat (val, "^7");
+	//LogMsg2 (head, val);
+	return 1;
+	}
+        return FALSE;    // Entity is not in liquid.
+};
+
+
+/*
+float(entity head) Blocked =
+{
+if (head.stairstime > time || head.health < 1 || head.waterlevel > 0) return 0;
+local float score;
+local vector here;
+here = head.origin - '0 0 10';
+
+if (!head.button8 && vlen(head.velocity) >= 28) return 0;
 
 
 
- 
+   if (head.flags & FL_CLIENT) 
+{	
+
+
+
+if (pointcontents (here + '18 0 0') == CONTENT_SOLID) 
+score = score + 1; // Front at knee level
+
+
+
+if (pointcontents (here + '-18 0 0') == CONTENT_SOLID) score = score + 1; // back at knee level
+
+if (pointcontents (here + '18 18 0') == CONTENT_SOLID) 
+score = score + 1; // Front side at knee level
+if (pointcontents (here + '18 -18 0') == CONTENT_SOLID) 
+score = score + 1; // Front side knee level
+
+if (pointcontents (here + '-18 18 0') == CONTENT_SOLID) 
+score = score + 1; // back side at knee level
+if (pointcontents (here + '-18 -18 0') == CONTENT_SOLID) 
+score = score + 1; // back side at knee level
+
+if (pointcontents (here + '0 18 0') == CONTENT_SOLID) 	
+score = score + 1; // side at knee level
+if (pointcontents (here + '0 -18 0') == CONTENT_SOLID) 
+score = score + 1; // side at knee level
+
+
+}
+
+     
+     
+	 if (score)
+	 {
+	 if (head.button8 && vlen(head.velocity) > 44.5)
+		  return 0;
+
+
+		 
+		  
+	 local string val;
+	 val = strcat ("^5Blocked  () SCORE: ", (ftos(score)));
+	 val = strcat (val, "^7");
+	LogMsg2 (head, val);
+		return 1;
+	}
+        return FALSE;    // Entity is not in blocked.
+};
+
+*/
+//--------------------------------------------------------------------------
+//  END OF LINE.
+//--------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+

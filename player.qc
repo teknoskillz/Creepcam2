@@ -619,7 +619,7 @@ void() PlayerDie =
 
 	if (self.super_time > 0) DropQuad ();
 	if (self.invisible_time > 0) DropRing ();
-          
+          if (self.runeflags > 0) DropRune ();
           
 	self.items = self.items - (self.items & IT_INVISIBILITY);
 	self.invisible_finished = 0;	// don't die as eyes
@@ -639,7 +639,7 @@ void() PlayerDie =
 	self.solid = SOLID_NOT;
 	self.flags = self.flags - (self.flags & FL_ONGROUND);
 	self.movetype = MOVETYPE_TOSS;
-
+          self.deaths += 1;
 	if (self.velocity_z < 10)
 		self.velocity_z = self.velocity_z + random()*300;
 

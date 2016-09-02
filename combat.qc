@@ -158,9 +158,29 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	// used by buttons and triggers to set activator for target firing
 	damage_attacker = attacker;
 
+           // Str Rune
+          if (attacker.runeflags & 2)
+		damage = (damage * 1.5);
+          
 	// check for quad damage powerup on the attacker
 	if (attacker.super_damage_finished > time)
 		damage = damage * 4;
+          
+         
+	// Res rune
+	if (targ.runeflags & 1)
+	{
+         
+		damage = (damage / 1.5);
+		if (targ.invincible_sound < time)
+		{
+			SUB_BlinkRune(32);
+			sound (targ, CHAN_AUTO, "items/protect3.wav", 1, ATTN_NORM);
+			targ.invincible_sound = (time + 2);
+		}
+	}
+          
+          
 
 	// save damage based on the target's armor level
 	save = ceil(targ.armortype*damage);
@@ -216,6 +236,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	if ( (teamplay == 1) && (targ.team > 0)&&(targ.team == attacker.team) )
 		return;
 
+                    
 	// do the damage
 	targ.health = targ.health - take;
 	if (targ.flags & FL_CLIENT || targ.flags & FL_MONSTER) // CC_2 Cobalt tag monsters or clients that just took dmg so they are a priority for a cam
@@ -342,3 +363,4 @@ void(entity attacker, float damage) T_BeamDamage =
 	}
 };
 
+ 

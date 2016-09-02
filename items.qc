@@ -1194,6 +1194,29 @@ END OF LEVEL RUNES
 
 void() sigil_touch =
 {
+          
+          
+          self.modelflags = 0;
+     
+       if (self.model != "")
+      	if (!PM_TraceCheck (self, self.origin))
+	{
+	
+	   SUB_CastLight (40, '12 26 18', (rint (random () * 10) + 1), self);
+	self.effects = EF_DOUBLESIDED;
+	}
+	else
+	{
+	self.pflags = 0; //CastLight (5, '0 0 0', 12, self);
+       self.effects = EF_FULLBRIGHT;
+	}
+	
+	if (self.watertype == CONTENT_SLIME)
+	self.pflags = 130;
+	if (self.watertype == CONTENT_WATER)
+	self.pflags = 129;
+  
+          
 
 	if (other.classname != "player")
 		return;
@@ -1217,10 +1240,10 @@ void() sigil_touch =
           other.air_finished = -1; // Cobalt, sound fx to player
 	self.solid = SOLID_NOT;
 	self.model = string_null;
-          other.runeflags = other.runeflags | (self.spawnflags & 15);
+          other.runeflags = other.runeflags | (self.runeflags & 15);
+          if (!self.cnt)
 	serverflags = serverflags | (self.spawnflags & 15);
 	self.classname = string_null;		// so rune doors won't find it
-	
 	activator = other;
 	SUB_UseTargets();				// fire all targets / killtargets
           self.effects = EF_NODRAW; // Cobalt dont transmit to network this ent
@@ -1238,10 +1261,11 @@ void() item_sigil =
 
 	precache_sound ("misc/runekey.wav");
 	self.noise = "misc/runekey.wav";
-
+          self.runeflags = self.spawnflags;
 	if (self.spawnflags & 1)
 	{
 		precache_model ("progs/end1.mdl");
+                    precache_sound ("items/protect3.wav");
 		setmodel (self, "progs/end1.mdl");
                     self.netname = "Rune of Resistance";
 	}
@@ -1250,6 +1274,7 @@ void() item_sigil =
 	{
 		precache_model2 ("progs/end2.mdl");
 		setmodel (self, "progs/end2.mdl");
+                    precache_sound ("items/damage3.wav");
                     self.netname = "Rune of Strength";
 	}
 
@@ -1257,6 +1282,7 @@ void() item_sigil =
 	{
 		precache_model2 ("progs/end3.mdl");
 		setmodel (self, "progs/end3.mdl");
+                    precache_sound ("boss1/sight1.wav");
                     self.netname = "Rune of Haste";
 	}
 
@@ -1362,7 +1388,82 @@ void () DropQuad =
 	item.think = SUB_Remove;
 };
 
+void () DropRune =
+{
 
+          local entity r1,r2,r3,r4,rune;
+          while (self.runeflags)
+          {
+            rune = world;
+	if (self.runeflags & 1) // resist
+	{
+                    r1 = spawn();
+                    r1.classname = "item_rune1";
+                    precache_model ("progs/end1.mdl");
+                    precache_sound ("items/protect3.wav");
+                    r1.netname = "Rune of Resistance";
+                    setmodel (r1, "progs/end1.mdl");
+            if (self.items2 & 32)
+            self.items2 = self.items2 - 32;
+          r1.runeflags = 1;
+          rune = r1;
+	}
+	else if (self.runeflags & 2) // str
+	{
+                    r2 = spawn();
+          r2.classname = "item_rune2";
+          precache_model2 ("progs/end2.mdl");
+          r2.netname = "Rune of Strength";
+          setmodel (r2, "progs/end2.mdl");
+            if (self.items2 & 64)
+            self.items2 = self.items2 - 64;
+            r2.runeflags = 2;
+             rune = r2;
+	}
+	else if (self.runeflags & 4)// haste
+	{
+                    r3 = spawn();
+           r3.classname = "item_rune3";
+           precache_model2 ("progs/end3.mdl");
+           r3.netname = "Rune of Haste";
+           setmodel (r3, "progs/end3.mdl");
+            if (self.items2)
+            self.items2 = self.items2 - 128;
+          r3.runeflags = 4;
+          rune = r3;
+	}
+	else if (self.runeflags & 8) // regen
+	{
+                    r4 = spawn();
+          r4.classname = "item_rune4";
+          precache_model2 ("progs/end4.mdl");
+          r4.netname = "Rune of Regeneration";
+          setmodel (r4, "progs/end4.mdl");
+            if (self.items2 & 256)
+            self.items2 = self.items2 - 256;
+          r4.runeflags = 8;
+           rune = r4;
+	}
+          
+          if (rune)
+          {
+	rune.origin = self.origin - '0 0 24';
+          rune.noise = "misc/runekey.wav";
+          precache_sound (rune.noise);
+	rune.velocity_z = 400;
+	rune.velocity_x = -500 + (random() * 1000);
+	rune.velocity_y = -500 + (random() * 1000);
+	setsize (rune, '-16 -16 0', '16 16 56');
+	rune.flags = FL_ITEM;
+	rune.solid = SOLID_TRIGGER;
+	rune.movetype = MOVETYPE_TOSS;
+	rune.touch = sigil_touch;
+          rune.cnt = 1;
+	self.runeflags = self.runeflags - (self.runeflags & rune.runeflags);
+          
+          }
+          }
+          };
 
 
 
@@ -1537,6 +1638,9 @@ void() BackpackTouch =
 	if (other.health <= 0)
 		return;
 		
+          if (other == self.owner && (self.nextthink - time > 14))
+                return;
+                    
 	acount = 0;
  	sprint (other, "You get ");//Netquake does not support print_low
 
@@ -1651,7 +1755,7 @@ void() DropBackpack =
 	local entity    item;
 
 	if (!(self.ammo_shells + self.ammo_nails + self.ammo_rockets + self.ammo_cells))
-		return; // nothing in it
+		return; // nothing in it, haha  !
 
 	item = spawn();
 	item.origin = self.origin - '0 0 24';
@@ -1680,4 +1784,343 @@ void() DropBackpack =
 	item.nextthink = time + 120;    // remove after 2 minutes
 	item.think = SUB_Remove;
 };
+
+void () TossBackpack =
+{
+	if (1)
+	{
+		if (self.currentammo <= 0)
+		return;
+		local entity item;	
+		item = spawn ();
+		item.owner = self;
+		item.view_ofs = '31 31 25';
+		makevectors (self.v_angle);
+		if (((self.weapon == IT_SHOTGUN) || (self.weapon == IT_SUPER_SHOTGUN)))
+		{
+			if ((self.ammo_shells >= 20))
+			{
+				item.ammo_shells = 20;
+				self.ammo_shells = (self.ammo_shells - 20);
+			}
+			else
+			{
+				item.ammo_shells = self.ammo_shells;
+				self.ammo_shells = 0;
+			}
+		}
+		if ((!(self.items & IT_SHOTGUN) && !(self.items & IT_SUPER_SHOTGUN)))
+		{
+			if ((self.ammo_shells >= 20))
+			{
+				item.ammo_shells = 20;
+				self.ammo_shells = (self.ammo_shells - 20);
+			}
+			else
+			{
+				item.ammo_shells = self.ammo_shells;
+				self.ammo_shells = 0;
+			}
+		}
+		if (((self.weapon == IT_NAILGUN) || (self.weapon == IT_SUPER_NAILGUN)))
+		{
+			if ((self.ammo_nails >= 20))
+			{
+				item.ammo_nails = 20;
+				self.ammo_nails = (self.ammo_nails - 20);
+			}
+			else
+			{
+				item.ammo_nails = self.ammo_nails;
+				self.ammo_nails = 0;
+			}
+		}
+		if ((!(self.items & IT_NAILGUN) && !(self.items & IT_SUPER_NAILGUN)))
+		{
+			if ((self.ammo_nails >= 20))
+			{
+				item.ammo_nails = 20;
+				self.ammo_nails = (self.ammo_nails - 20);
+			}
+			else
+			{
+				item.ammo_nails = self.ammo_nails;
+				self.ammo_nails = 0;
+			}
+		}
+		if (((self.weapon == IT_GRENADE_LAUNCHER) || (self.weapon == IT_ROCKET_LAUNCHER)))
+		{
+			if ((self.ammo_rockets >= 10))
+			{
+				item.ammo_rockets = 10;
+				self.ammo_rockets = (self.ammo_rockets - 10);
+			}
+			else
+			{
+				item.ammo_rockets = self.ammo_rockets;
+				self.ammo_rockets = 0;
+			}
+		}
+		if ((!(self.items & IT_GRENADE_LAUNCHER) && !(self.items & IT_ROCKET_LAUNCHER)))
+		{
+			if ((self.ammo_rockets >= 10))
+			{
+				item.ammo_rockets = 10;
+				self.ammo_rockets = (self.ammo_rockets - 10);
+			}
+			else
+			{
+				item.ammo_rockets = self.ammo_rockets;
+				self.ammo_rockets = 0;
+			}
+		}
+		if ((self.weapon == IT_LIGHTNING))
+		{
+			if ((self.ammo_cells >= 20))
+			{
+				item.ammo_cells = 20;
+				self.ammo_cells = (self.ammo_cells - 20);
+			}
+			else
+			{
+				item.ammo_cells = self.ammo_cells;
+				self.ammo_cells = 0;
+			}
+		}
+		if (!(self.items & IT_LIGHTNING))
+		{
+			if ((self.ammo_cells >= 20))
+			{
+				item.ammo_cells = 20;
+				self.ammo_cells = (self.ammo_cells - 20);
+			}
+			else
+			{
+				item.ammo_cells = self.ammo_cells;
+				self.ammo_cells = 0;
+			}
+		}
+		
+		setmodel (item, "progs/backpack.mdl");
+		setsize (item, '-16 -16 0', '16 16 56');
+		setorigin (item, (self.origin + '0 0 24'));
+	
+			item.velocity = aim (self, 1000);
+			item.velocity = (item.velocity * 500);
+		
+		item.flags = FL_ITEM;
+		item.solid = SOLID_TRIGGER;
+		item.movetype = MOVETYPE_BOUNCE;
+		item.touch = BackpackTouch;
+		item.classname = item.netname = "backpack";
+                    item.colormap = self.colormap;
+		item.nextthink = time + 100;
+		item.think = SUB_Remove;
+                    soundpitch (self, CHAN_AUTO, "zombie/z_shot1.wav", 1, ATTN_NORM, 185);
+		W_SetCurrentAmmo ();
+                    eprint (item);
+	}
+};
+
+void () Team_weapon_touch =
+{
+	local float hadammo;
+	local float best;
+	local float new;
+	local float old;
+	local entity stemp;
+
+	if (!(other.flags & FL_CLIENT))
+	{
+		return;
+	}
+	if (other == self.owner && ((self.nextthink - time) > 119))
+		return;
+	
+	stemp = self;
+	self = other;
+	best = W_BestWeapon ();
+	self = stemp;
+	if ((self.classname == "weapon_nailgun"))
+	{
+		hadammo = other.ammo_nails;
+		new = IT_NAILGUN;
+	}
+	else
+	{
+		if ((self.classname == "weapon_supernailgun"))
+		{
+			hadammo = other.ammo_rockets;
+			new = IT_SUPER_NAILGUN;
+		}
+		else
+		{
+			if ((self.classname == "weapon_supershotgun"))
+			{
+				hadammo = other.ammo_rockets;
+				new = IT_SUPER_SHOTGUN;
+			}
+			else
+			{
+				if ((self.classname == "weapon_rocketlauncher"))
+				{
+					hadammo = other.ammo_rockets;
+					new = IT_ROCKET_LAUNCHER;
+				}
+				else
+				{
+					if ((self.classname == "weapon_grenadelauncher"))
+					{
+						hadammo = other.ammo_rockets;
+						new = IT_GRENADE_LAUNCHER;
+					}
+					else
+					{
+						if ((self.classname == "weapon_lightning"))
+						{
+							hadammo = other.ammo_rockets;
+							new = IT_LIGHTNING;
+						}
+						else
+						{
+							objerror ("Team_weapon_touch: unknown classname");
+						}
+					}
+				}
+			}
+		}
+	}
+	if (other.classname == "player")
+	{
+		
+			sprint (other, "You got the ");
+			sprint (other, self.netname);
+			sprint (other, "\n");
+			stuffcmd (other, "bf\n");
+		
+	}
+      sound (other, CHAN_ITEM, "weapons/pkup.wav", 1, ATTN_NORM);
+	bound_other_ammo ();
+	old = other.items;
+	other.items = (other.items | new);
+	remove (self);
+	self = other;
+	if (!deathmatch)
+	{
+		self.weapon = new;
+	}
+	else
+	{
+		Deathmatch_Weapon (old, new);
+	}
+	W_SetCurrentAmmo ();
+	activator = other;
+	SUB_UseTargets ();
+};
+
+void () TossWeapon =
+{
+	local entity item;
+	local float weaps;
+	local float toss;
+
+	if (self.weapon == IT_AXE || (self.weapon == IT_SHOTGUN) )
+	{
+		return;
+	}
+	if (self.items & IT_SUPER_SHOTGUN)
+	{
+		weaps = (weaps + IT_SUPER_SHOTGUN);
+	}
+	if (self.items & IT_NAILGUN)
+	{
+		weaps = (weaps + IT_NAILGUN);
+	}
+	if (self.items & IT_SUPER_NAILGUN)
+	{
+		weaps = (weaps + IT_SUPER_NAILGUN);
+	}
+	if (self.items & IT_GRENADE_LAUNCHER)
+	{
+		weaps = (weaps + IT_GRENADE_LAUNCHER);
+	}
+	if (self.items & IT_ROCKET_LAUNCHER)
+	{
+		weaps = (weaps + IT_ROCKET_LAUNCHER);
+	}
+	if (self.items & IT_LIGHTNING)
+	{
+		weaps = (weaps + IT_LIGHTNING);
+	}
+	item = spawn ();
+	item.owner = self;
+	makevectors (self.v_angle);
+	setorigin (item, (self.origin + '0 0 16'));
+	item.velocity = aim (self, 1000);
+	item.velocity = (item.velocity * 500);
+	item.flags = FL_ITEM;
+	item.solid = SOLID_TRIGGER;
+	item.movetype = MOVETYPE_BOUNCE;
+	if (self.weapon == IT_SUPER_SHOTGUN)
+	{
+		setmodel (item, "progs/g_shot.mdl");
+		item.weapon = IT_SUPER_SHOTGUN;
+		item.netname = "Double-barrelled Shotgun";
+		item.classname = "weapon_supershotgun";
+	}
+	if (self.weapon == IT_NAILGUN)
+	{
+		setmodel (item, "progs/g_nail.mdl");
+		item.weapon = IT_NAILGUN;
+		item.netname = "Nailgun";
+		item.classname = "weapon_nailgun";
+	}
+	if ((self.weapon == IT_SUPER_NAILGUN))
+	{
+		setmodel (item, "progs/g_nail2.mdl");
+		item.weapon = IT_SUPER_NAILGUN;
+		item.netname = "Super Nailgun";
+		item.classname = "weapon_supernailgun";
+	}
+	if (self.weapon == IT_GRENADE_LAUNCHER)
+	{
+
+		setmodel (item, "progs/g_rock.mdl");
+		item.weapon = 3;
+		item.netname = "Grenade Launcher";
+		item.classname = "weapon_grenadelauncher";
+	}
+	if ((self.weapon == IT_ROCKET_LAUNCHER))
+	{
+		setmodel (item, "progs/g_rock2.mdl");
+		item.weapon = 3;
+		item.netname = "Rocket Launcher";
+		item.classname = "weapon_rocketlauncher";
+	}
+	if ((self.weapon == IT_LIGHTNING))
+	{
+		setmodel (item, "progs/g_light.mdl");
+		item.weapon = 3;
+		item.netname = "Thunderbolt";
+		item.classname = "weapon_lightning";
+	}
+	setsize (item, VEC_ORIGIN, VEC_ORIGIN);
+	//droptofloor ();
+	item.touch = Team_weapon_touch;
+	item.think = SUB_Remove;
+	item.nextthink = time + 120;
+	toss = (weaps - self.weapon);
+          soundpitch (self, CHAN_AUTO, "zombie/z_shot1.wav", 1, ATTN_NORM, 125);
+	self.items = (self.items - self.weapon);
+	if (toss >= (self.weapon * 1))
+              CycleWeaponCommand ();
+	//stuffcmd (self, "impulse 10\n");
+	
+	if (toss < self.weapon)
+           CycleWeaponReverseCommand ();
+	//stuffcmd (self, "impulse 12\n");
+	
+	W_SetCurrentAmmo ();
+};
+
  

@@ -75,7 +75,7 @@ void()	army_stand8	=[	$stand8,	army_stand1	] {ai_stand();};
 void()	army_walk1	=[	$prowl_1,	army_walk2	] 
 {
 	if (random() < 0.2)
-		sound (self, CHAN_VOICE, "soldier/idle.wav", 1, ATTN_IDLE);
+		soundpitch (self, CHAN_VOICE, "soldier/idle.wav", 1, ATTN_IDLE, self.p_adj);
 	ai_walk(1);
 };
 
@@ -106,7 +106,7 @@ void()	army_walk24	=[	$prowl_24,	army_walk1	] {ai_walk(1);};
 void()	army_run1	=[	$run1,		army_run2	] 
 {
 	if (random() < 0.2)
-		sound (self, CHAN_VOICE, "soldier/idle.wav", 1, ATTN_IDLE);
+		soundpitch (self, CHAN_VOICE, "soldier/idle.wav", 1, ATTN_IDLE, self.p_adj);
 	ai_run(11);
 };
 
@@ -184,21 +184,21 @@ void(entity attacker, float damage)	army_pain =
 	{
 		self.pain_finished = time + 0.6;
 		army_pain1 ();
-		sound (self, CHAN_VOICE, "soldier/pain1.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_VOICE, "soldier/pain1.wav", 1, ATTN_NORM, self.p_adj);
 	}
 
 	else if (r < 0.6)
 	{
 		self.pain_finished = time + 1.1;
 		army_painb1 ();
-		sound (self, CHAN_VOICE, "soldier/pain2.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_VOICE, "soldier/pain2.wav", 1, ATTN_NORM, self.p_adj);
 	}
 
 	else
 	{
 		self.pain_finished = time + 1.1;
 		army_painc1 ();
-		sound (self, CHAN_VOICE, "soldier/pain2.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_VOICE, "soldier/pain2.wav", 1, ATTN_NORM, self.p_adj);
 	}
 };
 
@@ -215,7 +215,7 @@ void() army_fire =
         else
 	 self.killstring = " was put down by a Grunt\n";
 	
-	sound (self, CHAN_WEAPON, "soldier/sattck1.wav", 1, ATTN_NORM);	
+	soundpitch (self, CHAN_WEAPON, "soldier/sattck1.wav", 1, ATTN_NORM, self.p_adj);	
 
 	// fire somewhat behind the player, so a dodging player is harder to hit
 	en = self.enemy;
@@ -270,7 +270,7 @@ void() army_die =
 	// check for gib
 	if (self.health < -35)
 	{
-		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM, self.p_adj);
 		ThrowHead ("progs/h_guard.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
@@ -280,7 +280,7 @@ void() army_die =
 	}
 
 	// regular death
-	sound (self, CHAN_VOICE, "soldier/death1.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "soldier/death1.wav", 1, ATTN_NORM, self.p_adj);
 	if (random() < 0.5)
 		army_die1 ();
 

@@ -123,7 +123,7 @@ void() dog_stand9	=[	$stand9,	dog_stand1	] {ai_stand();};
 void() dog_walk1	=[	$walk1 ,	dog_walk2	] 
 {
 	if (random() < 0.2)
-		sound (self, CHAN_VOICE, "dog/idle.wav", 1, ATTN_IDLE);
+		soundpitch (self, CHAN_VOICE, "dog/idle.wav", 1, ATTN_IDLE, self.p_adj);
 	ai_walk(8);
 };
 
@@ -138,7 +138,7 @@ void() dog_walk8	=[	$walk8 ,	dog_walk1	] {ai_walk(8);};
 void() dog_run1		=[	$run1  ,	dog_run2	] 
 {
 	if (random() < 0.2)
-		sound (self, CHAN_VOICE, "dog/idle.wav", 1, ATTN_IDLE);
+		soundpitch (self, CHAN_VOICE, "dog/idle.wav", 1, ATTN_IDLE, self.p_adj);
 	ai_run(16);
 };
 
@@ -159,7 +159,7 @@ void() dog_atta2	=[	$attack2,	dog_atta3	] {ai_charge(10);};
 void() dog_atta3	=[	$attack3,	dog_atta4	] {ai_charge(10);};
 void() dog_atta4	=[	$attack4,	dog_atta5	] 
 {
-	sound (self, CHAN_VOICE, "dog/dattack1.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "dog/dattack1.wav", 1, ATTN_NORM, self.p_adj);
 	dog_bite();
 };
 
@@ -216,7 +216,7 @@ void() dog_painb16	=[	$painb16 ,	dog_run1	] {};
 
 void() dog_pain =
 {
-	sound (self, CHAN_VOICE, "dog/dpain1.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "dog/dpain1.wav", 1, ATTN_NORM, self.p_adj);
 
 	if (random() > 0.5)
 		dog_pain1 ();
@@ -251,7 +251,7 @@ void() dog_die =
 	// check for gib
 	if (self.health < -35)
 	{
-		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM, (self.p_adj / 1.5));
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
@@ -261,7 +261,7 @@ void() dog_die =
 	}
 
 	// regular death
-	sound (self, CHAN_VOICE, "dog/ddeath.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "dog/ddeath.wav", 1, ATTN_NORM, self.p_adj);
 	self.solid = SOLID_NOT;
 
 	if (random() > 0.5)
@@ -380,7 +380,7 @@ void() monster_dog =
 	self.th_die = dog_die;
 	self.th_melee = dog_atta1;
 	self.th_missile = dog_leap1;
-
+        
 	walkmonster_start();
 	CC_AddtoList (self);
 };
