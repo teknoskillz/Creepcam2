@@ -132,10 +132,10 @@ void() CheckContinueCharge =
 	}
 
 	if (random() > 0.5)
-		sound (self, CHAN_WEAPON, "knight/sword2.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_WEAPON, "knight/sword2.wav", 1, ATTN_NORM, self.p_adj);
 
 	else
-		sound (self, CHAN_WEAPON, "knight/sword1.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_WEAPON, "knight/sword1.wav", 1, ATTN_NORM, self.p_adj);
 };
 
 //===========================================================================
@@ -194,7 +194,7 @@ void()	hknight_run8	=[	$run8,		hknight_run1	] {ai_run(13);};
 
 void()	hknight_pain1	=[	$pain1,		hknight_pain2	] 
 {
-	sound (self, CHAN_VOICE, "hknight/pain1.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "hknight/pain1.wav", 1, ATTN_NORM, self.p_adj);
 };
 
 void()	hknight_pain2	=[	$pain2,		hknight_pain3	] {};
@@ -232,7 +232,7 @@ void() hknight_die =
 	// check for gib
 	if (self.health < -40)
 	{
-		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM, self.p_adj);
 		ThrowHead ("progs/h_hellkn.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
@@ -242,7 +242,7 @@ void() hknight_die =
 	}
 
 	// regular death
-	sound (self, CHAN_VOICE, "hknight/death1.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "hknight/death1.wav", 1, ATTN_NORM, self.p_adj);
 
 	if (random() > 0.5)
 		hknight_die1 ();
@@ -384,7 +384,7 @@ void()	hknight_watk22	=[	$w_attack22,	hknight_run1	] {ai_charge(3);};
 void() hk_idle_sound =
 {
 	if (random() < 0.2)
-		sound (self, CHAN_VOICE, "hknight/idle.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_VOICE, "hknight/idle.wav", 1, ATTN_NORM, self.p_adj);
 };
 
 void(entity attacker, float damage)	hknight_pain =
@@ -392,7 +392,7 @@ void(entity attacker, float damage)	hknight_pain =
 	if (self.pain_finished > time)
 		return;
 
-	sound (self, CHAN_VOICE, "hknight/pain1.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "hknight/pain1.wav", 1, ATTN_NORM, self.p_adj);
 
 	if (time - self.pain_finished > 5)
 	{	// always go into pain frame if it has been a while
@@ -415,7 +415,7 @@ void() hknight_melee =
 {
 	hknight_type = hknight_type + 1;
 
-	sound (self, CHAN_WEAPON, "hknight/slash1.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_WEAPON, "hknight/slash1.wav", 1, ATTN_NORM, self.p_adj);
 	if (random () < 0.5)
 	self.killstring = " was slain by a Hell Knight.\n";
 	else

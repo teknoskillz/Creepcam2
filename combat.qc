@@ -86,17 +86,18 @@ void(entity targ, entity attacker) Killed =
 	oself = self;
 	self = targ;
 	 
-          
+           if ((!(self.flags & FL_CLIENT)) && (!(self.flags & FL_MONSTER))) // doors, triggers, etc
+	{
+                    
+                    if (self.th_die)
+		self.th_die ();
+		self = oself;
+		return;
+	}
 	if (self.health < -99)
 		self.health = -99;		// don't let sbar look bad if a player
 
-	if (self.movetype == MOVETYPE_PUSH || self.movetype == MOVETYPE_NONE)
-	{	// doors, triggers, etc
-		self.th_die ();
-		self = oself;
 
-		return;
-	}
           if (attacker.weapon == -1) // Telefrag
           self.enemy = attacker.owner;
           else
@@ -170,12 +171,22 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	// Res rune
 	if (targ.runeflags & 1)
 	{
-         
-		damage = (damage / 1.5);
+
+          local float x;
+          if (!skill)
+          x = 2;
+          if (skill == 1)
+          x = 1.75;
+          if (skill == 2)
+          x = 1.5;
+          if (skill == 3)
+          x = 1 + (1/3);
+		damage = (damage / x);
 		if (targ.invincible_sound < time)
 		{
+
 			SUB_BlinkRune(32);
-			sound (targ, CHAN_AUTO, "items/protect3.wav", 1, ATTN_NORM);
+			sound (targ, CHAN_RUNE1, "items/protect3.wav", 1, ATTN_NORM);
 			targ.invincible_sound = (time + 2);
 		}
 	}
@@ -223,10 +234,10 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	
 	if (targ.invincible_finished >= time)
 	{
-		if (self.invincible_sound < time)
+		if (targ.invincible_sound < time)
 		{
 			sound (targ, CHAN_ITEM, "items/protect3.wav", 1, ATTN_NORM);
-			self.invincible_sound = time + 2;
+			targ.invincible_sound = time + 2;
 		}
 	
 		return;

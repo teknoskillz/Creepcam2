@@ -197,7 +197,12 @@ void() misc_fireball =
 	//gnounc
 	self.netname = "lava_ball";
 	self.killstring = " ate a lavaball\n";
-
+          if (mapname == "e1m8") 
+          {
+          if (random () < 0.5)
+          self.effects = EF_FLAME;
+ 
+          }
 	if (!self.speed)
 		self.speed = 1000;
 };
@@ -220,19 +225,36 @@ void() fire_fly =
 	fireball.nextthink = time + 5;
 	fireball.think = SUB_Remove;
 	fireball.touch = fire_touch;
-
+          fireball.avelocity = vectoangles (fireball.velocity);
 	//gnounc
 	self.netname = "lava_ball";
 	self.killstring = " ate a lavaball\n";
 	
 	self.nextthink = time + (random() * 5) + 3;
 	self.think = fire_fly;
+           if (mapname == "e1m8") 
+          {
+          if (random () < 0.5)
+          fireball.gravity = random ();
+          if (random () < 0.5)
+          fireball.effects = EF_FLAME;
+          if (random () < 0.5)
+          fireball.modelflags += 1;
+          if (random () < 0.5)
+          fireball.modelflags += 2;
+           if (random () < 0.5)
+          fireball.modelflags += 64;
+          }
+          fireball.dmg = (15 * (skill + 1));
+          if (fireball.effects & EF_FLAME)
+                    fireball.dmg *= 1.25;
+          
 };
 
 
 void() fire_touch =
 {
-	T_Damage (other, self, self, 20);
+	T_Damage (other, self, self, self.dmg);
 	remove(self);
 };
 /*
@@ -629,6 +651,20 @@ void() func_wall_use =
 This is just a solid wall if not inhibitted*/
 void() func_wall =
 {
+          if (mapname == "start" && self.model == "*48")
+          {
+           self.origin_x += -6;
+           self.alpha = 0.92;
+           self.wait = 10;
+           self.lip = 8;
+           self.health = 5;
+           self.t_width = 0.01;
+           self.t_length = 256;
+           self.sounds = rint (random () * 3);
+           self.angles = '-90 0 2';
+           func_door_secret ();
+           return;
+          }
 	self.angles = '0 0 0';
 	self.movetype = MOVETYPE_PUSH;	// so it doesn't get pushed by anything
 	self.solid = SOLID_BSP;
@@ -775,3 +811,4 @@ void() misc_noisemaker =
 	self.nextthink = time + 0.1 + random();
 	self.think = noise_think;
 };
+ 

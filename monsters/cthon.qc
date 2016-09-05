@@ -355,6 +355,12 @@ void() boss_awake =
 /*QUAKED monster_boss (1 0 0) (-128 -128 -24) (128 128 256)*/
 void() monster_boss =
 {
+             if (cvar("nomonsters"))
+          {
+                   
+                    remove (self);
+                    return;
+          }
 	if (deathmatch)
 	{
 		remove(self);

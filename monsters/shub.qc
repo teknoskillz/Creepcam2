@@ -384,11 +384,13 @@ self.velocity_z = self.dmg_take;
 */
 void() monster_oldone =
 {
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
+             if (cvar("nomonsters") || deathmatch)
+          {
+           
+                    remove (self);
+                    return;
+          }
+
 
 	precache_model2 ("progs/oldone.mdl");
 

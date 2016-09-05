@@ -91,8 +91,21 @@ void() zombie_stand14	=[	$stand14,		zombie_stand15	] {ai_stand();};
 void() zombie_stand15	=[	$stand15,		zombie_stand1	] {ai_stand();};
 
 void() zombie_cruc1	=	[	$cruc_1,		zombie_cruc2	] {
+    if (random () < 0.15)
+    {
+    local vector vec;
+	vec_x = self.mins_x;
+	vec_y = self.maxs_y;
+	vec_z = (rint(random () * 40)) + 80;
+    te_blood (self.origin + ' 0 0 10', (vec), self.scale * 5);
+    
+    }
+    local float att;
+    att = ATTN_STATIC;
+    if (self.effects == (EF_RED + EF_BLUE))
+              att = ATTN_NONE;
 if (random() < 0.1)
-	sound (self, CHAN_VOICE, "zombie/idle_w2.wav", 1, ATTN_STATIC);};
+	soundpitch (self, CHAN_VOICE, "zombie/idle_w2.wav", 1, att, self.p_adj);};
 void() zombie_cruc2	=	[	$cruc_2,		zombie_cruc3	] {self.nextthink = time + 0.1 + random()*0.1;};
 void() zombie_cruc3	=	[	$cruc_3,		zombie_cruc4	] {self.nextthink = time + 0.1 + random()*0.1;};
 void() zombie_cruc4	=	[	$cruc_4,		zombie_cruc5	] {self.nextthink = time + 0.1 + random()*0.1;};
@@ -120,7 +133,7 @@ void() zombie_walk18	=[	$walk18,	zombie_walk19	] {ai_walk(0);};
 void() zombie_walk19	=[	$walk19,	zombie_walk1	] {
 ai_walk(0);
 if (random() < 0.2)
-	sound (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_IDLE);};
+	soundpitch (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_IDLE, self.p_adj);};
 
 void() zombie_run1		=[	$run1,		zombie_run2	] {ai_run(1);self.inpain = 0;};
 void() zombie_run2		=[	$run2,		zombie_run3	] {ai_run(1);};
@@ -142,9 +155,9 @@ void() zombie_run17		=[	$run17,		zombie_run18	] {ai_run(3);};
 void() zombie_run18		=[	$run18,		zombie_run1	] {
 ai_run(8);
 if (random() < 0.2)
-	sound (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_IDLE);
+	soundpitch (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_IDLE, self.p_adj);
 if (random() > 0.8)
-	sound (self, CHAN_VOICE, "zombie/z_idle1.wav", 1, ATTN_IDLE);
+	soundpitch (self, CHAN_VOICE, "zombie/z_idle1.wav", 1, ATTN_IDLE, self.p_adj);
 };
 
 /*
@@ -163,12 +176,12 @@ void() ZombieGrenadeTouch =
 	if (other.takedamage)
 	{
 		T_Damage (other, self, self.owner, 10 );
-		sound (self, CHAN_WEAPON, "zombie/z_hit.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_WEAPON, "zombie/z_hit.wav", 1, ATTN_NORM, self.p_adj);
 		remove (self);
 		return;
 	}
 
-	sound (self, CHAN_WEAPON, "zombie/z_miss.wav", 1, ATTN_NORM);	// bounce sound
+	soundpitch (self, CHAN_WEAPON, "zombie/z_miss.wav", 1, ATTN_NORM, self.p_adj);	// bounce soundpitch
 	self.velocity = '0 0 0';
 	self.avelocity = '0 0 0';
 	self.touch = SUB_Remove;
@@ -315,7 +328,7 @@ PAIN
 =============================================================================
 */
 
-void() zombie_paina1	=[	$paina1,	zombie_paina2	] {sound (self, CHAN_VOICE, "zombie/z_pain.wav", 1, ATTN_NORM);};
+void() zombie_paina1	=[	$paina1,	zombie_paina2	] {soundpitch (self, CHAN_VOICE, "zombie/z_pain.wav", 1, ATTN_NORM, self.p_adj);};
 void() zombie_paina2	=[	$paina2,	zombie_paina3	] {ai_painforward(3);};
 void() zombie_paina3	=[	$paina3,	zombie_paina4	] {ai_painforward(1);};
 void() zombie_paina4	=[	$paina4,	zombie_paina5	] {ai_pain(1);};
@@ -328,7 +341,7 @@ void() zombie_paina10	=[	$paina10,	zombie_paina11	] {};
 void() zombie_paina11	=[	$paina11,	zombie_paina12	] {};
 void() zombie_paina12	=[	$paina12,	zombie_run1		] {};
 
-void() zombie_painb1	=[	$painb1,	zombie_painb2	] {sound (self, CHAN_VOICE, "zombie/z_pain1.wav", 1, ATTN_NORM);};
+void() zombie_painb1	=[	$painb1,	zombie_painb2	] {soundpitch (self, CHAN_VOICE, "zombie/z_pain1.wav", 1, ATTN_NORM, self.p_adj);};
 void() zombie_painb2	=[	$painb2,	zombie_painb3	] {ai_pain(2);};
 void() zombie_painb3	=[	$painb3,	zombie_painb4	] {ai_pain(8);};
 void() zombie_painb4	=[	$painb4,	zombie_painb5	] {ai_pain(6);};
@@ -336,7 +349,7 @@ void() zombie_painb5	=[	$painb5,	zombie_painb6	] {ai_pain(2);};
 void() zombie_painb6	=[	$painb6,	zombie_painb7	] {};
 void() zombie_painb7	=[	$painb7,	zombie_painb8	] {};
 void() zombie_painb8	=[	$painb8,	zombie_painb9	] {};
-void() zombie_painb9	=[	$painb9,	zombie_painb10	] {sound (self, CHAN_BODY, "zombie/z_fall.wav", 1, ATTN_NORM);};
+void() zombie_painb9	=[	$painb9,	zombie_painb10	] {soundpitch (self, CHAN_BODY, "zombie/z_fall.wav", 1, ATTN_NORM, self.p_adj);};
 void() zombie_painb10	=[	$painb10,	zombie_painb11	] {};
 void() zombie_painb11	=[	$painb11,	zombie_painb12	] {};
 void() zombie_painb12	=[	$painb12,	zombie_painb13	] {};
@@ -357,7 +370,7 @@ void() zombie_painb26	=[	$painb26,	zombie_painb27	] {};
 void() zombie_painb27	=[	$painb27,	zombie_painb28	] {};
 void() zombie_painb28	=[	$painb28,	zombie_run1		] {};
 
-void() zombie_painc1	=[	$painc1,	zombie_painc2	] {sound (self, CHAN_VOICE, "zombie/z_pain1.wav", 1, ATTN_NORM);};
+void() zombie_painc1	=[	$painc1,	zombie_painc2	] {soundpitch (self, CHAN_VOICE, "zombie/z_pain1.wav", 1, ATTN_NORM, self.p_adj);};
 void() zombie_painc2	=[	$painc2,	zombie_painc3	] {};
 void() zombie_painc3	=[	$painc3,	zombie_painc4	] {ai_pain(3);};
 void() zombie_painc4	=[	$painc4,	zombie_painc5	] {ai_pain(1);};
@@ -376,7 +389,7 @@ void() zombie_painc16	=[	$painc16,	zombie_painc17	] {};
 void() zombie_painc17	=[	$painc17,	zombie_painc18	] {};
 void() zombie_painc18	=[	$painc18,	zombie_run1	] {};
 
-void() zombie_paind1	=[	$paind1,	zombie_paind2	] {sound (self, CHAN_VOICE, "zombie/z_pain.wav", 1, ATTN_NORM);};
+void() zombie_paind1	=[	$paind1,	zombie_paind2	] {soundpitch (self, CHAN_VOICE, "zombie/z_pain.wav", 1, ATTN_NORM, self.p_adj);};
 void() zombie_paind2	=[	$paind2,	zombie_paind3	] {};
 void() zombie_paind3	=[	$paind3,	zombie_paind4	] {};
 void() zombie_paind4	=[	$paind4,	zombie_paind5	] {};
@@ -391,7 +404,7 @@ void() zombie_paind12	=[	$paind12,	zombie_paind13	] {};
 void() zombie_paind13	=[	$paind13,	zombie_run1	] {};
 
 void() zombie_paine1	=[	$paine1,	zombie_paine2	] {
-sound (self, CHAN_VOICE, "zombie/z_pain.wav", 1, ATTN_NORM);
+soundpitch (self, CHAN_VOICE, "zombie/z_pain.wav", 1, ATTN_NORM, self.p_adj);
 self.health = 60;
 };
 void() zombie_paine2	=[	$paine2,	zombie_paine3	] {ai_pain(8);};
@@ -403,7 +416,7 @@ void() zombie_paine7	=[	$paine7,	zombie_paine8	] {ai_pain(1);};
 void() zombie_paine8	=[	$paine8,	zombie_paine9	] {ai_pain(1);};
 void() zombie_paine9	=[	$paine9,	zombie_paine10	] {ai_pain(2);};
 void() zombie_paine10	=[	$paine10,	zombie_paine11	] {
-sound (self, CHAN_BODY, "zombie/z_fall.wav", 1, ATTN_NORM);
+soundpitch (self, CHAN_BODY, "zombie/z_fall.wav", 1, ATTN_NORM, self.p_adj);
 self.solid = SOLID_NOT;
 };
 void() zombie_paine11	=[	$paine11,	zombie_paine12	] {self.nextthink = self.nextthink + 5;self.health = 60;};
@@ -412,7 +425,7 @@ void() zombie_paine12	=[	$paine12,	zombie_paine13	]
 
 	// see if ok to stand up
 	self.health = 60;
-	sound (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_IDLE);
+	soundpitch (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_IDLE, self.p_adj);
 	self.solid = SOLID_SLIDEBOX;
 
 	if (!walkmove (0, 0))
@@ -443,7 +456,7 @@ void() zombie_paine30	=[	$paine30,	zombie_run1		] {};
 
 void() zombie_die =
 {
-	sound (self, CHAN_VOICE, "zombie/z_gib.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "zombie/z_gib.wav", 1, ATTN_NORM, self.p_adj);
 	ThrowHead ("progs/h_zombie.mdl", self.health);
 	ThrowGib ("progs/gib1.mdl", self.health);
 	ThrowGib ("progs/gib2.mdl", self.health);
@@ -583,3 +596,4 @@ void() monster_zombie =
           CC_AddtoList (self);
           
 };
+ 

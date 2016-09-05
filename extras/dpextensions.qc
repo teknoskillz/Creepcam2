@@ -1,5 +1,18 @@
 
 //DarkPlaces supported extension list, draft version 1.04
+/*
+^ colors .....
+0 = Black
+1 = Red
+2 = Green
+3 = Yellow
+4 = Blue
+5 = Light blue
+6 = Pink
+7 = White
+8 = light grey
+9 = Dark Grey
+*/
 
 //things that don't have extensions yet:
 .float disableclientprediction;
@@ -2498,3 +2511,112 @@ void(float pause) setpause = #531;
 float(string url, float id, string content_type, string delim, float buf, float keyid) crypto_uri_postbuf = #513;
 //description:
 //use -1 as buffer handle to justs end delim as postdata
+
+
+/*
+void (fName) readfirst =
+{
+
+       local float cmd;
+       local string data;
+       //rfile = strcat (etos(self), ".txt");
+       cmd = fopen (fName, FILE_READ);    
+    
+    if (cmd < 0) //if file not found
+       {
+	 localcmd ("echo ^5");
+              localcmd ("Error in readfirst");
+              localcmd ("^7\n");
+	return;
+        
+        }	 
+
+    data = (fgets(cmd)); 
+     
+              //localcmd ("echo ^5");
+              //localcmd ("Read from file: ");
+		//localcmd (data);
+              //localcmd ("^7\n");     
+      
+    
+    
+     fclose (cmd);
+  hud_bit = stof(data);
+ //localcmd ("echo ^5");
+     //         localcmd ("Hudbit is now: ");
+	//	localcmd (ftos(hud_bit));
+            //  localcmd ("^7\n");     
+
+
+    /*
+    readtext = fgets(readparms);                //third line
+    self.ammo_rockets = stof(readtext);        //turn the text into the float u want (by using stof: string to float)
+
+    readtext = fgets(readparms);                
+    self.ammo_cells = stof(readtext);        
+
+    readtext = fgets(readparms);                
+    self.weapon = stof(readtext);        
+
+    readtext = fgets(readparms);                
+    self.armortype = stof(readtext);        
+*/
+/*
+
+
+
+};
+
+
+void (float sess, string d) senddata =
+{
+          fputs (sess, d);                   
+          fputs (sess, "\n");         
+};
+void(float mode) writefirst =
+
+{
+    local float    writeparms;
+    local string    writethis,wfile;
+    if (!mode)
+    {
+    wfile = strcat (etos(self), ".txt");
+    writeparms = fopen (wfile, FILE_WRITE);    //open what file to use in write mode
+    writethis = (ftos(self.hudstate));  
+    }
+    else
+     {
+    wfile = "playerlog.txt";
+    writeparms = fopen (wfile, FILE_WRITE);    //open what file to use in write mode
+    
+    }
+    
+    if (writeparms < 0)                            //if you didn't find the file that you needed
+        {
+          localcmd ("echo ^5");
+              localcmd ("File didnt exist in writefirst");
+              localcmd ("^7\n");
+  
+        return;
+        }
+
+	 writethis = self.netname;
+           senddata (writeparms, writethis);
+           writethis = ftos(self.frags;
+           senddata (writeparms, writethis);
+          writethis = "|break|";
+           senddata (writeparms, writethis);
+      
+              // localcmd ("echo ^5");
+              //localcmd ("Wrote to file: ");
+		//localcmd (writethis);
+              //localcmd ("^7\n");   
+
+    fclose (writeparms);                        //close the file or else you will have errors
+
+    
+    };
+
+ */
+
+ 

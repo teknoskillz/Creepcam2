@@ -725,15 +725,24 @@ void () SUB_PrintUpTime =
 {
 
 
-          local float mtime,stime,htime;
-
+          local float mtime,stime,htime,dtime;
+          uptime = (gettime (3));
          // days = num_seconds / (60 * 60 * 24);
          // num_seconds -= days * (60 * 60 * 24);
          // hours = num_seconds / (60 * 60);
          // num_seconds -= hours * (60 * 60);
-     
+          
           mtime = rint(floor(uptime / 60));
+          if (mtime > 59)
+          mtime = 0;
+          
+          
           htime = rint(floor(uptime / (3600)));
+          if (htime > 23)
+          {
+          htime = 0;
+          dtime = (rint(floor(uptime / (3600)))) * 24;
+          }
           
           if (uptime < 60)
           stime = rint(uptime);
@@ -746,10 +755,6 @@ void () SUB_PrintUpTime =
           else if (mtime && htime)
           stime = floor (uptime - ((mtime * 60) + (htime * 3600)));     
           }          
-          
-          
-
-          
 
           bprint ("Total Quake server uptime ");
 	if (stime < 60 && (!mtime && !htime))
@@ -759,7 +764,16 @@ void () SUB_PrintUpTime =
 	}
 	else
 	{
-		
+	  if (dtime > 0)
+          {                    
+	bprint (ftos(dtime));
+          if (dtime != 1)
+	bprint (" Days ");
+          else
+              bprint (" Day ");
+           if (!mtime && !stime && !htime)
+                    bprint (".\n");    
+	}	
 		
           if (htime > 0)
           {                    

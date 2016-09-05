@@ -379,7 +379,10 @@ float	CHAN_VOICE		= 2;
 float	CHAN_ITEM		= 3;
 float	CHAN_BODY		= 4;
 float	CHAN_LIQUID		= 5; // PRIME SoundPitch
-float     CHAN_RUNE = 6;
+float     CHAN_RUNE1 = 17;
+float     CHAN_RUNE2 = 18;
+float     CHAN_RUNE3 = 19;
+float     CHAN_RUNE4 = 20;
 float	ATTN_NONE		= 0;
 float	ATTN_NORM		= 1;
 float	ATTN_IDLE		= 2;
@@ -815,9 +818,9 @@ void () CC_ClearCamNamesForAll;
 float (float v) anglemod;
 
 // CC_2
-.float respawncam,respawn_time,spawn1_time; 
+.float respawncam,respawn_time,game_time; 
 .float watermove_time,runeflags,secrets,mfrags,deaths,items2,regen_time,regeneration_sound,haste_sound;
-.entity       chatbubble,spawn_ent;
+.entity       chatbubble;
 .float chatvisible;
 void updateclientchat(entity bclient, float bvisible);
 .float grenade_time;
@@ -836,6 +839,6 @@ void (vector org) spawn_tfog;
 void (vector org, entity death_owner) spawn_tdeath;
 void (float chance) CAN_GibZombie;
 string version,mtitle;
-void () CycleWeaponReverseCommand, CycleWeaponCommand;
+void () CycleWeaponReverseCommand, CycleWeaponCommand,ImpulseCommands, HasteSound;
 
  

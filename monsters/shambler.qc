@@ -88,7 +88,7 @@ void() sham_walk12      =[      $walk12,       sham_walk1 ]
 	ai_walk(7);
 
 	if (random() > 0.8)
-		sound (self, CHAN_VOICE, "shambler/sidle.wav", 1, ATTN_IDLE);
+		soundpitch (self, CHAN_VOICE, "shambler/sidle.wav", 1, ATTN_IDLE, self.p_adj);
 };
 
 void() sham_run1       =[      $run1,        sham_run2      ] {ai_run(20);};
@@ -100,12 +100,12 @@ void() sham_run6       =[      $run6,        sham_run1      ]
 {
 	ai_run(20);
 	if (random() > 0.8)
-		sound (self, CHAN_VOICE, "shambler/sidle.wav", 1, ATTN_IDLE);
+		soundpitch (self, CHAN_VOICE, "shambler/sidle.wav", 1, ATTN_IDLE, self.p_adj);
 };
 
 void() sham_smash1     =[      $smash1,       sham_smash2    ] 
 {
-	sound (self, CHAN_VOICE, "shambler/melee1.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "shambler/melee1.wav", 1, ATTN_NORM, self.p_adj);
 	ai_charge(2);
 };
 
@@ -137,7 +137,7 @@ void() sham_smash10    =[      $smash10,      sham_smash11   ]
 		
 	ldmg = (random() + random() + random()) * 40;
 	T_Damage (self.enemy, self, self, ldmg);
-	sound (self, CHAN_VOICE, "shambler/smack.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "shambler/smack.wav", 1, ATTN_NORM, self.p_adj);
 
 	SpawnMeatSpray (self.origin + v_forward*16, crandom() * 100 * v_right);
 	SpawnMeatSpray (self.origin + v_forward*16, crandom() * 100 * v_right);
@@ -169,7 +169,7 @@ void(float side) ShamClaw =
 		
 	ldmg = (random() + random() + random()) * 20;
 	T_Damage (self.enemy, self, self, ldmg);
-	sound (self, CHAN_VOICE, "shambler/smack.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "shambler/smack.wav", 1, ATTN_NORM, self.p_adj);
 
 	if (side)
 	{
@@ -186,7 +186,7 @@ void() sham_swingl1	=[      $swingl1,      sham_swingl2   ]
 	else
 	self.killstring = " was ripped to pieces by a Shambler\n";
 
-	sound(self, CHAN_VOICE, "shambler/melee2.wav", 1, ATTN_NORM);
+	soundpitch(self, CHAN_VOICE, "shambler/melee2.wav", 1, ATTN_NORM, self.p_adj);
 	ai_charge(5);
 };
 
@@ -211,7 +211,7 @@ void() sham_swingr1	=[      $swingr1,      sham_swingr2   ]
 	else
 	self.killstring = " was torn to pieces by a Shambler\n";
 
-	sound (self, CHAN_VOICE, "shambler/melee1.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "shambler/melee1.wav", 1, ATTN_NORM, self.p_adj);
 	ai_charge(1);
 };
 
@@ -322,7 +322,7 @@ void() sham_magic6     =[      $magic6,       sham_magic9    ]
 {
 	remove (self.owner);
 	CastLightning();
-	sound (self, CHAN_WEAPON, "shambler/sboom.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_WEAPON, "shambler/sboom.wav", 1, ATTN_NORM, self.p_adj);
 };
 
 void() sham_magic9     =[      $magic9,       sham_magic10   ]{CastLightning();};
@@ -346,7 +346,7 @@ void() sham_pain6       =[      $pain6, sham_run1       ] {};
 
 void(entity attacker, float damage)	sham_pain =
 {
-	sound (self, CHAN_VOICE, "shambler/shurt2.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "shambler/shurt2.wav", 1, ATTN_NORM, self.p_adj);
 
 	if (self.health <= 0)
 		return;		// already dying, don't go into pain frame
@@ -381,7 +381,7 @@ void() sham_die =
 	// check for gib
 	if (self.health < -60)
 	{
-		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM, self.p_adj);
 		ThrowHead ("progs/h_shams.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
@@ -391,7 +391,7 @@ void() sham_die =
 	}
 
 	// regular death
-	sound (self, CHAN_VOICE, "shambler/sdeath.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "shambler/sdeath.wav", 1, ATTN_NORM, self.p_adj);
 	sham_death1 ();
 };
 

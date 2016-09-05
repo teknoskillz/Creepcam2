@@ -340,7 +340,7 @@ void() ogre_walk6	=[	$walk6,		ogre_walk7	]
 	ai_walk(5);
 
 	if (random() < 0.1)
-		soundpitch (self, CHAN_VOICE, "ogre/ogdrag.wav", 1, ATTN_IDLE);
+		sound (self, CHAN_VOICE, "ogre/ogdrag.wav", 1, ATTN_IDLE);
 };
 
 void() ogre_walk7	=[	$walk7,		ogre_walk8	] {ai_walk(3);};

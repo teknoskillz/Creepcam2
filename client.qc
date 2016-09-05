@@ -171,7 +171,8 @@ void() DecodeLevelParms =
           {
                      // Check to see if player is ShubKiller from last level
                     self.watch = parm10;
-                    if (self.watch != -2)
+                    self.runeflags = parm6;
+                    if (!self.runeflags)
 			SetNewParms ();		// take away all stuff on starting new episode
                     if (serverflags) 
                     self.frags = parm5;
@@ -451,7 +452,7 @@ void() execute_changelevel =
                     }  
                     else if (killed_monsters == total_monsters)
                     {
-                    pos.netname = "^6All Monsters killed!^7";
+                    pos.netname = "^6All Monsters dead!^7";
                     pos.aflag = ceil (total_monsters / 2);
                     SUB_InfoBar (pos,other,pos.aflag);
                     other.frags = other.frags  + pos.aflag;          
@@ -606,7 +607,7 @@ void() respawn2 =
 		
   	        CC_ConfigureCamera();
 
-		if (self.dmg_inflictor = last_tdeath || mapname == "e1m7" || newcam.enemy.movedir || newcam.enemy == self || newcam.enemy.solid == world.solid || newcam.health < 1)  
+		if (self.dmg_inflictor == last_tdeath || mapname == "e1m7" || newcam.enemy.movedir || newcam.enemy == self || newcam.enemy.solid == world.solid || newcam.health < 1)  
 		{		
 		self.nextthink = time + 1;
 		self.think = CC_DeathCam;
@@ -894,7 +895,6 @@ void() PutClientInServer =
       //CC_2
           
 	  self.dmg = 2;
-            if (!self.spawn1_time) self.spawn1_time = time + 9;
 	self.respawncam = self.watch =  0;
           self.respawn_time = 0;
 	self.classname = "player";
@@ -1444,6 +1444,18 @@ Called every frame before physics are run
 ================*/
 void() PlayerPreThink =
 {
+          self.game_time = (self.game_time + frametime);
+          
+           if ((rint(self.game_time) == 9) && !self.th_missile) // Cobalt - announce map title
+                     {
+          stuffcmd (self, "infobar 15");
+          stuffcmd (self, " \"");
+          stuffcmd (self, mtitle);
+          stuffcmd (self, "\"");
+          stuffcmd (self, "\n");
+          self.th_missile = SUB_Null;
+          } 
+          
 	if (intermission_running)
 	{
 		IntermissionThink ();	// otherwise a button could be missed between
@@ -1519,7 +1531,22 @@ void() CheckPowerups =
 	if (self.health <= 0)
 		return;
 
+          /*
+          if (self.buttonchat)
+	{
+		if (self.chatvisible) 
+               self.chatvisible = 0;
+		else
+		self.chatvisible = 1;
+		}
+          */
           // Runes
+if (self.runeflags & 1)
+{
+if ((self.took_damage - 1.5) > time)
+SUB_BlinkRune(32);
+else self.items2 = 32;
+}
           
 if (self.runeflags & 2)
 {
@@ -1528,7 +1555,7 @@ SUB_BlinkRune(64);
 else self.items2 = 64;
 }
 
-if ((self.runeflags & 4))
+if (self.runeflags & 4)
 {
 if (time < self.attack_finished)
 SUB_BlinkRune(128);
@@ -1543,7 +1570,7 @@ if (self.runeflags & 8)
           local float m,v;
 if (self.regen_time < time)
    {
-if (random () < 0.15)
+if (random () < 0.15 && (framecount & 1))
 SUB_BlinkRune(256);
 if (self.velocity != VEC_ORIGIN)
 m = 3;
@@ -1578,7 +1605,7 @@ if (!self.velocity)
 if ( self.armorvalue >= v)
 sound (self, CHAN_AUTO, "items/armor1.wav", 1, ATTN_STATIC);
 else if (time > self.attack_finished)
-soundpitch (self, CHAN_RUNE, "items/armor1.wav", 1, ATTN_STATIC, y);
+soundpitch (self, CHAN_LIQUID, "items/armor1.wav", 1, ATTN_STATIC, y);
 //sound (self, CHAN_AUTO, "items/itembk2.wav", 1, ATTN_STATIC);
 
 if (self.armorvalue > v)
@@ -1898,6 +1925,8 @@ called when a player disconnects from a server
 ============*/
 void() ClientDisconnect =
 {
+          
+    //writefirst (1);
     CC_ClientDisconnect(); // PRIME CreepCam
     removebubble (self, chatbubble);
 	if (gameover)
@@ -1906,6 +1935,8 @@ void() ClientDisconnect =
           if (self.super_time > 0) DropQuad ();
 	if (self.invisible_time > 0) DropRing ();
           if (self.runeflags > 0) DropRune ();
+          if (active_clients < 3)
+		DropBackpack();
           
 		 sound (self, CHAN_BODY, "player/tornoff2.wav", 1, ATTN_NONE);
      if(self.classname == "player")
@@ -1958,12 +1989,22 @@ void(entity targ, entity attacker) ClientObituary =
                                 }
                                 if (targ.flags & FL_MONSTER)
                                 {
+                                
                                           if (targ.netname == "Ogre" || targ.netname == "Enforcer")
                                           bprint ("An ");
+                                          else if (targ.netname == "Grunt")
+                                          bprint ("A deranged");
                                           else
                                           bprint ("A ");
+                                
+                                
                                 bprint (targ.netname);
-                                if (targ.classname == attacker.classname)
+                                if (attacker.classname == "fireball")
+                                {
+                                   bprint (attacker.killstring);
+                                   attacker.killstring = "";
+                                }
+                                else if (targ.classname == attacker.classname)
                                    bprint (" fought it out with another ");
                                 else
                                 {
@@ -1971,11 +2012,13 @@ void(entity targ, entity attacker) ClientObituary =
                                 bprint (" fought it out with an ");
                                 else bprint (" fought it out with a ");
                                 }
+                                if (attacker.killstring)
+                                {
                                 bprint (attacker.netname);
-                                bprint (" and the ");
+                                bprint ("\n . . . and the ");
                                 bprint (targ.netname);
 				bprint (attacker.killstring);          
-                                          
+                                }
                                 }
                                 
 			}

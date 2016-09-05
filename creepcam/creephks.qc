@@ -24,9 +24,9 @@ void() RespawnTimer = // CC_2
               centerprint2 (self, "\nPress Jump or Fire to respawn", " ", "", "  ", "");          
         if (ret)     
         {                  
-          self.clientcamera = self;
-	self.respawncam = 0;
+          self.clientcamera = self;	
 	CC_RequestNotCam();
+          self.respawncam = 0;
         }
 	
 	}

@@ -375,15 +375,15 @@ void() worldspawn =
           
           local entity ent;
 
-	ent = nextent (world);
-	max_clients = 0;
-	while (ent != world)
+          ent = nextent (world);
+	while (ent.classname != "worldspawn")
 	{
+                    if (ent.colormap)
 		max_clients = max_clients + 1;
 		ent = nextent (ent);
 	}
 
-          
+          c_max = ceil (max_clients / 2);
           
           
 	
@@ -394,18 +394,14 @@ void() StartFrame =
 {
 
 	teamplay = cvar("teamplay");
-	
-	// PRIME CreepCam
-	c_max = floor(teamplay / MOVETYPE_BOUNCE);
-	teamplay = teamplay - c_max * MOVETYPE_BOUNCE;
-   if (c_max == 0)
-	c_max = 16;
 
 // CC_2	
 if (!framecount) 
 {          
-          registercvar ("respawntimer", "15");	
-          version = "v2.082\n"; // Current version of Creepiercam
+          registercvar ("respawntimer", "15");
+          registercvar ("serverflags", "0");
+          cvar_set("serverflags",(ftos(serverflags)));
+          version = "v2.083\n"; // Current version of Creepiercam
           local string hname;
           hname = "\"^2Coop with Creepiercam^7 ";
           hname = strcat (hname, version);
@@ -414,13 +410,47 @@ if (!framecount)
           localcmd (hname);
           
           SUB_ShowMapAuthor ();
+                      if (mapname == "start" && coop && serverflags == 255)
+          {
+          local entity p,n,z;
+
+          while (z = find(z, classname, "monster_zombie"))
+          {
+          if (z.origin == '-336 1808 -264')
+          {
+                    z.scale = 1.5;
+                    z.modelflags = 36;
+                    z.effects = EF_RED | EF_BLUE;
+                    z.colormap = 1;
+            setorigin (z, '-440 1856 -200');        
+          }
+          }
+                    n = spawn ();
+
+                    p = world;
+	while (p = find(p, classname, "trigger_setskill")) 
+          {
+          if (p.message == "3")
+          {
+          copyentity (p,n);    
+          n.absmin = n.absmax = VEC_ORIGIN;
+          setsize (n, VEC_ORIGIN, VEC_ORIGIN);
+          n.frame = -1;
+          n.target = "t1";
+          setorigin (n, '-430 1856 -316');
+          
+	}
+         
+          }
+         
           
 }	
 	CC_RESPAWN = cvar ("respawntimer");
 	skill = cvar("skill");
+          serverflags = cvar("serverflags");
 	framecount = framecount + 1;
-	uptime = (gettime (3));
-          
+	
+}
                     
             
 // Cobalt CC_2 lock camera angles when in worldcam
@@ -439,14 +469,7 @@ while (clienttype (slot) == CLIENTTYPE_REAL)
 	if (!slot.button0 && slot.state != 1)
 	slot.fixangle = 1;
           }
-          if ((time > slot.spawn1_time + frametime) && time < (slot.spawn1_time + frametime * 2)) // Cobalt - announce map title
-                     {
-          stuffcmd (slot, "infobar 15");
-          stuffcmd (slot, " \"");
-          stuffcmd (slot, mtitle);
-          stuffcmd (slot, "\"");
-          stuffcmd (slot, "\n");
-          } 
+         
 	
 	slot = nextent (slot);
 	
@@ -513,3 +536,4 @@ void(entity ent) CopyToBodyQueue =
 };
 
 
+ 

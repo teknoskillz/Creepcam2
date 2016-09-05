@@ -43,6 +43,11 @@ void() W_Precache =
           precache_sound ("misc/null.wav");
           precache_sound ("blob/hit1.wav"); // For new axe hit code
           precache_sound2 ("zombie/z_shot1.wav"); // For toss backpack
+          precache_sound ("boss1/sight1.wav"); // for haste rune
+          precache_sound ("items/r_item1.wav"); // for str rune
+          precache_sound ("items/protect3.wav"); // resist rune
+          precache_sound ("items/damage3.wav"); // str
+          
 };
 
 float() crandom =
@@ -983,6 +988,11 @@ void() W_Attack =
 		else
 			player_axed1 ();
 		self.attack_finished = time + 0.5;
+                    if (self.runeflags & 4)
+                    {
+                    self.attack_finished = time + (1/3);
+                    HasteSound ();
+                    }
 	}
 
 	else if (self.weapon == IT_SHOTGUN)
@@ -990,13 +1000,29 @@ void() W_Attack =
 		player_shot1 ();
 		W_FireShotgun ();
 		self.attack_finished = time + 0.5;
-	}
+		if (self.runeflags & 4)
+                    {
+                    local float calc;
+                    calc = (self.attack_finished - time) * 0.85;
+                    self.attack_finished = time + calc;
+                    HasteSound ();
 
+                    }
+
+                    }
 	else if (self.weapon == IT_SUPER_SHOTGUN)
 	{
 		player_shot1 ();
 		W_FireSuperShotgun ();
 		self.attack_finished = time + 0.7;
+                    if (self.runeflags & 4)
+                    {
+                    if (!self.movement)
+                    self.attack_finished = time + 0.35;
+                    else
+                    self.attack_finished = time + 0.525;
+                    HasteSound ();
+                    }
 	}
 
 	else if (self.weapon == IT_NAILGUN)
@@ -1013,7 +1039,15 @@ void() W_Attack =
 	{
 		player_rocket1();
 		W_FireGrenade();
-		self.attack_finished = time + 0.6;
+		self.attack_finished = time + (2/3);
+                    if (self.runeflags & 4)
+                    {
+                    if (!self.movement)
+                    self.attack_finished = time + (1/3);
+                    else
+                    self.attack_finished = time + (2/5);
+                    HasteSound ();
+                    }
 	}
 
 	else if (self.weapon == IT_ROCKET_LAUNCHER)
@@ -1021,12 +1055,28 @@ void() W_Attack =
 		player_rocket1();
 		W_FireRocket();
 		self.attack_finished = time + 0.8;
+                     if (self.runeflags & 4)
+                    {
+                    if (!self.movement)
+                    self.attack_finished = time + 0.45;
+                    else
+                    self.attack_finished = time + (2/3);
+                    HasteSound ();
+                    }
 	}
 
 	else if (self.weapon == IT_LIGHTNING)
 	{
 		player_light1();
 		self.attack_finished = time + 0.1;
+                     if (self.runeflags & 4)
+                    {
+                    if (!self.movement)
+                    self.attack_finished = time + 0.05;
+                    else
+                    self.attack_finished = time + (0.075);
+                    HasteSound ();
+                    }
 		sound (self, CHAN_AUTO, "weapons/lstart.wav", 1, ATTN_NORM);
 	}
 };
@@ -1393,14 +1443,7 @@ void() ImpulseCommands =
              sprint (self, (ftos(cvar("skill"))));
              sprint (self, "\n");
              }
-	if (self.impulse == 123)
-	{
-		if (self.chatvisible) 
-               self.chatvisible = 0;
-		else
-		self.chatvisible = 1;
-		}
-	
+
 	
 	if (self.impulse == 255)
 		QuadCheat ();
@@ -1441,7 +1484,7 @@ void() W_WeaponFrame =
           
           if (self.movement == VEC_ORIGIN)
           {                    
-          if (self.flags & FL_CLIENT)
+          if (self.flags & FL_CLIENT && (!(self.flags & FL_NOTARGET)))
 	TraceID ();
           }  else
           {
@@ -1468,7 +1511,7 @@ if ((self.runeflags & 2) && (self.super_damage_finished > time))
 if (self.super_sound < time)
 {
 self.super_sound = time + 1;
-sound (self, CHAN_RUNE, "items/damage3.wav", 1, ATTN_NORM);
+soundpitch (self, CHAN_RUNE2, "items/damage3.wav", 1, ATTN_IDLE, 115);
 }
 }
 else
@@ -1488,7 +1531,7 @@ if (self.runeflags & 2)
 if (self.super_sound < time)
 {
 self.super_sound = time + 1;
-sound (self, CHAN_RUNE, "items/damage3.wav", 1, ATTN_NORM);
+sound (self, CHAN_RUNE2, "items/damage3.wav", 1, ATTN_NORM);
 }
 }
 }
@@ -1503,7 +1546,7 @@ if (self.runeflags & 8)
 if (self.regeneration_sound < time)
 {
 self.regeneration_sound = time + 1;
-sound (self, CHAN_RUNE, "items/r_item1.wav", 1, ATTN_NORM);
+sound (self, CHAN_RUNE4, "items/r_item1.wav", 1, ATTN_NORM);
 }
 }
 return;
@@ -1516,7 +1559,7 @@ if (self.runeflags & 4)
 if (self.haste_sound < time)
 {
 self.haste_sound = time + 1;
-sound (self, CHAN_RUNE, "boss1/sight1.wav", 1, ATTN_NORM);
+sound (self, CHAN_RUNE3, "boss1/sight1.wav", 1, ATTN_NORM);
 
 }
 }

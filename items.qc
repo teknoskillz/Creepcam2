@@ -312,6 +312,9 @@ void() health_touch =
 
 	activator = other;
 	SUB_UseTargets();				// fire all targets / killtargets
+          
+          if (!deathmatch) remove (self);
+          
 };
 void() item_megahealth_rot =
 {
@@ -409,6 +412,9 @@ void() armor_touch =
 	
 	activator = other;
 	SUB_UseTargets();				// fire all targets / killtargets
+          
+          if (!deathmatch) remove (self);
+          
 };
 
 
@@ -853,6 +859,9 @@ void() ammo_touch =
 
 	activator = other;
 	SUB_UseTargets();				// fire all targets / killtargets
+          
+          if (!deathmatch) remove (self);
+          
 };
 
 
@@ -1194,11 +1203,7 @@ END OF LEVEL RUNES
 
 void() sigil_touch =
 {
-          
-          
-          self.modelflags = 0;
      
-       if (self.model != "")
       	if (!PM_TraceCheck (self, self.origin))
 	{
 	
@@ -1238,15 +1243,18 @@ void() sigil_touch =
           }
           
           other.air_finished = -1; // Cobalt, sound fx to player
-	self.solid = SOLID_NOT;
-	self.model = string_null;
+
           other.runeflags = other.runeflags | (self.runeflags & 15);
           if (!self.cnt)
 	serverflags = serverflags | (self.spawnflags & 15);
 	self.classname = string_null;		// so rune doors won't find it
 	activator = other;
 	SUB_UseTargets();				// fire all targets / killtargets
-          self.effects = EF_NODRAW; // Cobalt dont transmit to network this ent
+           
+          cvar_set("serverflags",(ftos(serverflags)));
+          
+          remove (self);
+          
           };
 
 
@@ -1265,8 +1273,7 @@ void() item_sigil =
 	if (self.spawnflags & 1)
 	{
 		precache_model ("progs/end1.mdl");
-                    precache_sound ("items/protect3.wav");
-		setmodel (self, "progs/end1.mdl");
+                    setmodel (self, "progs/end1.mdl");
                     self.netname = "Rune of Resistance";
 	}
 
@@ -1274,7 +1281,6 @@ void() item_sigil =
 	{
 		precache_model2 ("progs/end2.mdl");
 		setmodel (self, "progs/end2.mdl");
-                    precache_sound ("items/damage3.wav");
                     self.netname = "Rune of Strength";
 	}
 
@@ -1282,7 +1288,6 @@ void() item_sigil =
 	{
 		precache_model2 ("progs/end3.mdl");
 		setmodel (self, "progs/end3.mdl");
-                    precache_sound ("boss1/sight1.wav");
                     self.netname = "Rune of Haste";
 	}
 
@@ -1447,13 +1452,12 @@ void () DropRune =
           
           if (rune)
           {
-	rune.origin = self.origin - '0 0 24';
+	setorigin (rune, Rvec (self.absmin, self.absmax));
           rune.noise = "misc/runekey.wav";
           precache_sound (rune.noise);
-	rune.velocity_z = 400;
-	rune.velocity_x = -500 + (random() * 1000);
-	rune.velocity_y = -500 + (random() * 1000);
-	setsize (rune, '-16 -16 0', '16 16 56');
+	rune.velocity = crandom () * '250 250 300';
+	rune.velocity_z += 60;
+	//setsize (rune, '-16 -16 0', '16 16 56');
 	rune.flags = FL_ITEM;
 	rune.solid = SOLID_TRIGGER;
 	rune.movetype = MOVETYPE_TOSS;
@@ -1503,7 +1507,7 @@ void() powerup_touch =
 		self.think = SUB_regen;
 	}	
 
-	sound (other, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
 	self.solid = SOLID_NOT;
 	other.items = other.items | self.items;
@@ -1536,6 +1540,9 @@ void() powerup_touch =
 
 	activator = other;
 	SUB_UseTargets();				// fire all targets / killtargets
+          
+          if (!deathmatch) remove (self);
+          
 };
 
 
@@ -1787,7 +1794,7 @@ void() DropBackpack =
 
 void () TossBackpack =
 {
-	if (1)
+	if (coop || deathmatch)
 	{
 		if (self.currentammo <= 0)
 		return;

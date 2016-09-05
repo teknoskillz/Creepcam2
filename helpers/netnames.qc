@@ -258,7 +258,6 @@ string getModelByNum(float it_num)
 
 void () TraceID =
 {
-	
 	makevectors (self.v_angle);
 	local vector bing;          
 	bing = self.origin + self.view_ofs + v_forward * 18;

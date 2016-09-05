@@ -496,7 +496,7 @@ Any object touching this will be transported to the corresponding info_teleport_
 If the trigger_teleport has a targetname, it will only teleport entities when it has been fired.
 */
 void() trigger_teleport =
-{
+{          
 	local vector o;
 
 	InitTrigger ();
@@ -527,9 +527,33 @@ void() trigger_skill_touch =
 {
 	if (other.classname != "player")
 		return;
-		
+          
 	cvar_set ("skill", self.message);
-};
+          if (other.teleport_time < time)
+          {
+          local string des;
+          if (self.message == "0")
+                    des = " (Easy)";
+          if (self.message == "1")
+                    des = " (^2Normal^7)";
+          if (self.message == "2")
+                    des = " (^3Hard^7)";
+          if (self.message == "3")
+                    des = " (^1NIGHTMARE!^7)";
+          self.wad = "?";
+            self.wad = strcat ("Skill is set to: ", self.message);
+          self.wad = strcat (self.wad, des);
+             bprint (self.wad);
+             bprint ("\n");
+          }
+          other.teleport_time = time + 0.66;
+                    
+if (self.frame == -1) 
+{
+          trigger_teleport ();
+          force_retouch = 2;
+}
+          };
 
 /*QUAKED trigger_setskill (.5 .5 .5) ?
 sets skill level to the value of "message".
@@ -537,8 +561,12 @@ Only used on start map.
 */
 void() trigger_setskill =
 {
+          
 	InitTrigger ();
 	self.touch = trigger_skill_touch;
+
+
+          
 };
 
 

@@ -37,10 +37,10 @@ void(entity e) CC_AntiSpamAction =
 		e.spam_count = e.spam_count + 1;
 		if (e.spam_count >= SPAM_ACTIONLIMIT)
 		{
-			bprint("^3Too much spamming from ");
+			bprint("^6Too much spamming from ");
 			bprint(e.netname);
-			bprint("\n");
-			stuffcmd(e, "\ndisconnect\n");
+			bprint("^7\n");
+                              dropclient (e); // Cobalt use DP optimization for D-C
 		}
 	}
 };
@@ -441,9 +441,7 @@ void() CC_PlayerImpulses =
 {
           if (self.impulse == 80)
              {
-             sprint (self, "Skill is set to: ");
-             sprint (self, (ftos(cvar("skill"))));
-             sprint (self, "\n");
+              ImpulseCommands ();
              }
 	if (self.impulse == 100)
 	{

@@ -253,6 +253,14 @@ void() player_light1   =[$light1, player_light2  ]
 	SuperDamageSound();
 	W_FireLightning();
 	self.attack_finished = time + 0.2;
+             if (self.runeflags & 4)
+                    {
+                    if (!self.movement)
+                    self.attack_finished = time + 0.1;
+                    else
+                    self.attack_finished = time + (0.15);
+                    
+                    }
 };
 
 void() player_light2   =[$light2, player_light1  ]
@@ -270,6 +278,14 @@ void() player_light2   =[$light2, player_light1  ]
 	SuperDamageSound();
 	W_FireLightning();
 	self.attack_finished = time + 0.2;
+          if (self.runeflags & 4)
+                    {
+                    if (!self.movement)
+                    self.attack_finished = time + 0.1;
+                    else
+                    self.attack_finished = time + (0.15);
+                    
+                    }
 };
 
 //============================================================================

@@ -67,7 +67,7 @@ void()	demon1_stand13	=[	$stand13,	demon1_stand1	] {ai_stand();};
 void()	demon1_walk1	=[	$walk1,		demon1_walk2	] 
 {
 	if (random() < 0.2)
-	    sound (self, CHAN_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
+	    soundpitch (self, CHAN_VOICE, "demon/idle1.wav", 1, ATTN_IDLE, self.p_adj);
 	ai_walk(8);
 };
 
@@ -82,7 +82,7 @@ void()	demon1_walk8	=[	$walk8,		demon1_walk1	] {ai_walk(10);};
 void()	demon1_run1	=[	$run1,		demon1_run2	] 
 {
 	if (random() < 0.2)
-	    sound (self, CHAN_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
+	    soundpitch (self, CHAN_VOICE, "demon/idle1.wav", 1, ATTN_IDLE, self.p_adj);
 	ai_run(20);
 };
 
@@ -220,7 +220,7 @@ void(entity attacker, float damage)	demon1_pain =
 		return;
 
 	self.pain_finished = time + 1;
-    sound (self, CHAN_VOICE, "demon/dpain1.wav", 1, ATTN_NORM);
+    soundpitch (self, CHAN_VOICE, "demon/dpain1.wav", 1, ATTN_NORM, self.p_adj);
 
 	if (random()*200 > damage)
 		return;		// didn't flinch
@@ -230,7 +230,7 @@ void(entity attacker, float damage)	demon1_pain =
 
 void()	demon1_die1		=[	$death1,		demon1_die2	] 
 {
-	sound (self, CHAN_VOICE, "demon/ddeath.wav", 1, ATTN_NORM);
+	soundpitch (self, CHAN_VOICE, "demon/ddeath.wav", 1, ATTN_NORM, self.p_adj);
 };
 
 void()	demon1_die2		=[	$death2,		demon1_die3	] {};
@@ -247,7 +247,7 @@ void() demon_die =
 	// check for gib
 	if (self.health < -80)
 	{
-		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+		soundpitch (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM, self.p_adj);
 		ThrowHead ("progs/h_demon.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
@@ -381,7 +381,7 @@ float()	DemonCheckAttack =
 	if (CheckDemonJump ())
 	{
 		self.attack_state = AS_MISSILE;
-        sound (self, CHAN_VOICE, "demon/djump.wav", 1, ATTN_NORM);
+        soundpitch (self, CHAN_VOICE, "demon/djump.wav", 1, ATTN_NORM, self.p_adj);
 
 		return TRUE;
 	}
@@ -415,7 +415,7 @@ void(float side)	Demon_Melee =
 		
                     CAN_GibZombie (skill); // CC_2 Prime - Demon gib zombies chance
                     
-    sound (self, CHAN_WEAPON, "demon/dhit2.wav", 1, ATTN_NORM);
+    soundpitch (self, CHAN_WEAPON, "demon/dhit2.wav", 1, ATTN_NORM, self.p_adj);
 	ldmg = 10 + 5*random();
 	T_Damage (self.enemy, self, self, ldmg);	
 
@@ -474,7 +474,7 @@ void() undead_demon_run5 =[	$run5,	undead_demon_jump1 ]    {ai_face();movetogoal
 /*
 //This sets up animations for a jump attack! And at the end calls to remove the entity										
 void() undead_demon_jump1 =[	$leap1,	undead_demon_jump2 ]    {ai_face();};
-void() undead_demon_jump2 =[	$leap2,	undead_demon_jump3 ]    {sound (self, CHAN_VOICE, "demon/djump.wav", 1, ATTN_NORM);	ai_face();};
+void() undead_demon_jump2 =[	$leap2,	undead_demon_jump3 ]    {soundpitch (self, CHAN_VOICE, "demon/djump.wav", 1, ATTN_NORM);	ai_face();};
 void() undead_demon_jump3 =[	$leap3,	undead_demon_jump4 ]    {ai_face();movetogoal (10);};
 void() undead_demon_jump4 =[	$leap4,	undead_demon_jump5 ]    {ai_face();movetogoal (10);};
 void() undead_demon_jump5 =[	$leap5,	undead_demon_end1 ]    {ai_face();movetogoal (10); 

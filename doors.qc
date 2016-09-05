@@ -639,7 +639,7 @@ void () fd_secret_use =
 	local float temp;
 	
 	self.health = 10000;
-
+          //eprint (self);
 	// exit if still moving around...
 	if (self.origin != self.oldorigin)
 		return;
