@@ -323,6 +323,7 @@ void () monster_tarbaby;
 
 void () RandomMonster = 
 {
+if (total_monsters > 254) return;
 local float rn,type;
 
 traceline (self.origin, self.origin - '0 0 500', 0, self);
@@ -384,7 +385,7 @@ self.classname = "monster_tarbaby";
 monster_tarbaby ();
 }
 
-
+total_monsters += 1;
 spawn_tfog(self.origin);
 
           

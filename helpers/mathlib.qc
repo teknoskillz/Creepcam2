@@ -1283,6 +1283,3 @@ score = score + 1; // side at knee level
 
 
 
-
-
-

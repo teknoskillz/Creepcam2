@@ -401,7 +401,7 @@ if (!framecount)
           registercvar ("respawntimer", "15");
           registercvar ("serverflags", "0");
           cvar_set("serverflags",(ftos(serverflags)));
-          version = "v2.083\n"; // Current version of Creepiercam
+          version = "v2.084\n"; // Current version of Creepiercam
           local string hname;
           hname = "\"^2Coop with Creepiercam^7 ";
           hname = strcat (hname, version);
