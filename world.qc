@@ -446,12 +446,13 @@ if (!framecount)
           
 }	
 	CC_RESPAWN = cvar ("respawntimer");
-	skill = cvar("skill");
           serverflags = cvar("serverflags");
-	framecount = framecount + 1;
 	
 }
-                    
+            
+          
+          skill = cvar("skill");
+	framecount = framecount + 1;            
             
 // Cobalt CC_2 lock camera angles when in worldcam
 if (framecount > 100)

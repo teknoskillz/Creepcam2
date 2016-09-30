@@ -234,17 +234,17 @@ void () team_teleport =
 
          
           local float loop, rev, x;
-          local entity slot,img;
+          local entity pslot,img;
           x = 56;
-          slot = nextent (world);
+          pslot = nextent (world);
           makevectors (self.angles);
-          while (slot.colormap <= active_clients)
+          while (pslot.colormap <= active_clients)
           {
           loop = loop + 1;
           if (loop > 2)
           x = x + 96;
           
-          if (slot.colormap != self.colormap && (slot.flags & FL_CLIENT))
+          if (pslot.colormap != self.colormap && (pslot.flags & FL_CLIENT))
           {
           if (loop & 1)
           rev = -1;
@@ -254,8 +254,8 @@ void () team_teleport =
           img.gravity = 5;
           img.classname = "image";
           setsize (img, VEC_HULL_MIN, VEC_HULL_MAX);
-          img.colormap = slot.colormap;
-          img.owner = slot;
+          img.colormap = pslot.colormap;
+          img.owner = pslot;
           img.solid = SOLID_SLIDEBOX;
           img.movetype = MOVETYPE_FLY;
           img.velocity_z = (vlen (img.size)) * -2;
@@ -268,7 +268,7 @@ void () team_teleport =
           te_teleport (img.origin);
           }
         
-          slot = nextent (slot);
+          pslot = nextent (pslot);
          
           }    
            self.think = world.think;

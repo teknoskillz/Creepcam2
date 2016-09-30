@@ -624,8 +624,9 @@ r = find (world, classname, "plat");
           {
                     r.effects = 2;
 
-          if (active_clients)
-          if (random () * (skill + 1) < skill)
+
+          
+          if (random () * (skill + 1) < skill && active_clients > 0)
           {
           local entity newm;
           newm = spawn ();
